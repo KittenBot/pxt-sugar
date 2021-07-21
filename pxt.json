@@ -1,0 +1,16 @@
+{
+    "name": "sugarbox",
+    "version": "0.1.0",
+    "description": "Extension for Kittenbot Sugarbox",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*"
+    },
+    "files": [
+        "README.md",
+        "main.ts",
+        "_locales/zh/hfgfds-strings.json"
+    ],
+    "public": true,
+    "preferredEditor": "tsprj"
+}
