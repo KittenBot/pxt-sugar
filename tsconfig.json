@@ -4,5 +4,8 @@
         "noImplicitAny": true,
         "outDir": "built",
         "rootDir": "."
-    }
+    },
+    "include": [
+        "../../**/*"
+    ]
 }

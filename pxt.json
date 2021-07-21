@@ -4,7 +4,8 @@
     "description": "Extension for Kittenbot Sugarbox",
     "license": "MIT",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "microphone": "*"
     },
     "files": [
         "README.md",

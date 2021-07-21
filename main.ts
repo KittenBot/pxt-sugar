@@ -4,6 +4,18 @@
 
  */
 
+function i2cwrite(addr: number, reg: number, value: number[]) {
+  let a = [reg]
+  if (value.length)
+    a = a.concat(value)
+  return pins.i2cWriteBuffer(addr, Buffer.fromArray(a))
+}
+
+function i2cread(addr: number, reg: number, size: number) {
+  pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE);
+  return pins.i2cReadBuffer(addr, size);
+}
+
 //% color="#9DA4D0" weight=10 icon="\uf24d"
 //% groups='["Motion/PIR", "Linefollower/Tracker", "HallEffect", "Buttons", "LED", "Flame", "PotentialMeter", "LightLevel", "Moisture", "Rain Gauge", "Infra Transmitter", "Distance", "Environment", "Joystick"]'
 namespace Sugarmodule {
@@ -23,124 +35,191 @@ namespace Sugarmodule {
     Humidity = 1
   }
 
+  export enum JoystickDir {
+    pressed = 1,
+    left = 0x10,
+    right = 0x8,
+    up = 0x4,
+    down = 0x2
+  }
+
   export enum DirType {
     X = 0,
     Y = 1
   }
 
 
-  //% blockId=pir block="Motion Detect %port"
+  //% blockId=pir block="Motion Detect %pin"
   //% group="Motion/PIR" weight=90
-  export function pir(port: Ports): boolean {
-    return false;  
+  export function pir(pin: DigitalPin): boolean {
+    return pins.digitalReadPin(pin) == 1
   }
 
-  //% blockId=tracer block="Tracer|%port"
+  //% blockId=tracer block="Tracer|%pin"
   //% group="Linefollower" weight=89
-  export function Tracer(port: Ports): boolean {
-    return false;
+  export function Tracer(pin: DigitalPin): boolean {
+    return pins.digitalReadPin(pin) == 1
   }
 
-  //% blockId=hall block="Hall Effect|%port"
+  //% blockId=hall block="Hall Effect|%pin"
   //% group="HallEffect" weight=88
-  export function HallSensor(port: Ports): boolean {
-    return false;
+  export function HallSensor(pin: DigitalPin): boolean {
+    return pins.digitalReadPin(pin) == 1
   }
 
-  //% blockId=button block="Button|%port| Pressed %pressed"
+  //% blockId=button block="Button|%pin| Pressed %pressed"
   //% group="Buttons" weight=87
-  export function buttonPressed(port: Ports, pressed: boolean): boolean {
-    return false;
+  export function buttonPressed(pin: DigitalPin, pressed: boolean): boolean {
+    return (pins.digitalReadPin(pin) == 0) == pressed
   }
 
-  //% blockId=led_toggle block="Led|%port| On/Off %onoff"
+  //% blockId=led_toggle block="Led|%pin| On/Off %onoff"
   //% group="LED" weight=86
-  export function ledOnoff(port: Ports, onoff: boolean) {
-    
+  export function ledOnoff(pin: DigitalPin, onoff: boolean) {
+    pins.digitalWritePin(pin, onoff?1:0)
   }
 
-  //% blockId=led_luminent block="Led|%port| Luminent %value"
+  //% blockId=led_luminent block="Led|%pin| Luminent %value"
   //% group="LED" weight=85
-  export function ledLuminent(port: Ports, value: number) {
-    
+  export function ledLuminent(pin: AnalogPin, value: number) {
+    pins.analogWritePin(pin, value)
   }
 
-  //% blockId=flameBool block="Flame|%port Detected Flame"
+  //% blockId=flameBool block="Flame|%pin Detected Flame"
   //% group="Flame" weight=84
-  export function flameBool(port: Ports): boolean {
-    return false;
+  export function flameBool(pin: DigitalPin): boolean {
+    return pins.digitalReadPin(pin) == 1
   }
 
-  //% blockId=flameAnalog block="Flame|%port Strength"
+  //% blockId=flameAnalog block="Flame|%pin Strength"
   //% group="Flame" weight=84
-  export function flameAnalog(port: Ports): number {
-    return 100;
+  export function flameAnalog(pin: AnalogPin): number {
+    return pins.analogReadPin(pin)
   }
 
-  //% blockId=potential block="Potential|%port Value"
+  //% blockId=potential block="Potential|%pin Value"
   //% group="PotentialMeter" weight=83
-  export function potential(port: Ports): number {
-    return 100;
+  export function potential(pin: AnalogPin): number {
+    return pins.analogReadPin(pin)
   }
 
-  //% blockId=lightlvl block="Light Level|%port"
+  //% blockId=lightlvl block="Light Level|%pin"
   //% group="LightLevel" weight=82
-  export function LightLevel(port: Ports): number {
-    return 100;
+  export function LightLevel(pin: AnalogPin): number {
+    return pins.analogReadPin(pin)
   }
 
-  //% blockId=soilmoisture block="Soil Moisture|%port"
+  //% blockId=soilmoisture block="Soil Moisture|%pin"
   //% group="Moisture" weight=81
-  export function SoilMoisture(port: Ports): number {
-    return 100;
+  export function SoilMoisture(pin: AnalogPin): number {
+    return pins.analogReadPin(pin)
   }
 
-  //% blockId=rainlvl block="Rain Gauge|%port"
+  //% blockId=rainlvl block="Rain Gauge|%pin"
   //% group="Rain Gauge" weight=80
-  export function rainGauge(port: Ports): number {
-    return 100;
+  export function rainGauge(pin: AnalogPin): number {
+    return pins.analogReadPin(pin)
   }
 
-  //% blockId=infraRx block="On Infra|%port Received"
+  //% blockId=infraRx block="On Infra|%pin Received"
   //% group="Infra Transmitter" weight=78
-  export function infraRx(port: Ports, handler: (data: string) => void) {
+  export function infraRx(pin: AnalogPin, handler: (data: string) => void) {
 
   }
 
-  //% blockId=infraTx block="Infra %port Transmit %data"
+  //% blockId=infraTx block="Infra %pin Transmit %data"
   //% group="Infra Transmitter" weight=78
-  export function infraTx(port: Ports, data: string) {
+  export function infraTx(pin: AnalogPin, data: string) {
 
   }
 
-  //% blockId=ultrasonic block="Ultrasonic Distance %port"
+  let distanceBuf = 0;
+  //% blockId=ultrasonic block="Ultrasonic Distance %pin"
   //% group="Distance" weight=76
-  export function ultrasonicCm(port: Ports): number {
-    return 0;
+  export function ultrasonicCm(pin: DigitalPin): number {
+    pins.setPull(pin, PinPullMode.PullDown);
+    pins.digitalWritePin(pin, 0);
+    control.waitMicros(2);
+    pins.digitalWritePin(pin, 1);
+    control.waitMicros(10);
+    pins.digitalWritePin(pin, 0);
+
+    // read pulse
+    let d = pins.pulseIn(pin, PulseValue.High, 25000);
+    let ret = d;
+    // filter timeout spikes
+    if (ret == 0 && distanceBuf != 0) {
+        ret = distanceBuf;
+    }
+    distanceBuf = d;
+    return Math.floor(ret / 40 + (ret / 800));
   }
 
-  //% blockId=tof block="TOF Distance %port"
+  const VL53L0X_ADDR = 0x5e;
+  let vl53Inited = false;
+
+  //% blockId=tof block="TOF Distance %pin"
   //% group="Distance" weight=76
-  export function tofmm(port: Ports): number {
-    return 0;
+  export function tofmm(pin: AnalogPin): number {
+    if (!vl53Inited){
+      let buf = pins.createBuffer(3)
+      buf[0] = 1
+      pins.i2cWriteBuffer(VL53L0X_ADDR, buf)
+      vl53Inited = true
+      control.waitMicros(50)
+    }
+    pins.i2cWriteNumber(VL53L0X_ADDR, 0x1, NumberFormat.UInt8BE);
+    return pins.i2cReadNumber(VL53L0X_ADDR, NumberFormat.UInt16LE);
+  }
+
+  const AHT20_ADDR = 0x38
+  let aht20Inited = false;
+
+  function _aht20Ready (): boolean{
+    let stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
+    while (stat & 0x80){
+      basic.pause(10)
+    }
+    return true
   }
 
   //% blockId=environment block="Environ %env"
   //% group="Environment" weight=74
   export function environment(env: EnvType): number {
+    if (!aht20Inited){
+      i2cwrite(AHT20_ADDR,0xba, [])
+      basic.pause(50)
+      i2cwrite(AHT20_ADDR,0xa8, [0,0])
+      basic.pause(350)
+      i2cwrite(AHT20_ADDR,0xe1, [0x28,0])
+      aht20Inited=true;
+    }
+    i2cwrite(AHT20_ADDR,0xac,[0x33,0])
+    if (_aht20Ready()){
+      const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
+      const humi = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
+      const temp = ((n[3]&0x0f)<<16|(n[4]<<8)|n[5])
+      return env === EnvType.Humidity ? humi : temp
+    }
     return 0;
   }
 
+  const JOYSTICK_ADDR = 0x5c
+
   //% blockId=joyState block="Joystick State %state"
   //% group="Joystick" weight=72
-  export function joyState(state: EnvType): boolean {
-    return false;
+  export function joyState(state: JoystickDir): boolean {
+    const sta = i2cread(JOYSTICK_ADDR,1,1).getNumber(NumberFormat.UInt8BE,0)
+    return (sta & state) != 0;
   }
 
   //% blockId=joyValue block="Joystick %dir"
   //% group="Joystick" weight=72
   export function joyValue(dir: DirType): number {
-    return 100;
+    const buf = i2cread(JOYSTICK_ADDR,2,4)
+    const valX = buf.getNumber(NumberFormat.Int16LE, 0)
+    const valY = buf.getNumber(NumberFormat.Int16LE, 2)
+    return dir === DirType.X ? valX : valY
   }
 
 }
