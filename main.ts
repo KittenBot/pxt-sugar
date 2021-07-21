@@ -158,9 +158,9 @@ namespace Sugarmodule {
   const VL53L0X_ADDR = 0x5e;
   let vl53Inited = false;
 
-  //% blockId=tof block="TOF Distance %pin"
+  //% blockId=tof block="TOF Distance"
   //% group="Distance" weight=76
-  export function tofmm(pin: AnalogPin): number {
+  export function tofmm(): number {
     if (!vl53Inited){
       let buf = pins.createBuffer(3)
       buf[0] = 1
@@ -178,7 +178,8 @@ namespace Sugarmodule {
   function _aht20Ready (): boolean{
     let stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
     while (stat & 0x80){
-      basic.pause(10)
+      stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
+      basic.pause(100)
     }
     return true
   }
@@ -197,8 +198,10 @@ namespace Sugarmodule {
     i2cwrite(AHT20_ADDR,0xac,[0x33,0])
     if (_aht20Ready()){
       const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
-      const humi = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
-      const temp = ((n[3]&0x0f)<<16|(n[4]<<8)|n[5])
+      const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
+      const humi = Math.round(h*0.000095)
+      const t = ((n[3]&0x0f)<<16|(n[4]<<8)|n[5])
+      const temp = Math.round(t*0.000191 - 50)
       return env === EnvType.Humidity ? humi : temp
     }
     return 0;
@@ -217,8 +220,8 @@ namespace Sugarmodule {
   //% group="Joystick" weight=72
   export function joyValue(dir: DirType): number {
     const buf = i2cread(JOYSTICK_ADDR,2,4)
-    const valX = buf.getNumber(NumberFormat.Int16LE, 0)
-    const valY = buf.getNumber(NumberFormat.Int16LE, 2)
+    const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0)*255/2048 - 255)
+    const valY = Math.round(buf.getNumber(NumberFormat.Int16LE, 2)*255/2048 - 255)
     return dir === DirType.X ? valX : valY
   }
 
@@ -357,6 +360,7 @@ namespace SugarBox {
         basic.pause(200)
       }
     }
+    return 0
   }
 
   //% blockId=enc_init block="Encoder Motor|%motor Init"
@@ -452,6 +456,7 @@ namespace SugarBox {
         basic.pause(200)
       }
     }
+    return 0
   }
 
   //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width|left %ml right %mr|inversed %inversed"
@@ -480,7 +485,7 @@ namespace SugarBox {
   //% blockId=denc_turn block="Turn degree %degree, speed %w degree/s, forward speed %v cm/s"
   //% group="Dual Encoded Motor" weight=27
   export function dualMotorTurn(degree: number,w: number, v: number) {
-    speed = speed/(Math.PI*_R) // in round/s
+    const speed = v/(Math.PI*_R) // in round/s
     const diff = w*_W/_R/360 // wheel difference
     const rnd = 2*(degree/w)*diff
     _dualMotorRun(MODE_TURN, speed, diff, rnd)
