@@ -13,7 +13,8 @@ function i2cwrite(addr: number, reg: number, value: number[]) {
 
 function i2cread(addr: number, reg: number, size: number) {
   pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE);
-  return pins.i2cReadBuffer(addr, size);
+  const ret = pins.i2cReadBuffer(addr, size);
+  return ret
 }
 
 //% color="#9DA4D0" weight=10 icon="\uf24d"
@@ -289,7 +290,7 @@ namespace SugarBox {
   export enum DSetup {
     //% block="M1A@Left"
     LR = 1,
-    //% block="M2A@Left"
+    //% block="M1A@Right"
     RL = 2
   }
 
@@ -343,16 +344,17 @@ namespace SugarBox {
   }
 
   function _pidRun(port: EPort, mode: number, speed: number, param2: number, wait: boolean = true){
-    const buf = pins.createBuffer(10) // B,B,f,f
-    buf[0] = port
-    buf[1] = mode
-    buf.setNumber(NumberFormat.Float32LE, 2, speed)
-    buf.setNumber(NumberFormat.Float32LE, 6, param2)
+    const buf = pins.createBuffer(11) // reg,B,B,f,f
+    buf[0] = REG_PIDRUN
+    buf[1] = port
+    buf[2] = mode
+    buf.setNumber(NumberFormat.Float32LE, 3, speed)
+    buf.setNumber(NumberFormat.Float32LE, 7, param2)
     pins.i2cWriteBuffer(SGBOX_ADDR, buf)
     if (wait){
       let _reg = port == EPort.EM1 ? 0x60 : 0x70
       while (mode != 0){
-        mode = i2cread(SGBOX_ADDR,_reg,1)[0]
+        mode = i2cread(SGBOX_ADDR,_reg,4)[0]
         if (mode & MODE_STUCK){
           _emotorReset(port)
           return -1;
@@ -459,7 +461,7 @@ namespace SugarBox {
     return 0
   }
 
-  //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width|left %ml right %mr|inversed %inversed"
+  //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width|setup %setup |inversed %inversed"
   //% group="Dual Encoded Motor" weight=30
   export function dualMotorInit(diameter: number,width: number,setup:DSetup,inversed: boolean) {
     _Setup = 0
