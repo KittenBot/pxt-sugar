@@ -10,7 +10,8 @@
     "files": [
         "README.md",
         "main.ts",
-        "_locales/zh/hfgfds-strings.json"
+        "_locales/zh-CN/sugarbox-strings.json",
+        "_locales/zh-CN/sugarbox-jsdocs-strings.json"
     ],
     "public": true,
     "preferredEditor": "tsprj"

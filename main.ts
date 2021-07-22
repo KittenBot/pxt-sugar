@@ -309,13 +309,20 @@ namespace SugarBox {
   }
 
   //% blockId=battery block="Battery Voltage"
-  //% group="Dual Encoded Motor" weight=50
+  //% weight=50
   export function battery(): number {
     return i2cread(SGBOX_ADDR,REG_VOLTAG,4).getNumber(NumberFormat.Float32LE,0)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param speed speed in pwm eg: 100
+   */
   //% blockId=motor_spd block="Motor|%motor Speed %spd"
   //% group="Actuators" weight=49
+  //% speed.min=-255 speed.max=255
+  //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
   export function motorSpd(port: MPort, speed: number) {
     _i2cWriteBH(REG_MOTOR,port,speed)
   }
@@ -326,13 +333,25 @@ namespace SugarBox {
     _i2cWriteBH(REG_MOTOR,port,0)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param angle servo angle eg: 90
+   */
   //% blockId=servo2kg block="Servo|%motor Angle %angle"
   //% group="Actuators" weight=48
+  //% angle.min=-25 angle.max=225
+  //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
   export function servo2kg(port: SPort, angle: number) {
     const us =  Math.floor(angle*200/36+500) // 2kg
     servoPulse(port, us)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param us pulse in us eg: 1500
+   */
   //% blockId=servo_pulse block="Servo|%motor Pulse %us us"
   //% group="Actuators" weight=48
   export function servoPulse(port: SPort, us: number) {
@@ -371,6 +390,11 @@ namespace SugarBox {
     _emotorReset(port)
   } 
 
+  /**
+   * 
+   * @param port 
+   * @param spd speed in round per minute eg: 120
+   */
   //% blockId=enc_rpm_set block="EMotor %motor run %spd RPM"
   //% group="Encoded Motor" weight=39
   export function eMotorSetRpm(port: EPort, spd: number) {
@@ -384,6 +408,12 @@ namespace SugarBox {
     return _i2cReadF(port, E_PARAM.SPEED)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param degree target position in degree eg: 360
+   * @param rpm eg: 120
+   */
   //% blockId=enc_goto block="EMotor %motor Goto degree %degree speed %rpm RPM"
   //% group="Encoded Motor" weight=36
   export function eMotorGoto(port: EPort, degree: number, rpm: number) {
@@ -399,6 +429,11 @@ namespace SugarBox {
     return _i2cReadF(port, E_PARAM.POSITION)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param degree eg: 360
+   */
   //% blockId=enc_set_pos block="EMotor %motor To Position %degree"
   //% group="Encoded Motor" weight=36
   export function eMotorSetPos(port: EPort, degree: number) {
@@ -409,18 +444,36 @@ namespace SugarBox {
     _pidRun(port,mode, speed, rnd, true)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param degree target degree eg: 360
+   * @param speed speed in rpm eg: 120
+   */
   //% blockId=enc_move_deg block="EMotor %motor Move By Degree %degree, speed %speed RPM"
   //% group="Encoded Motor" weight=34
   export function eMotorMoveDeg(port: EPort, degree: number, speed: number) {
     eMotorGoto(port, degree, speed)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param rnd rounds to move eg: 2
+   * @param speed speed in rpm eg: 120
+   */
   //% blockId=enc_move_rnd block="EMotor %motor Move Round %rnd, speed %speed RPM"
   //% group="Encoded Motor" weight=34
   export function eMotorMoveRnd(port: EPort, rnd: number, speed: number) {
     eMotorGoto(port, rnd*360, speed)
   }
 
+  /**
+   * 
+   * @param port 
+   * @param t seconds to stop eg: 3
+   * @param speed speed in rpm eg: 120
+   */
   //% blockId=enc_move_delay block="EMotor %motor Move Delayed %t sec, speed %speed RPM"
   //% group="Encoded Motor" weight=34
   export function eMotorMoveDelayed(port: EPort, t: number, speed: number) {
@@ -461,9 +514,16 @@ namespace SugarBox {
     return 0
   }
 
-  //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width|setup %setup |inversed %inversed"
+  /**
+   * 
+   * @param diameter wheel diameter in cm eg: 6
+   * @param width track width cm eg:12
+   * @param setup define left/right motor
+   * @param inversed move direction inversed
+   */
+  //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width||setup %setup ||inversed %inversed"
   //% group="Dual Encoded Motor" weight=30
-  export function dualMotorInit(diameter: number,width: number,setup:DSetup,inversed: boolean) {
+  export function dualMotorInit(diameter: number, width: number, setup: DSetup, inversed: boolean) {
     _Setup = 0
     _R = diameter
     _W = width
@@ -476,6 +536,11 @@ namespace SugarBox {
     _dmotorReset()
   }
 
+  /**
+   * 
+   * @param distance distance to move cm eg: 20
+   * @param speed speed in rpm eg: 120
+   */
   //% blockId=denc_move block="Move %distance cm, speed %speed cm/s"
   //% group="Dual Encoded Motor" weight=28
   export function dualMotorMove(distance: number,speed: number) {
@@ -484,9 +549,15 @@ namespace SugarBox {
     _dualMotorRun(MODE_RUN, speed, 0, rnd)
   }
 
+  /**
+   * 
+   * @param degree degree to turn eg: 180
+   * @param w rotation speed degree/s eg: 90
+   * @param v forward speed cm/s eg: 0
+   */
   //% blockId=denc_turn block="Turn degree %degree, speed %w degree/s, forward speed %v cm/s"
   //% group="Dual Encoded Motor" weight=27
-  export function dualMotorTurn(degree: number,w: number, v: number) {
+  export function dualMotorTurn(degree: number, w: number, v: number) {
     const speed = v/(Math.PI*_R) // in round/s
     const diff = w*_W/_R/360 // wheel difference
     const rnd = 2*(degree/w)*diff
