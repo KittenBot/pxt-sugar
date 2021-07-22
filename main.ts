@@ -494,16 +494,17 @@ namespace SugarBox {
   }
 
   function _dualMotorRun(mode: number, v: number, w: number, rnd: number, wait: boolean = true){
-    const buf = pins.createBuffer(10) // B,f,f,f
-    buf[0] = mode
-    buf.setNumber(NumberFormat.Float32LE, 1, v) // forward linear speed
-    buf.setNumber(NumberFormat.Float32LE, 5, w) // angular speed
-    buf.setNumber(NumberFormat.Float32LE, 9, rnd)
+    const buf = pins.createBuffer(14) // reg,B,f,f,f
+    buf[0] = REG_DUALRUN
+    buf[1] = mode
+    buf.setNumber(NumberFormat.Float32LE, 2, v) // forward linear speed
+    buf.setNumber(NumberFormat.Float32LE, 6, w) // angular speed
+    buf.setNumber(NumberFormat.Float32LE, 10, rnd)
     pins.i2cWriteBuffer(SGBOX_ADDR, buf)
     if (wait){
       let _reg = 0x80
       while (mode != 0){
-        mode = i2cread(SGBOX_ADDR,_reg,1)[0]
+        mode = i2cread(SGBOX_ADDR,_reg,4)[0]
         if (mode & MODE_STUCK){
           _dmotorReset()
           return -1;
@@ -518,12 +519,12 @@ namespace SugarBox {
    * 
    * @param diameter wheel diameter in cm eg: 6
    * @param width track width cm eg:12
-   * @param setup define left/right motor
-   * @param inversed move direction inversed
+   * @param setup define left/right motor eg:1
+   * @param inversed move direction inversed eg:false
    */
   //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width||setup %setup ||inversed %inversed"
   //% group="Dual Encoded Motor" weight=30
-  export function dualMotorInit(diameter: number, width: number, setup: DSetup, inversed: boolean) {
+  export function dualMotorInit(diameter: number, width: number, setup: DSetup=1, inversed: boolean=false) {
     _Setup = 0
     _R = diameter
     _W = width
