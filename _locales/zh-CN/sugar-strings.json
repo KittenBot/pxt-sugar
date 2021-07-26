@@ -34,7 +34,7 @@
     "SugarBox.eMotorMoveDelayed|block": "编码电机 %port 转动时间 %t 速度 %speed (圈/分钟)",
     "SugarBox.dualMotorInit|block": "双编码电机初始化|轮直径(cm) %diameter|轮间距(cm) %width|朝向 %setup|设置反向 %inversed",
     "SugarBox.dualMotorMove|block": "小车前行 %distance 厘米, 速度 %speed (厘米/秒)",
-    "SugarBox.dualMotorTurn|block": "小车转向 %degree 度, 速度d %w (度/秒)",
+    "SugarBox.dualMotorTurn|block": "小车转向 %degree 度, 角速度 %w (角度/s), 前进速度 %v (厘米/秒)",
     "SugarBox.DSetup.LR|block": "EM1为左轮",
     "SugarBox.DSetup.RL|block": "EM2为左轮",
     "Sugar.LEDSta.On|block": "点亮",
