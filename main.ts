@@ -90,20 +90,21 @@ namespace Sugar {
     }
 
     //% blockId=led_luminent block="(LED) %pin| Luminent %value"
+    //% value.min=0 value.max=1023 value.defl=0
     //% group="digitalOut" weight=85
     export function ledLuminent(pin: AnalogPin, value: number) {
         pins.analogWritePin(pin, value)
     }
 
-    // //% blockId=flameBool block="(Flame)|%pin Detected Flame"
-    // //% group="Flame" weight=84
-    // export function Flame(pin: DigitalPin): boolean {
-    //     return pins.digitalReadPin(pin) == 1
-    // }
+    //% blockId=flameBool block="(Flame) Flame Detected %pin "
+    //% group="digitalIn" weight=80
+    export function FlameDigi(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 1
+    }
 
     //% blockId=flameAnalog block="(Flame) %pin"
     //% group="analogIn" weight=84
-    export function Flame(pin: AnalogPin): number {
+    export function FlameAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
@@ -125,13 +126,13 @@ namespace Sugar {
         return pins.analogReadPin(pin)
     }
 
-    //% blockId=rainlvl block="(WaterLevel) Digital %pin"
-    //% group="analogIn" weight=80
+    //% blockId=rain block="(WaterLevel) Digital %pin"
+    //% group="digitalIn" weight=80
     export function WaterLevelDigi(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
-    //% blockId=rainlvl block="(WaterLevel) Analog %pin"
+    //% blockId=waterlvl block="(WaterLevel) Analog %pin"
     //% group="analogIn" weight=79
     export function WaterLevelAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
@@ -486,192 +487,58 @@ namespace SugarBox {
                 basic.pause(200)
             }
         }
-        basic.pause(200)
-      }
+        return 0
     }
-    return 0
-  }
 
-  //% blockId=enc_init block="Encoder Motor|%motor Init"
-  //% group="Encoded Motor" weight=40
-  export function encMotorInit(port: EPort) {
-    _emotorReset(port)
-  } 
-
-  /**
-   * 
-   * @param port 
-   * @param spd speed in round per minute eg: 120
-   */
-  //% blockId=enc_rpm_set block="EMotor %motor run %spd RPM"
-  //% group="Encoded Motor" weight=39
-  export function eMotorSetRpm(port: EPort, spd: number) {
-    spd /= 60 // from rpm to rnd per sec
-    _pidRun(port,MODE_SPEED,spd,0,false)
-  }
-
-  //% blockId=enc_rpm_get block="EMotor %motor get Speed(RPM)"
-  //% group="Encoded Motor" weight=38
-  export function eMotorGetRpm(port: EPort): number {
-    return _i2cReadF(port, E_PARAM.SPEED)
-  }
-
-  /**
-   * 
-   * @param port 
-   * @param degree target position in degree eg: 360
-   * @param rpm eg: 120
-   */
-  //% blockId=enc_goto block="EMotor %motor Goto degree %degree speed %rpm RPM"
-  //% group="Encoded Motor" weight=36
-  export function eMotorGoto(port: EPort, degree: number, rpm: number) {
-    // speed to RPSec, degree to round
-    const speed = rpm/60
-    const rnd = degree/360
-    _pidRun(port, MODE_SPEED | MODE_RUNPOS, speed, rnd, true)
-  }
-
-  //% blockId=enc_position block="EMotor %motor Position degree"
-  //% group="Encoded Motor" weight=36
-  export function eMotorPos(port: EPort): number {
-    return _i2cReadF(port, E_PARAM.POSITION)
-  }
-
-  /**
-   * 
-   * @param port 
-   * @param degree eg: 360
-   */
-  //% blockId=enc_set_pos block="EMotor %motor To Position %degree"
-  //% group="Encoded Motor" weight=36
-  export function eMotorSetPos(port: EPort, degree: number) {
-    // speed to RPSec, degree to round
-    const speed = 2 // 120 rpm
-    const rnd = degree/360
-    const mode = MODE_SPEED | MODE_RUNPOS | MODE_ABSOLU
-    _pidRun(port,mode, speed, rnd, true)
-  }
-
-  /**
-   * 
-   * @param port 
-   * @param degree target degree eg: 360
-   * @param speed speed in rpm eg: 120
-   */
-  //% blockId=enc_move_deg block="EMotor %motor Move By Degree %degree, speed %speed RPM"
-  //% group="Encoded Motor" weight=34
-  export function eMotorMoveDeg(port: EPort, degree: number, speed: number) {
-    eMotorGoto(port, degree, speed)
-  }
-
-  /**
-   * 
-   * @param port 
-   * @param rnd rounds to move eg: 2
-   * @param speed speed in rpm eg: 120
-   */
-  //% blockId=enc_move_rnd block="EMotor %motor Move Round %rnd, speed %speed RPM"
-  //% group="Encoded Motor" weight=34
-  export function eMotorMoveRnd(port: EPort, rnd: number, speed: number) {
-    eMotorGoto(port, rnd*360, speed)
-  }
-
-  /**
-   * 
-   * @param port 
-   * @param t seconds to stop eg: 3
-   * @param speed speed in rpm eg: 120
-   */
-  //% blockId=enc_move_delay block="EMotor %motor Move Delayed %t sec, speed %speed RPM"
-  //% group="Encoded Motor" weight=34
-  export function eMotorMoveDelayed(port: EPort, t: number, speed: number) {
-    const mode = MODE_SPEED | MODE_DELAY
-    _pidRun(port,mode, speed, t*1000, true)
-  }
-
-  // initial params in CM
-  let _R = 6
-  let _W = 12
-  let _Setup = 1
-
-  const MODE_RUN    = 0x1
-  const MODE_TURN   = 0x2
-
-  function _dmotorReset (){
-    i2cwrite(SGBOX_ADDR, REG_PIDRESET, [3, _Setup])
-  }
-
-  function _dualMotorRun(mode: number, v: number, w: number, rnd: number, wait: boolean = true){
-    const buf = pins.createBuffer(14) // reg,B,f,f,f
-    buf[0] = REG_DUALRUN
-    buf[1] = mode
-    buf.setNumber(NumberFormat.Float32LE, 2, v) // forward linear speed
-    buf.setNumber(NumberFormat.Float32LE, 6, w) // angular speed
-    buf.setNumber(NumberFormat.Float32LE, 10, rnd)
-    pins.i2cWriteBuffer(SGBOX_ADDR, buf)
-    if (wait){
-      let _reg = 0x80
-      while (mode != 0){
-        mode = i2cread(SGBOX_ADDR,_reg,4)[0]
-        if (mode & MODE_STUCK){
-          _dmotorReset()
-          return -1;
+    /**
+     * 
+     * @param diameter wheel diameter in cm eg: 6
+     * @param width track width cm eg:12
+     * @param setup define left/right motor eg:1
+     * @param inversed move direction inversed eg:false
+     */
+    //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width||setup %setup ||inversed %inversed"
+    //% group="Dual Encoded Motor" weight=30
+    export function dualMotorInit(diameter: number, width: number, setup: DSetup=1, inversed: boolean=false) {
+        _Setup = 0
+        _R = diameter
+        _W = width
+        if (setup == DSetup.RL){
+        _Setup |= 0x1
         }
-        basic.pause(200)
-      }
+        if (inversed){
+        _Setup |= 0x2
+        }
+        _dmotorReset()
     }
-    return 0
-  }
 
-  /**
-   * 
-   * @param diameter wheel diameter in cm eg: 6
-   * @param width track width cm eg:12
-   * @param setup define left/right motor eg:1
-   * @param inversed move direction inversed eg:false
-   */
-  //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width||setup %setup ||inversed %inversed"
-  //% group="Dual Encoded Motor" weight=30
-  export function dualMotorInit(diameter: number, width: number, setup: DSetup=1, inversed: boolean=false) {
-    _Setup = 0
-    _R = diameter
-    _W = width
-    if (setup == DSetup.RL){
-      _Setup |= 0x1
+    /**
+     * 
+     * @param distance distance to move cm eg: 20
+     * @param speed speed in rpm eg: 120
+     */
+    //% blockId=denc_move block="Move %distance cm, speed %speed cm/s"
+    //% group="Dual Encoded Motor" weight=28
+    export function dualMotorMove(distance: number,speed: number) {
+        const rnd = distance/(Math.PI*_R)
+        speed = speed/(Math.PI*_R)
+        _dualMotorRun(MODE_RUN, speed, 0, rnd)
     }
-    if (inversed){
-      _Setup |= 0x2
+
+    /**
+     * 
+     * @param degree degree to turn eg: 180
+     * @param w rotation speed degree/s eg: 90
+     * @param v forward speed cm/s eg: 0
+     */
+    //% blockId=denc_turn block="Turn degree %degree, speed %w degree/s, forward speed %v cm/s"
+    //% group="Dual Encoded Motor" weight=27
+    export function dualMotorTurn(degree: number, w: number, v: number) {
+        const speed = v/(Math.PI*_R) // in round/s
+        const diff = w*_W/_R/360 // wheel difference
+        const rnd = 2*(degree/w)*diff
+        _dualMotorRun(MODE_TURN, speed, diff, rnd)
     }
-    _dmotorReset()
-  }
-
-  /**
-   * 
-   * @param distance distance to move cm eg: 20
-   * @param speed speed in rpm eg: 120
-   */
-  //% blockId=denc_move block="Move %distance cm, speed %speed cm/s"
-  //% group="Dual Encoded Motor" weight=28
-  export function dualMotorMove(distance: number,speed: number) {
-    const rnd = distance/(Math.PI*_R)
-    speed = speed/(Math.PI*_R)
-    _dualMotorRun(MODE_RUN, speed, 0, rnd)
-  }
-
-  /**
-   * 
-   * @param degree degree to turn eg: 180
-   * @param w rotation speed degree/s eg: 90
-   * @param v forward speed cm/s eg: 0
-   */
-  //% blockId=denc_turn block="Turn degree %degree, speed %w degree/s, forward speed %v cm/s"
-  //% group="Dual Encoded Motor" weight=27
-  export function dualMotorTurn(degree: number, w: number, v: number) {
-    const speed = v/(Math.PI*_R) // in round/s
-    const diff = w*_W/_R/360 // wheel difference
-    const rnd = 2*(degree/w)*diff
-    _dualMotorRun(MODE_TURN, speed, diff, rnd)
-  }
 
 }
 

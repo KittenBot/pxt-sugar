@@ -30,5 +30,5 @@
   "SugarBox.servo2kg|param|angle": "servo angle eg: 90",
   "SugarBox.servoPulse": "* @param port",
   "SugarBox.servoPulse|param|us": "pulse in us eg: 1500",
-  "i2cwrite": "KittenBot Sugarbox contest set\n\"sugarbox\": \"file:../pxt-sugarbox\""
+  "i2cwrite": "KittenBot Sugarbox contest set\n\"sugarbox\": \"file:../pxt-sugar\""
 }
