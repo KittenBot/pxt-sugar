@@ -1,11 +1,10 @@
 {
-    "name": "sugarbox",
+    "name": "sugar",
     "version": "0.1.1",
-    "description": "Extension for Kittenbot Sugarbox",
+    "description": "Extension for Kittenbot Sugar",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "microphone": "*"
+        "core": "*"
     },
     "files": [
         "README.md",

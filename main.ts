@@ -1,14 +1,14 @@
-/**
- * KittenBot Sugarbox contest set
-"sugarbox": "file:../pxt-sugarbox"
-
- */
+/*
+KittenBot Team
+A series of sensors
+"sugar": "file:../pxt-sugar"
+*/
 
 function i2cwrite(addr: number, reg: number, value: number[]) {
-  let a = [reg]
-  if (value.length)
-    a = a.concat(value)
-  return pins.i2cWriteBuffer(addr, Buffer.fromArray(a))
+    let a = [reg]
+    if (value.length)
+        a = a.concat(value)
+    return pins.i2cWriteBuffer(addr, Buffer.fromArray(a))
 }
 
 function i2cread(addr: number, reg: number, size: number) {
@@ -17,218 +17,233 @@ function i2cread(addr: number, reg: number, size: number) {
   return ret
 }
 
-//% color="#9DA4D0" weight=10 icon="\uf24d"
+//% color="#49cef7" weight=10 icon="\uf1b0"
 //% groups='["Motion/PIR", "Linefollower/Tracker", "HallEffect", "Buttons", "LED", "Flame", "PotentialMeter", "LightLevel", "Moisture", "Rain Gauge", "Infra Transmitter", "Distance", "Environment", "Joystick"]'
-namespace Sugarmodule {
+namespace Sugar {
 
-  export enum Ports {
-    PORT1 = 0,
-    PORT2 = 1,
-    PORT3 = 2,
-    PORT4 = 3,
-    PORT5 = 4,
-    PORT6 = 5,
-    PORT7 = 6
-  }
-
-  export enum EnvType {
-    Temperature = 0,
-    Humidity = 1
-  }
-
-  export enum JoystickDir {
-    pressed = 1,
-    left = 0x10,
-    right = 0x8,
-    up = 0x4,
-    down = 0x2
-  }
-
-  export enum DirType {
-    X = 0,
-    Y = 1
-  }
-
-
-  //% blockId=pir block="Motion Detect %pin"
-  //% group="Motion/PIR" weight=90
-  export function pir(pin: DigitalPin): boolean {
-    return pins.digitalReadPin(pin) == 1
-  }
-
-  //% blockId=tracer block="Tracer|%pin"
-  //% group="Linefollower" weight=89
-  export function Tracer(pin: DigitalPin): boolean {
-    return pins.digitalReadPin(pin) == 1
-  }
-
-  //% blockId=hall block="Hall Effect|%pin"
-  //% group="HallEffect" weight=88
-  export function HallSensor(pin: DigitalPin): boolean {
-    return pins.digitalReadPin(pin) == 1
-  }
-
-  //% blockId=button block="Button|%pin| Pressed %pressed"
-  //% group="Buttons" weight=87
-  export function buttonPressed(pin: DigitalPin, pressed: boolean): boolean {
-    return (pins.digitalReadPin(pin) == 0) == pressed
-  }
-
-  //% blockId=led_toggle block="Led|%pin| On/Off %onoff"
-  //% group="LED" weight=86
-  export function ledOnoff(pin: DigitalPin, onoff: boolean) {
-    pins.digitalWritePin(pin, onoff?1:0)
-  }
-
-  //% blockId=led_luminent block="Led|%pin| Luminent %value"
-  //% group="LED" weight=85
-  export function ledLuminent(pin: AnalogPin, value: number) {
-    pins.analogWritePin(pin, value)
-  }
-
-  //% blockId=flameBool block="Flame|%pin Detected Flame"
-  //% group="Flame" weight=84
-  export function flameBool(pin: DigitalPin): boolean {
-    return pins.digitalReadPin(pin) == 1
-  }
-
-  //% blockId=flameAnalog block="Flame|%pin Strength"
-  //% group="Flame" weight=84
-  export function flameAnalog(pin: AnalogPin): number {
-    return pins.analogReadPin(pin)
-  }
-
-  //% blockId=potential block="Potential|%pin Value"
-  //% group="PotentialMeter" weight=83
-  export function potential(pin: AnalogPin): number {
-    return pins.analogReadPin(pin)
-  }
-
-  //% blockId=lightlvl block="Light Level|%pin"
-  //% group="LightLevel" weight=82
-  export function LightLevel(pin: AnalogPin): number {
-    return pins.analogReadPin(pin)
-  }
-
-  //% blockId=soilmoisture block="Soil Moisture|%pin"
-  //% group="Moisture" weight=81
-  export function SoilMoisture(pin: AnalogPin): number {
-    return pins.analogReadPin(pin)
-  }
-
-  //% blockId=rainlvl block="Rain Gauge|%pin"
-  //% group="Rain Gauge" weight=80
-  export function rainGauge(pin: AnalogPin): number {
-    return pins.analogReadPin(pin)
-  }
-
-  //% blockId=infraRx block="On Infra|%pin Received"
-  //% group="Infra Transmitter" weight=78
-  export function infraRx(pin: AnalogPin, handler: (data: string) => void) {
-
-  }
-
-  //% blockId=infraTx block="Infra %pin Transmit %data"
-  //% group="Infra Transmitter" weight=78
-  export function infraTx(pin: AnalogPin, data: string) {
-
-  }
-
-  let distanceBuf = 0;
-  //% blockId=ultrasonic block="Ultrasonic Distance %pin"
-  //% group="Distance" weight=76
-  export function ultrasonicCm(pin: DigitalPin): number {
-    pins.setPull(pin, PinPullMode.PullDown);
-    pins.digitalWritePin(pin, 0);
-    control.waitMicros(2);
-    pins.digitalWritePin(pin, 1);
-    control.waitMicros(10);
-    pins.digitalWritePin(pin, 0);
-
-    // read pulse
-    let d = pins.pulseIn(pin, PulseValue.High, 25000);
-    let ret = d;
-    // filter timeout spikes
-    if (ret == 0 && distanceBuf != 0) {
-        ret = distanceBuf;
+    export enum Ports {
+        PORT1 = 0,
+        PORT2 = 1,
+        PORT3 = 2,
+        PORT4 = 3,
+        PORT5 = 4,
+        PORT6 = 5,
+        PORT7 = 6
     }
-    distanceBuf = d;
-    return Math.floor(ret / 40 + (ret / 800));
-  }
 
-  const VL53L0X_ADDR = 0x5e;
-  let vl53Inited = false;
-
-  //% blockId=tof block="TOF Distance"
-  //% group="Distance" weight=76
-  export function tofmm(): number {
-    if (!vl53Inited){
-      let buf = pins.createBuffer(3)
-      buf[0] = 1
-      pins.i2cWriteBuffer(VL53L0X_ADDR, buf)
-      vl53Inited = true
-      control.waitMicros(50)
+    export enum EnvType {
+        //% block="Temperature(℃)"
+        Temperature = 0,
+        //% block="Humidity(%RH)"
+        Humidity = 1
     }
-    pins.i2cWriteNumber(VL53L0X_ADDR, 0x1, NumberFormat.UInt8BE);
-    return pins.i2cReadNumber(VL53L0X_ADDR, NumberFormat.UInt16LE);
-  }
 
-  const AHT20_ADDR = 0x38
-  let aht20Inited = false;
-
-  function _aht20Ready (): boolean{
-    let stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
-    while (stat & 0x80){
-      stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
-      basic.pause(100)
+    export enum LEDSta {
+        //% block="OFF"
+        Off = 0,
+        //% block="ON"
+        On = 1
     }
-    return true
-  }
 
-  //% blockId=environment block="Environ %env"
-  //% group="Environment" weight=74
-  export function environment(env: EnvType): number {
-    if (!aht20Inited){
-      i2cwrite(AHT20_ADDR,0xba, [])
-      basic.pause(50)
-      i2cwrite(AHT20_ADDR,0xa8, [0,0])
-      basic.pause(350)
-      i2cwrite(AHT20_ADDR,0xe1, [0x28,0])
-      aht20Inited=true;
+    export enum JoystickDir {
+        pressed = 1,
+        left = 0x10,
+        right = 0x8,
+        up = 0x4,
+        down = 0x2
     }
-    i2cwrite(AHT20_ADDR,0xac,[0x33,0])
-    if (_aht20Ready()){
-      const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
-      const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
-      const humi = Math.round(h*0.000095)
-      const t = ((n[3]&0x0f)<<16|(n[4]<<8)|n[5])
-      const temp = Math.round(t*0.000191 - 50)
-      return env === EnvType.Humidity ? humi : temp
+
+    export enum DirType {
+        X = 0,
+        Y = 1
     }
-    return 0;
-  }
 
-  const JOYSTICK_ADDR = 0x5c
 
-  //% blockId=joyState block="Joystick State %state"
-  //% group="Joystick" weight=72
-  export function joyState(state: JoystickDir): boolean {
-    const sta = i2cread(JOYSTICK_ADDR,1,1).getNumber(NumberFormat.UInt8BE,0)
-    return (sta & state) != 0;
-  }
+    //% blockId=pir block="(PIR) Motion Detected %pin"
+    //% group="digitalIn" weight=90
+    export function PIR(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 1
+    }
 
-  //% blockId=joyValue block="Joystick %dir"
-  //% group="Joystick" weight=72
-  export function joyValue(dir: DirType): number {
-    const buf = i2cread(JOYSTICK_ADDR,2,4)
-    const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0)*255/2048 - 255)
-    const valY = Math.round(buf.getNumber(NumberFormat.Int16LE, 2)*255/2048 - 255)
-    return dir === DirType.X ? valX : valY
-  }
+    //% blockId=tracer block="(Tracker) Black Dectected %pin"
+    //% group="digitalIn" weight=89
+    export function Tracker(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 1
+    }
+
+    //% blockId=hall block="(Hall) Magnetic Detected %pin"
+    //% group="digitalIn" weight=88
+    export function Hall(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 1
+    }
+
+    //% blockId=button block="(Button) Pressed %pin"
+    //% group="digitalIn" weight=87
+    export function Button(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 0
+    }
+
+    //% blockId=led_toggle block="(LED) %pin| %onoff"
+    //% group="digitalOut" weight=86
+    export function ledOnoff(pin: DigitalPin, onoff: LEDSta) {
+        pins.digitalWritePin(pin, onoff?1:0)
+    }
+
+    //% blockId=led_luminent block="(LED) %pin| Luminent %value"
+    //% group="digitalOut" weight=85
+    export function ledLuminent(pin: AnalogPin, value: number) {
+        pins.analogWritePin(pin, value)
+    }
+
+    // //% blockId=flameBool block="(Flame)|%pin Detected Flame"
+    // //% group="Flame" weight=84
+    // export function Flame(pin: DigitalPin): boolean {
+    //     return pins.digitalReadPin(pin) == 1
+    // }
+
+    //% blockId=flameAnalog block="(Flame) %pin"
+    //% group="analogIn" weight=84
+    export function Flame(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
+    //% blockId=potential block="(Angle) %pin"
+    //% group="analogIn" weight=83
+    export function Angle(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
+    //% blockId=lightlvl block="(Light) %pin"
+    //% group="analogIn" weight=82
+    export function Light(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
+    //% blockId=soilmoisture block="(SoilMoisture) %pin"
+    //% group="analogIn" weight=81
+    export function SoilMoisture(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
+    //% blockId=rainlvl block="(WaterLevel) Digital %pin"
+    //% group="analogIn" weight=80
+    export function WaterLevelDigi(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 1
+    }
+
+    //% blockId=rainlvl block="(WaterLevel) Analog %pin"
+    //% group="analogIn" weight=79
+    export function WaterLevelAna(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
+    //% blockId=infraRx block="On Infra %pin Received"
+    //% group="Special" weight=78
+    export function InfraRx(pin: AnalogPin, handler: (data: string) => void) {
+
+    }
+
+    //% blockId=infraTx block="Infra %pin Transmit %data"
+    //% group="Special" weight=78
+    export function InfraTx(pin: AnalogPin, data: string) {
+
+    }
+
+    let distanceBuf = 0;
+    //% blockId=ultrasonic block="Ultrasonic Distance %pin (cm)"
+    //% group="Special" weight=76
+    export function UltrasonicCm(pin: DigitalPin): number {
+        pins.setPull(pin, PinPullMode.PullDown);
+        pins.digitalWritePin(pin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(pin, 1);
+        control.waitMicros(10);
+        pins.digitalWritePin(pin, 0);
+
+        // read pulse
+        let d = pins.pulseIn(pin, PulseValue.High, 25000);
+        let ret = d;
+        // filter timeout spikes
+        if (ret == 0 && distanceBuf != 0) {
+                ret = distanceBuf;
+        }
+        distanceBuf = d;
+        return Math.floor(ret / 40 + (ret / 800));
+    }
+
+    const VL53L0X_ADDR = 0x5e;
+    let vl53Inited = false;
+
+    //% blockId=tof block="(TOF Distance) mm"
+    //% group="I2C" weight=76
+    export function TOFDistance(): number {
+        if (!vl53Inited){
+            let buf = pins.createBuffer(3)
+            buf[0] = 1
+            pins.i2cWriteBuffer(VL53L0X_ADDR, buf)
+            vl53Inited = true
+            control.waitMicros(50)
+        }
+        pins.i2cWriteNumber(VL53L0X_ADDR, 0x1, NumberFormat.UInt8BE);
+        return pins.i2cReadNumber(VL53L0X_ADDR, NumberFormat.UInt16LE);
+    }
+
+    const AHT20_ADDR = 0x38
+    let aht20Inited = false;
+
+    function _aht20Ready (): boolean{
+        let stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
+        while (stat & 0x80){
+            stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
+            basic.pause(100)
+        }
+        return true
+    }
+
+    //% blockId=environment block="(ENV) %env"
+    //% group="I2C" weight=74
+    export function ENV(env: EnvType): number {
+        if (!aht20Inited){
+            i2cwrite(AHT20_ADDR,0xba, [])
+            basic.pause(50)
+            i2cwrite(AHT20_ADDR,0xa8, [0,0])
+            basic.pause(350)
+            i2cwrite(AHT20_ADDR,0xe1, [0x28,0])
+            aht20Inited=true;
+        }
+        i2cwrite(AHT20_ADDR,0xac,[0x33,0])
+        if (_aht20Ready()){
+            const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
+            const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
+            const humi = Math.round(h*0.000095)
+            const t = ((n[3]&0x0f)<<16|(n[4]<<8)|n[5])
+            const temp = Math.round(t*0.000191 - 50)
+            return env === EnvType.Humidity ? humi : temp
+        }
+        return 0;
+    }
+
+    const JOYSTICK_ADDR = 0x5c
+
+    //% blockId=joyState block="(Joystick) State %state trigger"
+    //% group="I2C" weight=72
+    export function joyState(state: JoystickDir): boolean {
+        const sta = i2cread(JOYSTICK_ADDR,1,1).getNumber(NumberFormat.UInt8BE,0)
+        return (sta & state) != 0;
+    }
+
+    //% blockId=joyValue block="(Joystick) %dir Value"
+    //% group="I2C" weight=72
+    export function joyValue(dir: DirType): number {
+        const buf = i2cread(JOYSTICK_ADDR,2,4)
+        const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0)*255/2048 - 255)
+        const valY = Math.round(buf.getNumber(NumberFormat.Int16LE, 2)*255/2048 - 255)
+        return dir === DirType.X ? valX : valY
+    }
 
 }
 
-//% color="#90B7FB" weight=10 icon="\uf8ff"
+//% color="#fe99d4" weight=10 icon="\uf0e7"
 //% groups='["Actuators", "Encoded Motor", "Dual Encoded Motor", "Audio"]'
 namespace SugarBox {
 
