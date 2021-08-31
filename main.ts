@@ -80,7 +80,7 @@ namespace Sugar {
     //% blockId=button block="(Button) Pressed %pin"
     //% group="digitalIn" weight=87
     export function Button(pin: DigitalPin): boolean {
-        pins.setPull(pin, PinPullMode.PullUp)
+        pins.setPull(DigitalPin.P0, PinPullMode.PullUp)
         return pins.digitalReadPin(pin) == 0
     }
 
@@ -361,6 +361,7 @@ namespace SugarBox {
     }
 
     //% blockId=servo_pulse block="Servo|%port Pulse %us us"
+    //% us.min=500 us.max=2500 us.defl=1500
     //% group="Actuators" weight=46
     export function servoPulse(port: SPort, us: number) {
         _i2cWriteBH(REG_SERVO,port,us)
@@ -398,10 +399,17 @@ namespace SugarBox {
     } 
 
     //% blockId=enc_rpm_set block="EMotor %port run %spd RPM"
+    //% spd.min=-300 spd.max=300 spd.defl=120
     //% group="Encoded Motor" weight=39
     export function eMotorSetRpm(port: EPort, spd: number) {
-        spd /= 60 // from rpm to rnd per sec
+        spd = spd/60 // from rpm to rnd per sec
         _pidRun(port,MODE_SPEED,spd,0,false)
+    }
+
+    //% blockId=enc_stop block="EMotor %port Stop"
+    //% group="Encoded Motor" weight=39
+    export function eMotorStop(port: EPort) {
+        _pidRun(port,MODE_SPEED,0,0,false)
     }
 
     //% blockId=enc_rpm_get block="EMotor %port get Speed(RPM)"
@@ -440,18 +448,21 @@ namespace SugarBox {
 
 
     //% blockId=enc_move_deg block="EMotor %port Move By Degree %degree speed %speed RPM"
+    //% speed.min=-300 speed.max=300 speed.defl=120
     //% group="Encoded Motor" weight=34
     export function eMotorMoveDeg(port: EPort, degree: number, speed: number) {
         eMotorGoto(port, degree, speed)
     }
 
     //% blockId=enc_move_rnd block="EMotor %port Move Round %rnd speed %speed RPM"
+    //% speed.min=-300 speed.max=300 speed.defl=120
     //% group="Encoded Motor" weight=34
     export function eMotorMoveRnd(port: EPort, rnd: number, speed: number) {
         eMotorGoto(port, rnd*360, speed)
     }
 
     //% blockId=enc_move_delay block="EMotor %port Move Delayed %t sec speed %speed RPM"
+    //% speed.min=-300 speed.max=300 speed.defl=120
     //% group="Encoded Motor" weight=34
     export function eMotorMoveDelayed(port: EPort, t: number, speed: number) {
         const mode = MODE_SPEED | MODE_DELAY

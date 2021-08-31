@@ -27,6 +27,7 @@
     "SugarBox.servoPulse|block": "舵机|%port 脉宽 %us us(周期20ms)",
     "SugarBox.encMotorInit|block": "编码电机|%port 初始化",
     "SugarBox.eMotorSetRpm|block": "编码电机 %port 速度 %spd (圈/分钟)",
+    "SugarBox.eMotorStop|block": "编码电机 %port 停止",
     "SugarBox.eMotorGetRpm|block": "获取编码电机 %port 的速度(圈/分钟)",
     "SugarBox.eMotorSetPos|block": "编码电机 %port 转到位置 %degree",
     "SugarBox.eMotorPos|block": "获取编码电机 %port 当前位置(角度)",
