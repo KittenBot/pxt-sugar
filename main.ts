@@ -13,8 +13,7 @@ function i2cwrite(addr: number, reg: number, value: number[]) {
 
 function i2cread(addr: number, reg: number, size: number) {
   pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE);
-  const ret = pins.i2cReadBuffer(addr, size);
-  return ret
+  return pins.i2cReadBuffer(addr, size);
 }
 
 //% color="#49cef7" weight=10 icon="\uf1b0"
@@ -246,9 +245,8 @@ namespace Sugar {
 }
 
 //% color="#fe99d4" weight=10 icon="\uf0e7"
-//% groups='["Actuators", "Encoded Motor", "Dual Encoded Motor", "Audio"]'
+//% groups='["Basic", "Actuators", "Encoded Motor", "Dual Encoded Motor", "Audio"]'
 namespace SugarBox {
-
     const MODE_IDLE = 0x0
     const MODE_SPEED = 0x1
     const MODE_HOLD = 0x2
@@ -325,8 +323,21 @@ namespace SugarBox {
         return i2cread(SGBOX_ADDR, _reg, 4).getNumber(NumberFormat.Float32LE, 0)
     }
 
+    /**
+     * The firmware of sugarbox took a little longer than microbit to init
+     */
+    //% blockId=waitready block="Wait Ready"
+    //% group="Basic" weight=100
+    export function waitready() {
+      let bat = 0
+      while (bat === 0){
+          bat = battery()
+          basic.pause(200)
+      }
+    }
+
     //% blockId=battery block="Battery Voltage"
-    //% weight=100
+    //% group="Basic" weight=100
     export function battery(): number {
         return i2cread(SGBOX_ADDR,REG_VOLTAG,4).getNumber(NumberFormat.Float32LE,0)
     }
