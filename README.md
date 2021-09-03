@@ -123,6 +123,7 @@ This extension is designed to programme and drive the moudule series Sugar for m
         SugarBox.servoPulse(SugarBox.SPort.S1, 2500)
         basic.pause(1000)
     })
+    SugarBox.waitready()
 
 ```
 
@@ -138,6 +139,7 @@ This extension is designed to programme and drive the moudule series Sugar for m
         basic.showNumber(SugarBox.eMotorGetRpm(SugarBox.EPort.EM1))
         SugarBox.motorStopAll()
     })
+    SugarBox.waitready()
     SugarBox.encMotorInit(SugarBox.EPort.EM1)
 
 

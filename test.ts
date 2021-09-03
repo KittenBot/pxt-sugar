@@ -14,3 +14,4 @@ basic.forever(function () {
     1023
     )
 })
+SugarBox.waitready()
