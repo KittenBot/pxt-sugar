@@ -19,6 +19,7 @@
     "Sugar.ENV|block": "(ENV) 环境模块 %env",
     "Sugar.joyState|block": "(Joystick) 摇杆状态 %state 触发",
     "Sugar.joyValue|block": " (Joystick) 摇杆方向 %dir 数值",
+    "SugarBox.waitready|block": "等待初始化完成",
     "SugarBox.battery|block": "电池电压",
     "SugarBox.motorSpd|block": "电机|%port 速度 %speed",
     "SugarBox.motorStop|block": "电机|%port 停止",
@@ -51,6 +52,7 @@
     "{id:group}Special": "特殊类型",
     "{id:group}I2C": "I2C类型",
     "{id:category}SugarBox": "方糖盒",
+    "{id:group}Basic": "基础",
     "{id:group}Actuators": "执行器",
     "{id:group}Encoded Motor": "编码电机(单)",
     "{id:group}Dual Encoded Motor": "编码电机(双)"

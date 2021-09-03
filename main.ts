@@ -13,8 +13,7 @@ function i2cwrite(addr: number, reg: number, value: number[]) {
 
 function i2cread(addr: number, reg: number, size: number) {
   pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE);
-  const ret = pins.i2cReadBuffer(addr, size);
-  return ret
+  return pins.i2cReadBuffer(addr, size);
 }
 
 //% color="#49cef7" weight=10 icon="\uf1b0"
@@ -246,9 +245,8 @@ namespace Sugar {
 }
 
 //% color="#fe99d4" weight=10 icon="\uf0e7"
-//% groups='["Actuators", "Encoded Motor", "Dual Encoded Motor", "Audio"]'
+//% groups='["Basic", "Actuators", "Encoded Motor", "Dual Encoded Motor", "Audio"]'
 namespace SugarBox {
-
     const MODE_IDLE = 0x0
     const MODE_SPEED = 0x1
     const MODE_HOLD = 0x2
@@ -325,8 +323,21 @@ namespace SugarBox {
         return i2cread(SGBOX_ADDR, _reg, 4).getNumber(NumberFormat.Float32LE, 0)
     }
 
+    /**
+     * The firmware of sugarbox took a little longer than microbit to init
+     */
+    //% blockId=waitready block="Wait Ready"
+    //% group="Basic" weight=100
+    export function waitready() {
+      let bat = 0
+      while (bat === 0){
+          bat = battery()
+          basic.pause(200)
+      }
+    }
+
     //% blockId=battery block="Battery Voltage"
-    //% weight=100
+    //% group="Basic" weight=100
     export function battery(): number {
         return i2cread(SGBOX_ADDR,REG_VOLTAG,4).getNumber(NumberFormat.Float32LE,0)
     }
@@ -372,11 +383,12 @@ namespace SugarBox {
     }
 
     function _pidRun(port: EPort, mode: number, speed: number, param2: number, wait: boolean = true){
-        const buf = pins.createBuffer(10) // B,B,f,f
-        buf[0] = port
-        buf[1] = mode
-        buf.setNumber(NumberFormat.Float32LE, 2, speed)
-        buf.setNumber(NumberFormat.Float32LE, 6, param2)
+        const buf = pins.createBuffer(11) // reg,B,B,f,f
+        buf[0] = REG_PIDRUN
+        buf[1] = port
+        buf[2] = mode
+        buf.setNumber(NumberFormat.Float32LE, 3, speed)
+        buf.setNumber(NumberFormat.Float32LE, 7, param2)
         pins.i2cWriteBuffer(SGBOX_ADDR, buf)
         if (wait){
             let _reg = port == EPort.EM1 ? 0x60 : 0x70
@@ -482,11 +494,12 @@ namespace SugarBox {
     }
 
     function _dualMotorRun(mode: number, v: number, w: number, rnd: number, wait: boolean = true){
-        const buf = pins.createBuffer(10) // B,f,f,f
-        buf[0] = mode
-        buf.setNumber(NumberFormat.Float32LE, 1, v) // forward linear speed
-        buf.setNumber(NumberFormat.Float32LE, 5, w) // angular speed
-        buf.setNumber(NumberFormat.Float32LE, 9, rnd)
+        const buf = pins.createBuffer(14) // reg B,f,f,f
+        buf[0] = REG_DUALRUN
+        buf[1] = mode
+        buf.setNumber(NumberFormat.Float32LE, 2, v) // forward linear speed
+        buf.setNumber(NumberFormat.Float32LE, 6, w) // angular speed
+        buf.setNumber(NumberFormat.Float32LE, 11, rnd)
         pins.i2cWriteBuffer(SGBOX_ADDR, buf)
         if (wait){
             let _reg = 0x80
