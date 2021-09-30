@@ -79,7 +79,7 @@ namespace Sugar {
     //% blockId=button block="(Button) Pressed %pin"
     //% group="digitalIn" weight=87
     export function Button(pin: DigitalPin): boolean {
-        pins.setPull(DigitalPin.P0, PinPullMode.PullUp)
+        pins.setPull(pin, PinPullMode.PullUp)
         return pins.digitalReadPin(pin) == 0
     }
 
