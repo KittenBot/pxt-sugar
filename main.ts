@@ -19,6 +19,256 @@ function i2cread(addr: number, reg: number, size: number) {
 //% color="#49cef7" weight=10 icon="\uf1b0"
 //% groups='["Motion/PIR", "Linefollower/Tracker", "HallEffect", "Buttons", "LED", "Flame", "PotentialMeter", "LightLevel", "Moisture", "Rain Gauge", "Infra Transmitter", "Distance", "Environment", "Joystick"]'
 namespace Sugar {
+    const TTS_INTEGER_CMD = 0x20          // tts id : signed integer
+    const TTS_DOUBLE_CMD = 0x1f           // tts id : signed double
+    const TTS_TIME_CMD = 0x03            // tts id : clock => (hour,minute)
+    const TTS_DATE_CMD = 0x04             // tts id : date => (year,mouth,day)
+    const INTEGER_LEN = 4                 // 4 bytes int
+    const DOUBLE_LEN = 8                  // 8 bytes double
+    const CLOCK_LEN = 2                   // 2 bytes clock(1,1)
+    const DATE_LEN = 6                    // 2 bytes date(4,1,1)  
+
+    type EvtAct = () => void
+
+    let ledEvt: EvtAct = null;
+    let actEvt: EvtAct = null;
+    let meaEvt: EvtAct = null;
+    let cosEvt: EvtAct = null;
+    let asrEventId = 6666
+    let cmd = 0
+
+    const PortSerial = [
+        [SerialPin.P0, SerialPin.P8],
+        [SerialPin.P1, SerialPin.P12],
+        [SerialPin.P2, SerialPin.P13],
+        [SerialPin.P14, SerialPin.P15]
+      ]
+
+      export enum SerialPorts {
+        //% block="PORT1(TX:P0 / RX:P8)"
+        PORT1 = 0,
+        //% block="PORT2(TX:P1 / RX:P12)"
+        PORT2 = 1,
+        //% block="PORT3(TX:P2 / RX:P13)"
+        PORT3 = 2,
+        //% block="PORT4(TX:P14 / RX:P15)"
+        PORT4 = 3
+      }
+
+    export enum LEDCmd {
+        //% block="lamp on / light On"
+        lamp_on = 200,
+        //% block="lamp off / light off"
+        lamp_off = 201,
+        //% block="brighter"
+        brighter = 202,
+        //% block="dimmer"
+        dimmer = 203,
+        //% block="red light on"
+        red_light_on = 204,
+        //% block="green light on"
+        green_light_on = 205,
+        //% block="yellow light on"
+        yellow_light_on = 206,
+        //% block="blue light on"
+        blue_light_on = 207,
+        //% block="sitting loom light on"
+        sitting_room_light_on = 208,
+        //% block="sitting room light off"
+        sitting_room_light_off = 209,
+        //% block="kitchen light on"
+        kitchen_light_on = 210,
+        //% block="kitchen light off"
+        kitchen_light_off = 211,
+        //% block="bedroom light on"
+        bedroom_light_on = 212,
+        //% block="bedroom light off"
+        bedroom_light_off = 213,
+        //% block="balcony light on"
+        balcony_light_on = 214,
+        //% block="balcony light off"
+        balcony_light_off = 215,
+        //% block="bathroom light on"
+        bathroom_light_on = 216,
+        //% block="bedroom light off"
+        bathroom_light_off = 217,
+        //% block="all light on"
+        all_light_on = 218,
+        //% block="all light off"
+        all_light_off= 219
+    }
+
+    export enum ActCmd {
+        //% block="open door"
+        open_door = 300,
+        //% block="close door"
+        close_door = 301,
+        //% block="open window"
+        open_window = 302,
+        //% block="close window"
+        close_window = 303,
+        //% block="open curtains"
+        open_curtains = 304,
+        //% block="close curtains"
+        close_curtains = 305,
+        //% block="hanger out"
+        hanger_out = 306,
+        //% block="hanger in" 
+        hanger_in  = 307,
+        //% block="fan on"
+        fan_on = 308,
+        //% block="fan off"
+        fan_off = 309,
+        //% block="speed up"
+        speed_up = 310,
+        //% block="slow down"
+        slow_down = 311,
+        //% block="air conditioner on"
+        air_conditioner_on = 312,
+        //% block="air conditioner off"
+        air_conditioner_off = 313,
+        //% block="music on"
+        music_on = 314,
+        //% block="music off" 
+        music_off  = 315,
+        //% block="pause"
+        pause = 316,
+        //% block="previous song"
+        previous_song = 317,
+        //% block="next song"
+        next_song = 318,
+        //% block="volume up"
+        volume_up = 319,
+        //% block="volume down"
+        volume_down = 320,
+        //% block="robot on"
+        robot_on = 321,
+        //% block="robot off"
+        robot_off = 322,
+        //% block="robot stop" 
+        robot_stop  = 323,
+        //% block="move forward"
+        move_forward = 324,
+        //% block="move backward"
+        move_backward = 325,
+        //% block="turn left"
+        turn_left = 326,
+        //% block="turn right"
+        turn_right = 327,
+        //% block="lift on"
+        lift_on_on = 328,
+        //% block="first floor"
+        first_floor_off = 329,
+        //% block="second floor"
+        second_floor = 330,
+        //% block="third floor" 
+        third_floor  = 331
+    }
+
+    export enum MeasureCmd {
+        //% block="check temperature"
+        check_temperature = 400,
+        //% block="check humidity"
+        check_humidity = 401,
+        //% block="check weather"
+        check_weather = 402,
+        //% block="check time"
+        check_time = 403,
+        //% block="check date"
+        check_date = 404,
+        //% block="measure distance"
+        measure_distance = 405,
+        //% block="measure temperature"
+        measure_temperature = 406,
+        //% block="measure weight"
+        measure_weight = 407,
+        //% block="measure height"
+        measure_height = 408
+    }
+
+    export enum CustomCmd {
+        //% block="command 1"
+        command_one = 901,
+        //% block="command 2"
+        command_two = 902,
+        //% block="command 3"
+        command_three = 903,
+        //% block="command 4"
+        command_four = 904,
+        //% block="command 5"
+        command_five = 905,
+        //% block="command 6"
+        command_six = 906,
+        //% block="command 7"
+        command_seven = 907,
+        //% block="command 8"
+        command_eight = 908,
+        //% block="command 9"
+        command_nine = 909,
+        //% block="command 10"
+        command_ten = 910
+    }
+
+    export enum WordsID {
+        //% block="temperature is"
+        temperature_is = 0x01,
+        //% block="Humidity is"
+        humidity_is = 0x02,
+        //% block="welcome"
+        welcome = 0x05,
+        //% block="distance is"
+        distance_is = 0x06,
+        //% block="millimeter"
+        millimeter = 0x07,
+        //% block="centimeter"
+        centimeter = 0x08,
+        //% block="meter"
+        meter = 0x09,
+        //% block="body temperature is"
+        body_temperature_is = 0x0a,
+        //% block="weight is"
+        weight_is = 0x0b,
+        //% block="gram"
+        gram = 0x0c,
+        //% block="kilogram"
+        kilogram = 0x0d,
+        //% block="please say the password"
+        please_say_the_password = 0x0e,
+        //% block="The weather is"
+        The_weather_is = 0x0f,
+        //% block="sunny"
+        sunny = 0x19,
+        //% block="cloudy"
+        cloudy = 0x11,
+        //% block="raining"
+        raining = 0x12,
+        //% block="snowing"
+        snowing = 0x13,
+        //% block="haze"
+        haze = 0x14,
+        //% block="big"
+        big = 0x15,
+        //% block="middle"
+        middle = 0x16,
+        //% block="small"
+        small = 0x17,
+        //% block="which floor are you going to"
+        which_floor_are_you_going_to = 0x18,
+        //% block="yes"
+        yes = 0x19,
+        //% block="no"
+        no = 0x1a,
+        //% block="percent"
+        percent = 0x1b,
+        //% block="you are right"
+        you_are_right = 0x1c,
+        //% block="you are wrong"
+        you_are_wrong = 0x1d,
+        //% block="degree centigrade"
+        degree_centigrade = 0x1e,
+        //% block="ok"
+        ok = 0x21
+    }
 
     export enum Ports {
         PORT1 = 0,
@@ -29,7 +279,7 @@ namespace Sugar {
         PORT6 = 5,
         PORT7 = 6
     }
-
+    
     export enum EnvType {
         //% block="Temperature(℃)"
         Temperature = 0,
@@ -154,7 +404,7 @@ namespace Sugar {
     //% blockId=ultrasonic block="Ultrasonic Distance %pin (cm)"
     //% group="Special" weight=76
     export function UltrasonicCm(pin: DigitalPin): number {
-        pins.setPull(pin, PinPullMode.PullDown);
+        // pins.setPull(pin, PinPullMode.PullDown);
         pins.digitalWritePin(pin, 0);
         control.waitMicros(2);
         pins.digitalWritePin(pin, 1);
@@ -162,13 +412,15 @@ namespace Sugar {
         pins.digitalWritePin(pin, 0);
 
         // read pulse
-        let d = pins.pulseIn(pin, PulseValue.High, 25000);
+        let d = pins.pulseIn(pin, PulseValue.High, 30000);
         let ret = d;
         // filter timeout spikes
         if (ret == 0 && distanceBuf != 0) {
                 ret = distanceBuf;
         }
         distanceBuf = d;
+        pins.digitalWritePin(pin, 0);
+        basic.pause(20)
         return Math.floor(ret / 40 + (ret / 800));
     }
 
@@ -240,6 +492,183 @@ namespace Sugar {
         const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0)*255/2048 - 255)
         const valY = Math.round(buf.getNumber(NumberFormat.Int16LE, 2)*255/2048 - 255)
         return dir === DirType.X ? valX : valY
+    }
+
+
+    /**
+     * init serial port
+     * @param tx Tx pin; eg: SerialPin.P2
+     * @param rx Rx pin; eg: SerialPin.P12
+     */
+    //% blockId=asr_init block="(ASR) init|Tx pin %tx|Rx pin %rx"
+    //% group="ASR" weight=50
+    export function asr_init(tx: SerialPin, rx: SerialPin): void {
+        serial.redirect(tx, rx, BaudRate.BaudRate115200)
+        // serial.setRxBufferSize(6)
+    }
+
+    //% blockId=asr_init_pw block="(ASR) init|Port %port"
+    //% group="ASR" weight=49
+    export function asr_init_pw(port: SerialPorts): void {
+        asr_init(PortSerial[port][0], PortSerial[port][1])
+    }
+
+
+    //% blockId=asr_cmd_led block="(ASR) On LED Speech |%id recognized"
+    //% group="ASR" weight=48
+    export function on_asr_led(id: LEDCmd, handler: () => void) {
+        control.onEvent(asrEventId, id, handler);
+        control.inBackground(() => {
+            while (1) {
+                let a = serial.readString()
+                if (a.slice(0, 3) == "asr"){
+                    cmd = parseInt(a.substr(3,3))
+                    control.raiseEvent(asrEventId, cmd)
+                }
+                basic.pause(40)
+            }
+        })
+    }
+
+    //% blockId=asr_cmd_actuator block="(ASR) On Actuator Speech |%id recognized"
+    //% group="ASR" weight=47
+    export function on_asr_act(id: ActCmd, handler: () => void) {
+        control.onEvent(asrEventId, id, handler);
+        control.inBackground(() => {
+            while (1) {
+                let a = serial.readString()
+                if (a.slice(0, 3) == "asr"){
+                    cmd = parseInt(a.substr(3,3))
+                    control.raiseEvent(asrEventId, cmd)
+                }
+                basic.pause(40)
+            }
+        })
+    }
+
+    //% blockId=asr_cmd_measure block="(ASR) On Measurement Speech |%id recognized"
+    //% group="ASR" weight=46
+    export function on_asr_measure(id: MeasureCmd, handler: () => void) {
+        control.onEvent(asrEventId, id, handler);
+        control.inBackground(() => {
+            while (1) {
+                let a = serial.readString()
+                if (a.slice(0, 3) == "asr"){
+                    cmd = parseInt(a.substr(3,3))
+                    control.raiseEvent(asrEventId, cmd)
+                }
+                basic.pause(40)
+            }
+        })
+    }
+
+    //% blockId=asr_cmd_custom block="(ASR) On Customized Speech |%id recognized"
+    //% group="ASR" weight=45
+    export function on_asr_custom(id: CustomCmd, handler: () => void) {
+        control.onEvent(asrEventId, id, handler);
+        control.inBackground(() => {
+            while (1) {
+                let a = serial.readString()
+                if (a.slice(0, 3) == "asr"){
+                    cmd = parseInt(a.substr(3,3))
+                    control.raiseEvent(asrEventId, cmd)
+                }
+                basic.pause(40)
+            }
+        })
+    }
+
+    //% blockId=asr_tts_int block="(ASR) peak Integer |%num"
+    //% num.min=-67108864 num.max=67108864
+    //% group="ASR" weight=44
+    export function asr_tts_int(num: number): void {
+        let buf = pins.createBuffer(9);
+        buf[0] = 0xAA;
+        buf[1] = 0x55;
+        buf[2] = TTS_INTEGER_CMD;
+        for(let i=0; i<4; i++) {
+            buf[3+i] = num & 0xff;
+            num = num >> 8;
+        }
+        buf[7] = 0x55;
+        buf[8] = 0xAA;
+        serial.writeBuffer(buf)
+    }
+
+    //% blockId=asr_tts_double block="(ASR) Speak Double |%num"
+    //% group="ASR" weight=43
+    export function asr_tts_double(num: number): void {
+        let buf = pins.createBuffer(13);
+        buf[0] = 0xAA;
+        buf[1] = 0x55;
+        buf[2] = TTS_DOUBLE_CMD;
+        for(let i=8; i>=0; i--) {
+            buf[3+i] = num & 0xff;
+            num = num >> 8;
+        }
+        buf[11] = 0x55;
+        buf[12] = 0xAA;
+        serial.writeBuffer(buf)
+    }
+
+    /**
+     * Speak Date
+     * @param year year of date; eg: 2022
+     * @param month month of date; eg: 6
+     * @param day day of date; eg: 6
+    */
+    //% blockId=asr_tts_date block="(ASR) Speak Date Year|%year Month|%month Day|%day"
+    //% year.min=0 year.max=10000
+    //% month.min=1 month.max=12
+    //% day.min=1 day.max=31
+    //% group="ASR" weight=42
+    export function asr_tts_date(year: number, month: number, day: number): void {
+        let buf = pins.createBuffer(11);
+        buf[0] = 0xAA;
+        buf[1] = 0x55;
+        buf[2] = TTS_DATE_CMD;
+        for(let y=0; y<4; y++) {
+            buf[3+y] = year & 0xff;
+            year = year >> 8;
+        }
+        buf[7] = month & 0xff;
+        buf[8] = day & 0xff;
+        buf[9] = 0x55;
+        buf[10] = 0xAA;
+        serial.writeBuffer(buf)
+    }
+
+    /**
+     * Speak Time
+     * @param hour hour of time; eg: 18
+     * @param minute minute of time; eg: 30
+    */
+    //% blockId=asr_tts_time block="(ASR) Speak Time Hour|%hour Minute|%minute"
+    //% hour.min=0 hour.max=24
+    //% minute.min=0 minute.max=59
+    //% group="ASR" weight=41
+    export function asr_tts_time(hour: number, minute: number): void {
+        let buf = pins.createBuffer(7);
+        buf[0] = 0xAA;
+        buf[1] = 0x55;
+        buf[2] = TTS_TIME_CMD;
+        buf[3] = hour & 0xff;
+        buf[4] = minute & 0xff;
+        buf[5] = 0x55;
+        buf[6] = 0xAA;
+        serial.writeBuffer(buf)
+    }
+
+    //% blockId=asr_tts_words block="(ASR) Speak Words |%id"
+    //% group="ASR" weight=40
+    export function asr_tts_words(id: WordsID): void {
+        let buf = pins.createBuffer(5);
+        buf[0] = 0xAA;
+        buf[1] = 0x55;
+        buf[2] = id;
+        buf[3] = 0x55;
+        buf[4] = 0xAA;
+        serial.writeBuffer(buf)
     }
 
 }
