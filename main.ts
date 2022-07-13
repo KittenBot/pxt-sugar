@@ -322,6 +322,7 @@ namespace Sugar {
 
     //% blockId=hall block="(Hall) Magnetic Detected %pin"
     //% group="digitalIn" weight=88
+    
     export function Hall(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
@@ -333,57 +334,73 @@ namespace Sugar {
         return pins.digitalReadPin(pin) == 0
     }
 
+    //% blockId=onButtonEvent block="on Button|%pin pressed"
+    //% group="digitalIn" weight=86
+    export function onBumperEvent(pin: DigitalPin, handler: () => void): void {
+        pins.setPull(pin, PinPullMode.PullUp)
+        pins.onPulsed(pin, PulseValue.Low, handler)
+    }
+
     //% blockId=led_toggle block="(LED) %pin| %onoff"
-    //% group="digitalOut" weight=86
+    //% group="digitalOut" weight=85
+    
     export function ledOnoff(pin: DigitalPin, onoff: LEDSta) {
         pins.digitalWritePin(pin, onoff?1:0)
     }
 
     //% blockId=led_luminent block="(LED) %pin| Luminent %value"
     //% value.min=0 value.max=1023 value.defl=0
-    //% group="digitalOut" weight=85
+    //% group="digitalOut" weight=84
+    
     export function ledLuminent(pin: AnalogPin, value: number) {
         pins.analogWritePin(pin, value)
     }
 
     //% blockId=flameBool block="(Flame) Flame Detected %pin "
     //% group="digitalIn" weight=80
+    
     export function FlameDigi(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=flameAnalog block="(Flame) %pin"
     //% group="analogIn" weight=84
+    
     export function FlameAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=potential block="(Angle) %pin"
     //% group="analogIn" weight=83
+    
     export function Angle(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=lightlvl block="(Light) %pin"
     //% group="analogIn" weight=82
+    
     export function Light(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=soilmoisture block="(SoilMoisture) %pin"
     //% group="analogIn" weight=81
+    
     export function SoilMoisture(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=rain block="(WaterLevel) Digital %pin"
     //% group="digitalIn" weight=80
+    
     export function WaterLevelDigi(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=waterlvl block="(WaterLevel) Analog %pin"
     //% group="analogIn" weight=79
+    
     export function WaterLevelAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
@@ -396,32 +413,9 @@ namespace Sugar {
 
     //% blockId=infraTx block="Infra %pin Transmit %data"
     //% group="Special" weight=78
+    
     export function InfraTx(pin: AnalogPin, data: string) {
 
-    }
-
-    let distanceBuf = 0;
-    //% blockId=ultrasonic block="Ultrasonic Distance %pin (cm)"
-    //% group="Special" weight=76
-    export function UltrasonicCm(pin: DigitalPin): number {
-        // pins.setPull(pin, PinPullMode.PullDown);
-        pins.digitalWritePin(pin, 0);
-        control.waitMicros(2);
-        pins.digitalWritePin(pin, 1);
-        control.waitMicros(10);
-        pins.digitalWritePin(pin, 0);
-
-        // read pulse
-        let d = pins.pulseIn(pin, PulseValue.High, 30000);
-        let ret = d;
-        // filter timeout spikes
-        if (ret == 0 && distanceBuf != 0) {
-                ret = distanceBuf;
-        }
-        distanceBuf = d;
-        pins.digitalWritePin(pin, 0);
-        basic.pause(20)
-        return Math.floor(ret / 40 + (ret / 800));
     }
 
     const VL53L0X_ADDR = 0x5e;
@@ -429,6 +423,7 @@ namespace Sugar {
 
     //% blockId=tof block="(TOF Distance) mm"
     //% group="I2C" weight=76
+    
     export function TOFDistance(): number {
         if (!vl53Inited){
             let buf = pins.createBuffer(3)
@@ -455,6 +450,7 @@ namespace Sugar {
 
     //% blockId=environment block="(ENV) %env"
     //% group="I2C" weight=74
+    
     export function ENV(env: EnvType): number {
         if (!aht20Inited){
             i2cwrite(AHT20_ADDR,0xba, [])
@@ -487,6 +483,7 @@ namespace Sugar {
 
     //% blockId=joyValue block="(Joystick) %dir Value"
     //% group="I2C" weight=72
+    
     export function joyValue(dir: DirType): number {
         const buf = i2cread(JOYSTICK_ADDR,2,4)
         const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0)*255/2048 - 255)
