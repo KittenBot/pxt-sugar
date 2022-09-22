@@ -237,7 +237,7 @@ namespace Sugar {
         //% block="The weather is"
         The_weather_is = 0x0f,
         //% block="sunny"
-        sunny = 0x19,
+        sunny = 0x10,
         //% block="cloudy"
         cloudy = 0x11,
         //% block="raining"
@@ -322,9 +322,8 @@ namespace Sugar {
 
     //% blockId=hall block="(Hall) Magnetic Detected %pin"
     //% group="digitalIn" weight=88
-    
     export function Hall(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
+        return pins.digitalReadPin(pin) == 0
     }
 
     //% blockId=button block="(Button) Pressed %pin"
@@ -400,7 +399,6 @@ namespace Sugar {
 
     //% blockId=waterlvl block="(WaterLevel) Analog %pin"
     //% group="analogIn" weight=79
-    
     export function WaterLevelAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
@@ -450,7 +448,6 @@ namespace Sugar {
 
     //% blockId=environment block="(ENV) %env"
     //% group="I2C" weight=74
-    
     export function ENV(env: EnvType): number {
         if (!aht20Inited){
             i2cwrite(AHT20_ADDR,0xba, [])

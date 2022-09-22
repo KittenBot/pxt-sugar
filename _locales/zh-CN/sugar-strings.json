@@ -161,6 +161,7 @@
     "{id:group}analogIn": "模拟输入",
     "{id:group}Special": "特殊类型",
     "{id:group}I2C": "I2C类型",
+    "{id:group}ASR": "语音识别模块",
     "{id:category}SugarBox": "方糖盒",
     "{id:group}Basic": "基础",
     "{id:group}Actuators": "执行器",
