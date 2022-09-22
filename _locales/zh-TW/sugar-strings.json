@@ -160,6 +160,7 @@
     "{id:group}analogIn": "模擬輸入",
     "{id:group}Special": "特殊類型",
     "{id:group}I2C": "I2C類",
+    "{id:group}ASR": "語音識別模塊",
     "{id:category}SugarBox": "方糖盒",
     "{id:group}Basic": "基礎",
     "{id:group}Actuators": "電機舵機",
