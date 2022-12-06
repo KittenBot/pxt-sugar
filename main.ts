@@ -4,16 +4,16 @@ A series of sensors
 "sugar": "file:../pxt-sugar"
 */
 
-function i2cwrite(addr: number, reg: number, value: number[]) {
+function i2cwrite( addr: number, reg: number, value: number[] ) {
     let a = [reg]
-    if (value.length)
-        a = a.concat(value)
-    return pins.i2cWriteBuffer(addr, Buffer.fromArray(a))
+    if ( value.length )
+        a = a.concat( value )
+    return pins.i2cWriteBuffer( addr, Buffer.fromArray( a ) )
 }
 
-function i2cread(addr: number, reg: number, size: number) {
-  pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE);
-  return pins.i2cReadBuffer(addr, size);
+function i2cread( addr: number, reg: number, size: number ) {
+    pins.i2cWriteNumber( addr, reg, NumberFormat.UInt8BE );
+    return pins.i2cReadBuffer( addr, size );
 }
 
 //% color="#49cef7" weight=10 icon="\uf1b0"
@@ -42,9 +42,9 @@ namespace Sugar {
         [SerialPin.P1, SerialPin.P12],
         [SerialPin.P2, SerialPin.P13],
         [SerialPin.P14, SerialPin.P15]
-      ]
+    ]
 
-      export enum SerialPorts {
+    export enum SerialPorts {
         //% block="PORT1(TX:P0 / RX:P8)"
         PORT1 = 0,
         //% block="PORT2(TX:P1 / RX:P12)"
@@ -53,7 +53,7 @@ namespace Sugar {
         PORT3 = 2,
         //% block="PORT4(TX:P14 / RX:P15)"
         PORT4 = 3
-      }
+    }
 
     export enum LEDCmd {
         //% block="lamp on / light On"
@@ -95,7 +95,7 @@ namespace Sugar {
         //% block="all light on"
         all_light_on = 218,
         //% block="all light off"
-        all_light_off= 219
+        all_light_off = 219
     }
 
     export enum ActCmd {
@@ -114,7 +114,7 @@ namespace Sugar {
         //% block="hanger out"
         hanger_out = 306,
         //% block="hanger in" 
-        hanger_in  = 307,
+        hanger_in = 307,
         //% block="fan on"
         fan_on = 308,
         //% block="fan off"
@@ -130,7 +130,7 @@ namespace Sugar {
         //% block="music on"
         music_on = 314,
         //% block="music off" 
-        music_off  = 315,
+        music_off = 315,
         //% block="pause"
         pause = 316,
         //% block="previous song"
@@ -146,7 +146,7 @@ namespace Sugar {
         //% block="robot off"
         robot_off = 322,
         //% block="robot stop" 
-        robot_stop  = 323,
+        robot_stop = 323,
         //% block="move forward"
         move_forward = 324,
         //% block="move backward"
@@ -162,7 +162,7 @@ namespace Sugar {
         //% block="second floor"
         second_floor = 330,
         //% block="third floor" 
-        third_floor  = 331
+        third_floor = 331
     }
 
     export enum MeasureCmd {
@@ -279,7 +279,7 @@ namespace Sugar {
         PORT6 = 5,
         PORT7 = 6
     }
-    
+
     export enum EnvType {
         //% block="Temperature(℃)"
         Temperature = 0,
@@ -310,109 +310,109 @@ namespace Sugar {
 
     //% blockId=pir block="(PIR) Motion Detected %pin"
     //% group="digitalIn" weight=90
-    export function PIR(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
+    export function PIR( pin: DigitalPin ): boolean {
+        return pins.digitalReadPin( pin ) == 1
     }
 
     //% blockId=tracer block="(Tracker) Black Dectected %pin"
     //% group="digitalIn" weight=89
-    export function Tracker(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
+    export function Tracker( pin: DigitalPin ): boolean {
+        return pins.digitalReadPin( pin ) == 1
     }
 
     //% blockId=hall block="(Hall) Magnetic Detected %pin"
     //% group="digitalIn" weight=88
-    export function Hall(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 0
+    export function Hall( pin: DigitalPin ): boolean {
+        return pins.digitalReadPin( pin ) == 0
     }
 
     //% blockId=button block="(Button) Pressed %pin"
     //% group="digitalIn" weight=87
-    export function Button(pin: DigitalPin): boolean {
-        pins.setPull(pin, PinPullMode.PullUp)
-        return pins.digitalReadPin(pin) == 0
+    export function Button( pin: DigitalPin ): boolean {
+        pins.setPull( pin, PinPullMode.PullUp )
+        return pins.digitalReadPin( pin ) == 0
     }
 
     //% blockId=onButtonEvent block="on Button|%pin pressed"
     //% group="digitalIn" weight=86
-    export function onBumperEvent(pin: DigitalPin, handler: () => void): void {
-        pins.setPull(pin, PinPullMode.PullUp)
-        pins.onPulsed(pin, PulseValue.Low, handler)
+    export function onBumperEvent( pin: DigitalPin, handler: () => void ): void {
+        pins.setPull( pin, PinPullMode.PullUp )
+        pins.onPulsed( pin, PulseValue.Low, handler )
     }
 
     //% blockId=led_toggle block="(LED) %pin| %onoff"
     //% group="digitalOut" weight=85
-    
-    export function ledOnoff(pin: DigitalPin, onoff: LEDSta) {
-        pins.digitalWritePin(pin, onoff?1:0)
+
+    export function ledOnoff( pin: DigitalPin, onoff: LEDSta ) {
+        pins.digitalWritePin( pin, onoff ? 1 : 0 )
     }
 
     //% blockId=led_luminent block="(LED) %pin| Luminent %value"
     //% value.min=0 value.max=1023 value.defl=0
     //% group="digitalOut" weight=84
-    
-    export function ledLuminent(pin: AnalogPin, value: number) {
-        pins.analogWritePin(pin, value)
+
+    export function ledLuminent( pin: AnalogPin, value: number ) {
+        pins.analogWritePin( pin, value )
     }
 
     //% blockId=flameBool block="(Flame) Flame Detected %pin "
     //% group="digitalIn" weight=80
-    
-    export function FlameDigi(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
+
+    export function FlameDigi( pin: DigitalPin ): boolean {
+        return pins.digitalReadPin( pin ) == 1
     }
 
     //% blockId=flameAnalog block="(Flame) %pin"
     //% group="analogIn" weight=84
-    
-    export function FlameAna(pin: AnalogPin): number {
-        return pins.analogReadPin(pin)
+
+    export function FlameAna( pin: AnalogPin ): number {
+        return pins.analogReadPin( pin )
     }
 
     //% blockId=potential block="(Angle) %pin"
     //% group="analogIn" weight=83
-    
-    export function Angle(pin: AnalogPin): number {
-        return pins.analogReadPin(pin)
+
+    export function Angle( pin: AnalogPin ): number {
+        return pins.analogReadPin( pin )
     }
 
     //% blockId=lightlvl block="(Light) %pin"
     //% group="analogIn" weight=82
-    
-    export function Light(pin: AnalogPin): number {
-        return pins.analogReadPin(pin)
+
+    export function Light( pin: AnalogPin ): number {
+        return pins.analogReadPin( pin )
     }
 
     //% blockId=soilmoisture block="(SoilMoisture) %pin"
     //% group="analogIn" weight=81
-    
-    export function SoilMoisture(pin: AnalogPin): number {
-        return pins.analogReadPin(pin)
+
+    export function SoilMoisture( pin: AnalogPin ): number {
+        return pins.analogReadPin( pin )
     }
 
     //% blockId=rain block="(WaterLevel) Digital %pin"
     //% group="digitalIn" weight=80
-    
-    export function WaterLevelDigi(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
+
+    export function WaterLevelDigi( pin: DigitalPin ): boolean {
+        return pins.digitalReadPin( pin ) == 1
     }
 
     //% blockId=waterlvl block="(WaterLevel) Analog %pin"
     //% group="analogIn" weight=79
-    export function WaterLevelAna(pin: AnalogPin): number {
-        return pins.analogReadPin(pin)
+    export function WaterLevelAna( pin: AnalogPin ): number {
+        return pins.analogReadPin( pin )
     }
 
     //% blockId=infraRx block="On Infra %pin Received"
     //% group="Special" weight=78
-    export function InfraRx(pin: AnalogPin, handler: (data: string) => void) {
+    export function InfraRx( pin: AnalogPin, handler: ( data: string ) => void ) {
 
     }
 
     //% blockId=infraTx block="Infra %pin Transmit %data"
     //% group="Special" weight=78
-    
-    export function InfraTx(pin: AnalogPin, data: string) {
+
+    export function InfraTx( pin: AnalogPin, data: string ) {
 
     }
 
@@ -421,49 +421,49 @@ namespace Sugar {
 
     //% blockId=tof block="(TOF Distance) mm"
     //% group="I2C" weight=76
-    
+
     export function TOFDistance(): number {
-        if (!vl53Inited){
-            let buf = pins.createBuffer(3)
+        if ( !vl53Inited ) {
+            let buf = pins.createBuffer( 3 )
             buf[0] = 1
-            pins.i2cWriteBuffer(VL53L0X_ADDR, buf)
+            pins.i2cWriteBuffer( VL53L0X_ADDR, buf )
             vl53Inited = true
-            control.waitMicros(50)
+            control.waitMicros( 50 )
         }
-        pins.i2cWriteNumber(VL53L0X_ADDR, 0x1, NumberFormat.UInt8BE);
-        return pins.i2cReadNumber(VL53L0X_ADDR, NumberFormat.UInt16LE);
+        pins.i2cWriteNumber( VL53L0X_ADDR, 0x1, NumberFormat.UInt8BE );
+        return pins.i2cReadNumber( VL53L0X_ADDR, NumberFormat.UInt16LE );
     }
 
     const AHT20_ADDR = 0x38
     let aht20Inited = false;
 
-    function _aht20Ready (): boolean{
-        let stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
-        while (stat & 0x80){
-            stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
-            basic.pause(100)
+    function _aht20Ready(): boolean {
+        let stat = pins.i2cReadNumber( AHT20_ADDR, NumberFormat.UInt8BE );
+        while ( stat & 0x80 ) {
+            stat = pins.i2cReadNumber( AHT20_ADDR, NumberFormat.UInt8BE );
+            basic.pause( 100 )
         }
         return true
     }
 
     //% blockId=environment block="(ENV) %env"
     //% group="I2C" weight=74
-    export function ENV(env: EnvType): number {
-        if (!aht20Inited){
-            i2cwrite(AHT20_ADDR,0xba, [])
-            basic.pause(50)
-            i2cwrite(AHT20_ADDR,0xa8, [0,0])
-            basic.pause(350)
-            i2cwrite(AHT20_ADDR,0xe1, [0x28,0])
-            aht20Inited=true;
+    export function ENV( env: EnvType ): number {
+        if ( !aht20Inited ) {
+            i2cwrite( AHT20_ADDR, 0xba, [] )
+            basic.pause( 50 )
+            i2cwrite( AHT20_ADDR, 0xa8, [0, 0] )
+            basic.pause( 350 )
+            i2cwrite( AHT20_ADDR, 0xe1, [0x28, 0] )
+            aht20Inited = true;
         }
-        i2cwrite(AHT20_ADDR,0xac,[0x33,0])
-        if (_aht20Ready()){
-            const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
-            const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
-            const humi = Math.round(h*0.000095)
-            const t = ((n[3]&0x0f)<<16|(n[4]<<8)|n[5])
-            const temp = Math.round(t*0.000191 - 50)
+        i2cwrite( AHT20_ADDR, 0xac, [0x33, 0] )
+        if ( _aht20Ready() ) {
+            const n = pins.i2cReadBuffer( AHT20_ADDR, 6 )
+            const h = ( ( n[1] << 16 ) | ( n[2] << 8 ) | ( n[3] ) ) >> 4
+            const humi = Math.round( h * 0.000095 )
+            const t = ( ( n[3] & 0x0f ) << 16 | ( n[4] << 8 ) | n[5] )
+            const temp = Math.round( t * 0.000191 - 50 )
             return env === EnvType.Humidity ? humi : temp
         }
         return 0;
@@ -473,20 +473,135 @@ namespace Sugar {
 
     //% blockId=joyState block="(Joystick) State %state trigger"
     //% group="I2C" weight=72
-    export function joyState(state: JoystickDir): boolean {
-        const sta = i2cread(JOYSTICK_ADDR,1,1).getNumber(NumberFormat.UInt8BE,0)
-        return (sta & state) != 0;
+    export function joyState( state: JoystickDir ): boolean {
+        const sta = i2cread( JOYSTICK_ADDR, 1, 1 ).getNumber( NumberFormat.UInt8BE, 0 )
+        return ( sta & state ) != 0;
     }
 
     //% blockId=joyValue block="(Joystick) %dir Value"
     //% group="I2C" weight=72
-    
-    export function joyValue(dir: DirType): number {
-        const buf = i2cread(JOYSTICK_ADDR,2,4)
-        const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0)*255/2048 - 255)
-        const valY = Math.round(buf.getNumber(NumberFormat.Int16LE, 2)*255/2048 - 255)
+
+    export function joyValue( dir: DirType ): number {
+        const buf = i2cread( JOYSTICK_ADDR, 2, 4 )
+        const valX = Math.round( buf.getNumber( NumberFormat.Int16LE, 0 ) * 255 / 2048 - 255 )
+        const valY = Math.round( buf.getNumber( NumberFormat.Int16LE, 2 ) * 255 / 2048 - 255 )
         return dir === DirType.X ? valX : valY
     }
+
+    let COMMAND_I2C_ADDRESS = 0x24
+    let DISPLAY_I2C_ADDRESS = 0x34
+    let _SEG = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
+    let _intensity = 3
+    let TM1650_dbuf = [0, 0, 0, 0]
+    function TM1650_cmd( c: number ) {
+        pins.i2cWriteNumber( COMMAND_I2C_ADDRESS, c, NumberFormat.Int8BE )
+    }
+    function TM1650_dat( bit: number, d: number ) {
+        pins.i2cWriteNumber( DISPLAY_I2C_ADDRESS + ( bit % 4 ), d, NumberFormat.Int8BE )
+    }
+
+    //% blockId="TM1650_ON" block="turn on display"
+    //% group="I2C" weight=50 blockGap=8
+    export function TM1650_on() {
+        TM1650_cmd( _intensity * 16 + 1 )
+    }
+
+    //% blockId="TM1650_OFF" block="turn off display"
+    //% group="I2C" weight=50 blockGap=8
+    export function TM1650_off() {
+        _intensity = 0
+        TM1650_cmd( 0 )
+    }
+
+    //% blockId="TM1650_CLEAR" block="clear display"
+    //% group="I2C" weight=40 blockGap=8
+    export function TM1650_clear() {
+        TM1650_dat( 0, 0 )
+        TM1650_dat( 1, 0 )
+        TM1650_dat( 2, 0 )
+        TM1650_dat( 3, 0 )
+        TM1650_dbuf = [0, 0, 0, 0]
+    }
+
+    /**
+     * show a digital in given position
+     * @param digit is number (0-15) will be shown, eg: 1
+     * @param bit is position, eg: 0
+     */
+    //% blockId="TM1650_DIGIT" block="show digit %num|at %bit"
+    //% group="I2C" weight=60 blockGap=8
+    //% num.max=15 num.min=0
+    export function TM1650_digit( num: number, bit: number ) {
+        TM1650_dbuf[bit % 4] = _SEG[num % 16]
+        TM1650_dat( bit, _SEG[num % 16] )
+    }
+
+    /**
+     * show a number in display
+     * @param num is number will be shown, eg: 100
+     */
+    //% blockId="TM1650_SHOW_NUMBER" block="show number %num"
+    //% group="I2C" weight=70 blockGap=8
+    export function TM1650_showNumber( num: number ) {
+        if ( num < 0 ) {
+            TM1650_dat( 0, 0x40 ) // '-'
+            num = -num
+        }
+        else
+            TM1650_digit( Math.idiv( num, 1000 ) % 10, 0 )
+        TM1650_digit( num % 10, 3 )
+        TM1650_digit( Math.idiv( num, 10 ) % 10, 2 )
+        TM1650_digit( Math.idiv( num, 100 ) % 10, 1 )
+    }
+
+    /**
+     * show a number in hex format
+     * @param num is number will be shown, eg: 123
+     */
+    //% blockId="TM1650_SHOW_HEX_NUMBER" block="show hex number %num"
+    //% group="I2C" weight=65 blockGap=8
+    export function TM1650_showHex( num: number ) {
+        if ( num < 0 ) {
+            TM1650_dat( 0, 0x40 ) // '-'
+            num = -num
+        }
+        else
+            TM1650_digit( ( num >> 12 ) % 16, 0 )
+        TM1650_digit( num % 16, 3 )
+        TM1650_digit( ( num >> 4 ) % 16, 2 )
+        TM1650_digit( ( num >> 8 ) % 16, 1 )
+    }
+
+    /**
+     * show Dot Point in given position，1-4
+     * @param bit is positiion, eg: 0
+     * @param show is true/false, eg: true
+     */
+    //% blockId="TM1650_SHOW_DP" block=" %num show dot point %bit"
+    //% group="I2C" weight=60 blockGap=8
+    export function TM1650_showDpAt( show: boolean, bit: number ) {
+        if ( show ) TM1650_dat( bit, TM1650_dbuf[bit % 4] | 0x80 )
+        else TM1650_dat( bit, TM1650_dbuf[bit % 4] & 0x7F )
+    }
+
+    /**
+     * set display intensity
+     * @param dat is intensity of the display, eg: 3
+     */
+    //% blockId="TM1650_INTENSITY" block="set intensity %dat"
+    //% group="I2C" weight=70 blockGap=8
+    export function setIntensity( dat: number ) {
+        if ( ( dat < 0 ) || ( dat > 8 ) )
+            return;
+        if ( dat == 0 )
+            TM1650_off()
+        else {
+            _intensity = dat
+            TM1650_cmd( ( dat << 4 ) | 0x01 )
+        }
+    }
+
+    TM1650_on()
 
 
     /**
@@ -496,113 +611,113 @@ namespace Sugar {
      */
     //% blockId=asr_init block="(ASR) init|Tx pin %tx|Rx pin %rx"
     //% group="ASR" weight=50
-    export function asr_init(tx: SerialPin, rx: SerialPin): void {
-        serial.redirect(tx, rx, BaudRate.BaudRate115200)
+    export function asr_init( tx: SerialPin, rx: SerialPin ): void {
+        serial.redirect( tx, rx, BaudRate.BaudRate115200 )
         // serial.setRxBufferSize(6)
     }
 
     //% blockId=asr_init_pw block="(ASR) init|Port %port"
     //% group="ASR" weight=49
-    export function asr_init_pw(port: SerialPorts): void {
-        asr_init(PortSerial[port][0], PortSerial[port][1])
+    export function asr_init_pw( port: SerialPorts ): void {
+        asr_init( PortSerial[port][0], PortSerial[port][1] )
     }
 
 
     //% blockId=asr_cmd_led block="(ASR) On LED Speech |%id recognized"
     //% group="ASR" weight=48
-    export function on_asr_led(id: LEDCmd, handler: () => void) {
-        control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
+    export function on_asr_led( id: LEDCmd, handler: () => void ) {
+        control.onEvent( asrEventId, id, handler );
+        control.inBackground( () => {
+            while ( 1 ) {
                 let a = serial.readString()
-                if (a.slice(0, 3) == "asr"){
-                    cmd = parseInt(a.substr(3,3))
-                    control.raiseEvent(asrEventId, cmd)
+                if ( a.slice( 0, 3 ) == "asr" ) {
+                    cmd = parseInt( a.substr( 3, 3 ) )
+                    control.raiseEvent( asrEventId, cmd )
                 }
-                basic.pause(40)
+                basic.pause( 40 )
             }
-        })
+        } )
     }
 
     //% blockId=asr_cmd_actuator block="(ASR) On Actuator Speech |%id recognized"
     //% group="ASR" weight=47
-    export function on_asr_act(id: ActCmd, handler: () => void) {
-        control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
+    export function on_asr_act( id: ActCmd, handler: () => void ) {
+        control.onEvent( asrEventId, id, handler );
+        control.inBackground( () => {
+            while ( 1 ) {
                 let a = serial.readString()
-                if (a.slice(0, 3) == "asr"){
-                    cmd = parseInt(a.substr(3,3))
-                    control.raiseEvent(asrEventId, cmd)
+                if ( a.slice( 0, 3 ) == "asr" ) {
+                    cmd = parseInt( a.substr( 3, 3 ) )
+                    control.raiseEvent( asrEventId, cmd )
                 }
-                basic.pause(40)
+                basic.pause( 40 )
             }
-        })
+        } )
     }
 
     //% blockId=asr_cmd_measure block="(ASR) On Measurement Speech |%id recognized"
     //% group="ASR" weight=46
-    export function on_asr_measure(id: MeasureCmd, handler: () => void) {
-        control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
+    export function on_asr_measure( id: MeasureCmd, handler: () => void ) {
+        control.onEvent( asrEventId, id, handler );
+        control.inBackground( () => {
+            while ( 1 ) {
                 let a = serial.readString()
-                if (a.slice(0, 3) == "asr"){
-                    cmd = parseInt(a.substr(3,3))
-                    control.raiseEvent(asrEventId, cmd)
+                if ( a.slice( 0, 3 ) == "asr" ) {
+                    cmd = parseInt( a.substr( 3, 3 ) )
+                    control.raiseEvent( asrEventId, cmd )
                 }
-                basic.pause(40)
+                basic.pause( 40 )
             }
-        })
+        } )
     }
 
     //% blockId=asr_cmd_custom block="(ASR) On Customized Speech |%id recognized"
     //% group="ASR" weight=45
-    export function on_asr_custom(id: CustomCmd, handler: () => void) {
-        control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
+    export function on_asr_custom( id: CustomCmd, handler: () => void ) {
+        control.onEvent( asrEventId, id, handler );
+        control.inBackground( () => {
+            while ( 1 ) {
                 let a = serial.readString()
-                if (a.slice(0, 3) == "asr"){
-                    cmd = parseInt(a.substr(3,3))
-                    control.raiseEvent(asrEventId, cmd)
+                if ( a.slice( 0, 3 ) == "asr" ) {
+                    cmd = parseInt( a.substr( 3, 3 ) )
+                    control.raiseEvent( asrEventId, cmd )
                 }
-                basic.pause(40)
+                basic.pause( 40 )
             }
-        })
+        } )
     }
 
     //% blockId=asr_tts_int block="(ASR) peak Integer |%num"
     //% num.min=-67108864 num.max=67108864
     //% group="ASR" weight=44
-    export function asr_tts_int(num: number): void {
-        let buf = pins.createBuffer(9);
+    export function asr_tts_int( num: number ): void {
+        let buf = pins.createBuffer( 9 );
         buf[0] = 0xAA;
         buf[1] = 0x55;
         buf[2] = TTS_INTEGER_CMD;
-        for(let i=0; i<4; i++) {
-            buf[3+i] = num & 0xff;
+        for ( let i = 0; i < 4; i++ ) {
+            buf[3 + i] = num & 0xff;
             num = num >> 8;
         }
         buf[7] = 0x55;
         buf[8] = 0xAA;
-        serial.writeBuffer(buf)
+        serial.writeBuffer( buf )
     }
 
     //% blockId=asr_tts_double block="(ASR) Speak Double |%num"
     //% group="ASR" weight=43
-    export function asr_tts_double(num: number): void {
-        let buf = pins.createBuffer(13);
+    export function asr_tts_double( num: number ): void {
+        let buf = pins.createBuffer( 13 );
         buf[0] = 0xAA;
         buf[1] = 0x55;
         buf[2] = TTS_DOUBLE_CMD;
-        for(let i=8; i>=0; i--) {
-            buf[3+i] = num & 0xff;
+        for ( let i = 8; i >= 0; i-- ) {
+            buf[3 + i] = num & 0xff;
             num = num >> 8;
         }
         buf[11] = 0x55;
         buf[12] = 0xAA;
-        serial.writeBuffer(buf)
+        serial.writeBuffer( buf )
     }
 
     /**
@@ -616,20 +731,20 @@ namespace Sugar {
     //% month.min=1 month.max=12
     //% day.min=1 day.max=31
     //% group="ASR" weight=42
-    export function asr_tts_date(year: number, month: number, day: number): void {
-        let buf = pins.createBuffer(11);
+    export function asr_tts_date( year: number, month: number, day: number ): void {
+        let buf = pins.createBuffer( 11 );
         buf[0] = 0xAA;
         buf[1] = 0x55;
         buf[2] = TTS_DATE_CMD;
-        for(let y=0; y<4; y++) {
-            buf[3+y] = year & 0xff;
+        for ( let y = 0; y < 4; y++ ) {
+            buf[3 + y] = year & 0xff;
             year = year >> 8;
         }
         buf[7] = month & 0xff;
         buf[8] = day & 0xff;
         buf[9] = 0x55;
         buf[10] = 0xAA;
-        serial.writeBuffer(buf)
+        serial.writeBuffer( buf )
     }
 
     /**
@@ -641,8 +756,8 @@ namespace Sugar {
     //% hour.min=0 hour.max=24
     //% minute.min=0 minute.max=59
     //% group="ASR" weight=41
-    export function asr_tts_time(hour: number, minute: number): void {
-        let buf = pins.createBuffer(7);
+    export function asr_tts_time( hour: number, minute: number ): void {
+        let buf = pins.createBuffer( 7 );
         buf[0] = 0xAA;
         buf[1] = 0x55;
         buf[2] = TTS_TIME_CMD;
@@ -650,19 +765,19 @@ namespace Sugar {
         buf[4] = minute & 0xff;
         buf[5] = 0x55;
         buf[6] = 0xAA;
-        serial.writeBuffer(buf)
+        serial.writeBuffer( buf )
     }
 
     //% blockId=asr_tts_words block="(ASR) Speak Words |%id"
     //% group="ASR" weight=40
-    export function asr_tts_words(id: WordsID): void {
-        let buf = pins.createBuffer(5);
+    export function asr_tts_words( id: WordsID ): void {
+        let buf = pins.createBuffer( 5 );
         buf[0] = 0xAA;
         buf[1] = 0x55;
         buf[2] = id;
         buf[3] = 0x55;
         buf[4] = 0xAA;
-        serial.writeBuffer(buf)
+        serial.writeBuffer( buf )
     }
 
 }
@@ -706,7 +821,7 @@ namespace SugarBox {
     const REG_DUALRUN = 0x6
     const REG_VOLTAG = 0x8
     const REG_PIDRESET = 0x9
-    export enum MPort{
+    export enum MPort {
         M1A = 1,
         M1B = 2,
         M2A = 3,
@@ -732,18 +847,18 @@ namespace SugarBox {
         RL = 2
     }
 
-    function _i2cWriteBH(reg: number, index: number, value: number){
-        const buff = pins.createBuffer(4) // reg, int16
+    function _i2cWriteBH( reg: number, index: number, value: number ) {
+        const buff = pins.createBuffer( 4 ) // reg, int16
         buff[0] = reg
         buff[1] = index
-        buff.setNumber(NumberFormat.Int16LE, 2, value)
-        pins.i2cWriteBuffer(SGBOX_ADDR, buff)
+        buff.setNumber( NumberFormat.Int16LE, 2, value )
+        pins.i2cWriteBuffer( SGBOX_ADDR, buff )
     }
 
-    function _i2cReadF (port: EPort, p: E_PARAM): number {
+    function _i2cReadF( port: EPort, p: E_PARAM ): number {
         let _reg = port == EPort.EM1 ? 0x60 : 0x70
         _reg |= p
-        return i2cread(SGBOX_ADDR, _reg, 4).getNumber(NumberFormat.Float32LE, 0)
+        return i2cread( SGBOX_ADDR, _reg, 4 ).getNumber( NumberFormat.Float32LE, 0 )
     }
 
     /**
@@ -752,76 +867,76 @@ namespace SugarBox {
     //% blockId=waitready block="Wait Ready"
     //% group="Basic" weight=100
     export function waitready() {
-      let bat = 0
-      while (bat === 0){
-          bat = battery()
-          basic.pause(200)
-      }
+        let bat = 0
+        while ( bat === 0 ) {
+            bat = battery()
+            basic.pause( 200 )
+        }
     }
 
     //% blockId=battery block="Battery Voltage"
     //% group="Basic" weight=100
     export function battery(): number {
-        return i2cread(SGBOX_ADDR,REG_VOLTAG,4).getNumber(NumberFormat.Float32LE,0)
+        return i2cread( SGBOX_ADDR, REG_VOLTAG, 4 ).getNumber( NumberFormat.Float32LE, 0 )
     }
 
     //% blockId=motor_spd block="Motor|%port Speed %speed"
     //% speed.min=-255 speed.max=255 speed.defl=0
     //% group="Actuators" weight=50
-    export function motorSpd(port: MPort, speed: number) {
-        _i2cWriteBH(REG_MOTOR,port,speed)
+    export function motorSpd( port: MPort, speed: number ) {
+        _i2cWriteBH( REG_MOTOR, port, speed )
     }
-  
+
     //% blockId=motor_stop block="Motor|%port Stop"
     //% group="Actuators" weight=49
-    export function motorStop(port: MPort) {
-        _i2cWriteBH(REG_MOTOR,port,0)
+    export function motorStop( port: MPort ) {
+        _i2cWriteBH( REG_MOTOR, port, 0 )
     }
 
     //% blockId=motor_stop_all block="Stop All Motor "
     //% group="Actuators" weight=48
     export function motorStopAll() {
-        for (let idx = 1; idx <= 4; idx++) {
-            motorStop(idx);
+        for ( let idx = 1; idx <= 4; idx++ ) {
+            motorStop( idx );
         }
     }
 
     //% blockId=servo2kg block="2KG Servo|%port Angle %angle"
     //% angle.min=0 angle.max=360 angle.defl=90
     //% group="Actuators" weight=47
-    export function servo2kg(port: SPort, angle: number) {
-        const us = Math.floor(angle*200/36+500) // 2kg
-        servoPulse(port, us)
+    export function servo2kg( port: SPort, angle: number ) {
+        const us = Math.floor( angle * 200 / 36 + 500 ) // 2kg
+        servoPulse( port, us )
     }
 
     //% blockId=servo_pulse block="Servo|%port Pulse %us us"
     //% us.min=500 us.max=2500 us.defl=1500
     //% group="Actuators" weight=46
-    export function servoPulse(port: SPort, us: number) {
-        _i2cWriteBH(REG_SERVO,port,us)
+    export function servoPulse( port: SPort, us: number ) {
+        _i2cWriteBH( REG_SERVO, port, us )
     }
 
-    function _emotorReset(port: EPort){
-        i2cwrite(SGBOX_ADDR,REG_PIDRESET,[port,0])
+    function _emotorReset( port: EPort ) {
+        i2cwrite( SGBOX_ADDR, REG_PIDRESET, [port, 0] )
     }
 
-    function _pidRun(port: EPort, mode: number, speed: number, param2: number, wait: boolean = true){
-        const buf = pins.createBuffer(11) // reg,B,B,f,f
+    function _pidRun( port: EPort, mode: number, speed: number, param2: number, wait: boolean = true ) {
+        const buf = pins.createBuffer( 11 ) // reg,B,B,f,f
         buf[0] = REG_PIDRUN
         buf[1] = port
         buf[2] = mode
-        buf.setNumber(NumberFormat.Float32LE, 3, speed)
-        buf.setNumber(NumberFormat.Float32LE, 7, param2)
-        pins.i2cWriteBuffer(SGBOX_ADDR, buf)
-        if (wait){
+        buf.setNumber( NumberFormat.Float32LE, 3, speed )
+        buf.setNumber( NumberFormat.Float32LE, 7, param2 )
+        pins.i2cWriteBuffer( SGBOX_ADDR, buf )
+        if ( wait ) {
             let _reg = port == EPort.EM1 ? 0x60 : 0x70
-            while (mode != 0){
-                mode = i2cread(SGBOX_ADDR,_reg,1)[0]
-                if (mode & MODE_STUCK){
-                    _emotorReset(port)
+            while ( mode != 0 ) {
+                mode = i2cread( SGBOX_ADDR, _reg, 1 )[0]
+                if ( mode & MODE_STUCK ) {
+                    _emotorReset( port )
                     return -1;
                 }
-                basic.pause(200)
+                basic.pause( 200 )
             }
         }
         return 0
@@ -829,79 +944,79 @@ namespace SugarBox {
 
     //% blockId=enc_init block="Encoder Motor|%port Init"
     //% group="Encoded Motor" weight=40
-    export function encMotorInit(port: EPort) {
-        _emotorReset(port)
-    } 
+    export function encMotorInit( port: EPort ) {
+        _emotorReset( port )
+    }
 
     //% blockId=enc_rpm_set block="EMotor %port run %spd RPM"
     //% spd.min=-300 spd.max=300 spd.defl=120
     //% group="Encoded Motor" weight=39
-    export function eMotorSetRpm(port: EPort, spd: number) {
-        spd = spd/60 // from rpm to rnd per sec
-        _pidRun(port,MODE_SPEED,spd,0,false)
+    export function eMotorSetRpm( port: EPort, spd: number ) {
+        spd = spd / 60 // from rpm to rnd per sec
+        _pidRun( port, MODE_SPEED, spd, 0, false )
     }
 
     //% blockId=enc_stop block="EMotor %port Stop"
     //% group="Encoded Motor" weight=39
-    export function eMotorStop(port: EPort) {
-        _pidRun(port,MODE_SPEED,0,0,false)
+    export function eMotorStop( port: EPort ) {
+        _pidRun( port, MODE_SPEED, 0, 0, false )
     }
 
     //% blockId=enc_rpm_get block="EMotor %port get Speed(RPM)"
     //% group="Encoded Motor" weight=38
-    export function eMotorGetRpm(port: EPort): number {
-        return _i2cReadF(port, E_PARAM.SPEED)
+    export function eMotorGetRpm( port: EPort ): number {
+        return _i2cReadF( port, E_PARAM.SPEED )
     }
 
-    
+
     //% blockId=enc_goto block="EMotor %port Goto degree %degree speed %rpm RPM"
     //% group="Encoded Motor" weight=37
-    function eMotorGoto(port: EPort, degree: number, rpm: number) {
+    function eMotorGoto( port: EPort, degree: number, rpm: number ) {
         // speed to RPSec, degree to round
-        const speed = rpm/60
-        const rnd = degree/360
-        _pidRun(port, MODE_SPEED | MODE_RUNPOS, speed, rnd, true)
+        const speed = rpm / 60
+        const rnd = degree / 360
+        _pidRun( port, MODE_SPEED | MODE_RUNPOS, speed, rnd, true )
     }
 
 
     //% blockId=enc_set_pos block="EMotor %port To Position %degree"
     //% group="Encoded Motor" weight=36
-    export function eMotorSetPos(port: EPort, degree: number) {
+    export function eMotorSetPos( port: EPort, degree: number ) {
         // speed to RPSec, degree to round
         const speed = 2 // 120 rpm
-        const rnd = degree/360
+        const rnd = degree / 360
         const mode = MODE_SPEED | MODE_RUNPOS | MODE_ABSOLU
-        _pidRun(port,mode, speed, rnd, true)
+        _pidRun( port, mode, speed, rnd, true )
     }
 
 
     //% blockId=enc_position block="EMotor %port Position degree"
     //% group="Encoded Motor" weight=35
-    export function eMotorPos(port: EPort): number {
-        return _i2cReadF(port, E_PARAM.POSITION)
+    export function eMotorPos( port: EPort ): number {
+        return _i2cReadF( port, E_PARAM.POSITION )
     }
 
 
     //% blockId=enc_move_deg block="EMotor %port Move By Degree %degree speed %speed RPM"
     //% speed.min=-300 speed.max=300 speed.defl=120
     //% group="Encoded Motor" weight=34
-    export function eMotorMoveDeg(port: EPort, degree: number, speed: number) {
-        eMotorGoto(port, degree, speed)
+    export function eMotorMoveDeg( port: EPort, degree: number, speed: number ) {
+        eMotorGoto( port, degree, speed )
     }
 
     //% blockId=enc_move_rnd block="EMotor %port Move Round %rnd speed %speed RPM"
     //% speed.min=-300 speed.max=300 speed.defl=120
     //% group="Encoded Motor" weight=34
-    export function eMotorMoveRnd(port: EPort, rnd: number, speed: number) {
-        eMotorGoto(port, rnd*360, speed)
+    export function eMotorMoveRnd( port: EPort, rnd: number, speed: number ) {
+        eMotorGoto( port, rnd * 360, speed )
     }
 
     //% blockId=enc_move_delay block="EMotor %port Move Delayed %t sec speed %speed RPM"
     //% speed.min=-300 speed.max=300 speed.defl=120
     //% group="Encoded Motor" weight=34
-    export function eMotorMoveDelayed(port: EPort, t: number, speed: number) {
+    export function eMotorMoveDelayed( port: EPort, t: number, speed: number ) {
         const mode = MODE_SPEED | MODE_DELAY
-        _pidRun(port,mode, speed, t*1000, true)
+        _pidRun( port, mode, speed, t * 1000, true )
     }
 
     // initial params in CM
@@ -912,27 +1027,27 @@ namespace SugarBox {
     const MODE_RUN = 0x1
     const MODE_TURN = 0x2
 
-    function _dmotorReset (){
-        i2cwrite(SGBOX_ADDR, REG_PIDRESET, [3, _Setup])
+    function _dmotorReset() {
+        i2cwrite( SGBOX_ADDR, REG_PIDRESET, [3, _Setup] )
     }
 
-    function _dualMotorRun(mode: number, v: number, w: number, rnd: number, wait: boolean = true){
-        const buf = pins.createBuffer(14) // reg B,f,f,f
+    function _dualMotorRun( mode: number, v: number, w: number, rnd: number, wait: boolean = true ) {
+        const buf = pins.createBuffer( 14 ) // reg B,f,f,f
         buf[0] = REG_DUALRUN
         buf[1] = mode
-        buf.setNumber(NumberFormat.Float32LE, 2, v) // forward linear speed
-        buf.setNumber(NumberFormat.Float32LE, 6, w) // angular speed
-        buf.setNumber(NumberFormat.Float32LE, 11, rnd)
-        pins.i2cWriteBuffer(SGBOX_ADDR, buf)
-        if (wait){
+        buf.setNumber( NumberFormat.Float32LE, 2, v ) // forward linear speed
+        buf.setNumber( NumberFormat.Float32LE, 6, w ) // angular speed
+        buf.setNumber( NumberFormat.Float32LE, 11, rnd )
+        pins.i2cWriteBuffer( SGBOX_ADDR, buf )
+        if ( wait ) {
             let _reg = 0x80
-            while (mode != 0){
-                mode = i2cread(SGBOX_ADDR,_reg,1)[0]
-                if (mode & MODE_STUCK){
+            while ( mode != 0 ) {
+                mode = i2cread( SGBOX_ADDR, _reg, 1 )[0]
+                if ( mode & MODE_STUCK ) {
                     _dmotorReset()
                     return -1;
                 }
-                basic.pause(200)
+                basic.pause( 200 )
             }
         }
         return 0
@@ -947,15 +1062,15 @@ namespace SugarBox {
      */
     //% blockId=denc_init block="Dual encoded motor init|wheel diameter(cm) %diameter|track width(cm) %width||setup %setup ||inversed %inversed"
     //% group="Dual Encoded Motor" weight=30
-    export function dualMotorInit(diameter: number, width: number, setup: DSetup=1, inversed: boolean=false) {
+    export function dualMotorInit( diameter: number, width: number, setup: DSetup = 1, inversed: boolean = false ) {
         _Setup = 0
         _R = diameter
         _W = width
-        if (setup == DSetup.RL){
-        _Setup |= 0x1
+        if ( setup == DSetup.RL ) {
+            _Setup |= 0x1
         }
-        if (inversed){
-        _Setup |= 0x2
+        if ( inversed ) {
+            _Setup |= 0x2
         }
         _dmotorReset()
     }
@@ -967,10 +1082,10 @@ namespace SugarBox {
      */
     //% blockId=denc_move block="Move %distance cm, speed %speed cm/s"
     //% group="Dual Encoded Motor" weight=28
-    export function dualMotorMove(distance: number,speed: number) {
-        const rnd = distance/(Math.PI*_R)
-        speed = speed/(Math.PI*_R)
-        _dualMotorRun(MODE_RUN, speed, 0, rnd)
+    export function dualMotorMove( distance: number, speed: number ) {
+        const rnd = distance / ( Math.PI * _R )
+        speed = speed / ( Math.PI * _R )
+        _dualMotorRun( MODE_RUN, speed, 0, rnd )
     }
 
     /**
@@ -981,11 +1096,11 @@ namespace SugarBox {
      */
     //% blockId=denc_turn block="Turn degree %degree, speed %w degree/s, forward speed %v cm/s"
     //% group="Dual Encoded Motor" weight=27
-    export function dualMotorTurn(degree: number, w: number, v: number) {
-        const speed = v/(Math.PI*_R) // in round/s
-        const diff = w*_W/_R/360 // wheel difference
-        const rnd = 2*(degree/w)*diff
-        _dualMotorRun(MODE_TURN, speed, diff, rnd)
+    export function dualMotorTurn( degree: number, w: number, v: number ) {
+        const speed = v / ( Math.PI * _R ) // in round/s
+        const diff = w * _W / _R / 360 // wheel difference
+        const rnd = 2 * ( degree / w ) * diff
+        _dualMotorRun( MODE_TURN, speed, diff, rnd )
     }
 
 }
