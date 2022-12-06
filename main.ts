@@ -21,12 +21,41 @@ function i2cread( addr: number, reg: number, size: number ) {
 namespace Sugar {
     const TTS_INTEGER_CMD = 0x20          // tts id : signed integer
     const TTS_DOUBLE_CMD = 0x1f           // tts id : signed double
-    const TTS_TIME_CMD = 0x03            // tts id : clock => (hour,minute)
+    const TTS_TIME_CMD = 0x03             // tts id : clock => (hour,minute)
     const TTS_DATE_CMD = 0x04             // tts id : date => (year,mouth,day)
     const INTEGER_LEN = 4                 // 4 bytes int
     const DOUBLE_LEN = 8                  // 8 bytes double
     const CLOCK_LEN = 2                   // 2 bytes clock(1,1)
     const DATE_LEN = 6                    // 2 bytes date(4,1,1)  
+
+    //self.i2c address of the device
+    const HP203B_ADDRESS = 0x76
+
+    //ADC_CVT(HP203B_ADC_CVT, 3 - bit OSR, 2 - bit CHNL)
+
+    //HP203B Command Set
+    const HP203B_SOFT_RST = 0x06          //Soft reset the device
+    const HP203B_ADC_CVT = 0x40           //Perform ADC conversion
+    const HP203B_READ_PT = 0x10           //Read the temperature and pressure values
+    const HP203B_READ_AT = 0x11           //Read the temperature and altitude values
+    const HP203B_READ_P = 0x30            //Read the pressure value only
+    const HP203B_READ_A = 0x31            //Read the altitude value only
+    const HP203B_READ_T = 0x32            //Read the temperature value only
+    const HP203B_ANA_CAL = 0x28           //Re - calibrate the internal analog blocks
+    const HP203B_READ_REG = 0x80          //Read out the control registers
+    const HP203B_WRITE_REG = 0xC0         //Write in the control registers
+
+
+    //OSR Configuration
+    const HP203B_OSR_4096 = 0x00                // Conversion time: 4.1ms
+    const HP203B_OSR_2048 = 0x04                // Conversion time: 8.2ms
+    const HP203B_OSR_1024 = 0x08                // Conversion time: 16.4ms
+    const HP203B_OSR_512 = 0xC0                 // Conversion time: 32.8ms
+    const HP203B_OSR_256 = 0x10                 // Conversion time: 65.6ms
+    const HP203B_OSR_128 = 0x14                 // Conversion time: 131.1ms
+
+    const HP203B_CH_PRESSTEMP = 0x00                  // Sensor Pressure and Temperature Channel
+    const HP203B_CH_TEMP = 0x02                       // Temperature Channel
 
     type EvtAct = () => void
 
@@ -287,7 +316,23 @@ namespace Sugar {
         Humidity = 1
     }
 
+    export enum EnvTypeII {
+        //% block="Pressure(hPa)"
+        Pressure = 0,
+        //% block="Altitude(m)"
+        Altitude = 1,
+        //% block="Temp(℃)"
+        Temp = 2
+    }
+
     export enum LEDSta {
+        //% block="OFF"
+        Off = 0,
+        //% block="ON"
+        On = 1
+    }
+
+    export enum Switch {
         //% block="OFF"
         Off = 0,
         //% block="ON"
@@ -340,9 +385,20 @@ namespace Sugar {
         pins.onPulsed( pin, PulseValue.Low, handler )
     }
 
+    //% blockId=Crash block="(Crash) %pin crash"
+    //% group="digitalIn" weight=79
+    export function Crash( pin: DigitalPin ): boolean {
+        return pins.digitalReadPin( pin ) == 1
+    }
+
+    //% blockId=Touch block="(Touch) %pin Touch"
+    //% group="digitalIn" weight=78
+    export function Touch( pin: DigitalPin ): boolean {
+        return pins.digitalReadPin( pin ) == 1
+    }
+
     //% blockId=led_toggle block="(LED) %pin| %onoff"
     //% group="digitalOut" weight=85
-
     export function ledOnoff( pin: DigitalPin, onoff: LEDSta ) {
         pins.digitalWritePin( pin, onoff ? 1 : 0 )
     }
@@ -350,14 +406,30 @@ namespace Sugar {
     //% blockId=led_luminent block="(LED) %pin| Luminent %value"
     //% value.min=0 value.max=1023 value.defl=0
     //% group="digitalOut" weight=84
-
     export function ledLuminent( pin: AnalogPin, value: number ) {
         pins.analogWritePin( pin, value )
     }
 
+    //% blockId=Buzzer block="(Buzzer) have buzzer %pin| %onoff"
+    //% group="digitalOut" weight=83
+    export function Buzzer( pin: DigitalPin, onoff: Switch ) {
+        pins.digitalWritePin( pin, onoff ? 1 : 0 )
+    }
+
+    //% blockId=Laser block="(Laser) red dot laser %pin| %onoff"
+    //% group="digitalOut" weight=82
+    export function Laser( pin: DigitalPin, onoff: Switch ) {
+        pins.digitalWritePin( pin, onoff ? 1 : 0 )
+    }
+
+    //% blockId=vibeMotor block="(Vibe Motor) %pin| %onoff"
+    //% group="digitalOut" weight=81
+    export function vibeMotor( pin: DigitalPin, onoff: Switch ) {
+        pins.digitalWritePin( pin, onoff ? 1 : 0 )
+    }
+
     //% blockId=flameBool block="(Flame) Flame Detected %pin "
     //% group="digitalIn" weight=80
-
     export function FlameDigi( pin: DigitalPin ): boolean {
         return pins.digitalReadPin( pin ) == 1
     }
@@ -415,6 +487,12 @@ namespace Sugar {
     export function InfraTx( pin: AnalogPin, data: string ) {
 
     }
+
+    // //% blockId=tempSensor block="(DS18B20) Temperature Sensor %pin"
+    // //% group="Special" weight=77
+    // export function tempSensor(pin: DigitalPin):string {
+    //     return  '温度：16℃'
+    // }
 
     const VL53L0X_ADDR = 0x5e;
     let vl53Inited = false;
@@ -523,6 +601,8 @@ namespace Sugar {
         TM1650_dbuf = [0, 0, 0, 0]
     }
 
+
+
     /**
      * show a digital in given position
      * @param digit is number (0-15) will be shown, eg: 1
@@ -589,8 +669,8 @@ namespace Sugar {
      * @param dat is intensity of the display, eg: 3
      */
     //% blockId="TM1650_INTENSITY" block="set intensity %dat"
-    //% group="I2C" weight=70 blockGap=8
-    export function setIntensity( dat: number ) {
+    //% group="I2C" weight=59 blockGap=8
+    export function TM1650_setIntensity( dat: number ) {
         if ( ( dat < 0 ) || ( dat > 8 ) )
             return;
         if ( dat == 0 )
@@ -603,6 +683,34 @@ namespace Sugar {
 
     TM1650_on()
 
+    //% blockId="envUpdate" block="(ENV.II Model)Barometric Altitude Module update value"
+    //% group="I2C" weight=39 blockGap=8
+    export function envUpdate() {
+        const CNVRSN_CONFIG = Buffer.fromArray( [HP203B_ADC_CVT | HP203B_OSR_1024 | HP203B_CH_PRESSTEMP] )
+        pins.i2cWriteBuffer( HP203B_ADDRESS, CNVRSN_CONFIG )
+    }
+
+    //% blockId="envGetData" block="(ENV.II Model)Barometric Altitude Module get %pin"
+    //% group="I2C" weight=38 blockGap=8
+    export function envGetData( pin: EnvTypeII ): number {
+        let presData = i2cread( HP203B_ADDRESS, HP203B_READ_P, 3 )
+        let pressure = ( ( ( presData[0] & 0x0F ) * 65536 ) + ( presData[1] * 256 ) + presData[2] ) / 100.00
+
+        let tempData = i2cread( HP203B_ADDRESS, HP203B_READ_T, 3 )
+        let cTemp = ( ( ( tempData[0] & 0x0F ) * 65536 ) + ( tempData[1] * 256 ) + tempData[2] ) / 100.00
+        // const fTemp = (cTemp * 1.8) + 32
+
+        let altData = i2cread( HP203B_ADDRESS, 0x11, 6 )
+        let altitude = ( ( ( altData[3] & 0x0F ) * 65536 ) + ( altData[4] * 256 ) + altData[5] ) / 100.00
+
+        if ( pin === EnvTypeII.Pressure ) {
+            return pressure
+        } else if ( pin === EnvTypeII.Altitude ) {
+            return altitude
+        } else {
+            return cTemp
+        }
+    }
 
     /**
      * init serial port
@@ -1104,4 +1212,3 @@ namespace SugarBox {
     }
 
 }
-
