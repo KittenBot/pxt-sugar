@@ -382,7 +382,7 @@ namespace Sugar {
 
     //% blockId=onButtonEvent block="on Button|%pin pressed"
     //% group="digitalIn" weight=86
-    export function onBumperEvent( pin: DigitalPin, handler: () => void ): void {
+    export function onButtonEvent( pin: DigitalPin, handler: () => void ): void {
         pins.setPull( pin, PinPullMode.PullUp )
         pins.onPulsed( pin, PulseValue.Low, handler )
     }
