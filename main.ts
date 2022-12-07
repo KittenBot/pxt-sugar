@@ -322,7 +322,9 @@ namespace Sugar {
         //% block="Altitude(m)"
         Altitude = 1,
         //% block="Temp(℃)"
-        Temp = 2
+        CTemp = 2,
+        //% block="Temp(℉)"
+        FTemp = 3
     }
 
     export enum LEDSta {
@@ -698,7 +700,7 @@ namespace Sugar {
 
         let tempData = i2cread( HP203B_ADDRESS, HP203B_READ_T, 3 )
         let cTemp = ( ( ( tempData[0] & 0x0F ) * 65536 ) + ( tempData[1] * 256 ) + tempData[2] ) / 100.00
-        // const fTemp = (cTemp * 1.8) + 32
+        const fTemp = ( cTemp * 1.8 ) + 32
 
         let altData = i2cread( HP203B_ADDRESS, 0x11, 6 )
         let altitude = ( ( ( altData[3] & 0x0F ) * 65536 ) + ( altData[4] * 256 ) + altData[5] ) / 100.00
@@ -707,8 +709,10 @@ namespace Sugar {
             return pressure
         } else if ( pin === EnvTypeII.Altitude ) {
             return altitude
-        } else {
+        } else if ( pin === EnvTypeII.CTemp ) {
             return cTemp
+        } else {
+            return fTemp
         }
     }
 

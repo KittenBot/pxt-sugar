@@ -75,6 +75,7 @@
   "Sugar.EnvTypeII.Pressure|block": "压强(hPa)",
   "Sugar.EnvTypeII.Altitude|block": "海拔(m)",
   "Sugar.EnvTypeII.Temp|block": "温度(℃)",
+  "Sugar.EnvTypeII.FTemp|block": "温度(℉)",
   "Sugar.LEDCmd.lamp_on|block": "打开台灯/开灯",
   "Sugar.LEDCmd.lamp_off|block": "关闭台灯/关灯",
   "Sugar.LEDCmd.brighter|block": "亮一点",
