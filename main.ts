@@ -702,8 +702,8 @@ namespace Sugar {
         let cTemp = ( ( ( tempData[0] & 0x0F ) * 65536 ) + ( tempData[1] * 256 ) + tempData[2] ) / 100.00
         const fTemp = ( cTemp * 1.8 ) + 32
 
-        let altData = i2cread( HP203B_ADDRESS, 0x11, 6 )
-        let altitude = ( ( ( altData[3] & 0x0F ) * 65536 ) + ( altData[4] * 256 ) + altData[5] ) / 100.00
+        let altData = i2cread( HP203B_ADDRESS, HP203B_READ_A, 3 )
+        let altitude = ( ( ( altData[0] & 0x0F ) << 16 ) + ( altData[1] << 8 ) + altData[2] ) / 100.00
 
         if ( pin === EnvTypeII.Pressure ) {
             return pressure
