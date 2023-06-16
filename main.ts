@@ -892,6 +892,39 @@ namespace Sugar {
         serial.writeBuffer( buf )
     }
 
+    /**
+     * init serial port
+     * @param tx Tx pin; eg: SerialPin.P2
+     * @param rx Rx pin; eg: SerialPin.P12
+     */
+    //% blockId=fpv_init block="(FPV) init|Tx pin %tx|Rx pin %rx"
+    //% group="FPV" weight=50
+    export function fpv_init(tx: SerialPin, rx: SerialPin): void {
+        serial.redirect(tx, rx, BaudRate.BaudRate115200)
+        // serial.setRxBufferSize(6)
+    }
+
+    //% blockId=fpv_setAllColor block="(FPV) Set the light color R %R G %G B %B"
+    //% group="FPV" weight=40
+    export function fpv_setAllColor(R: number, G: number, B: number): void {
+        let str = `K25 (${R},${G},${B}) \r\n`
+        serial.writeString(str)
+    }
+
+    //% blockId=fpv_setColor block="(FPV) Set the light color |R1 %R1 G1 %G1 B1 %B1|R2 %R2 G2 %G2 B2 %B2"
+    //% group="FPV" weight=40
+    export function fpv_setColor(R1: number, G1: number, B1: number, R2: number, G2: number, B2: number): void {
+        let str = `K16 (${R1},${G1},${B1}) (${R2},${G2},${B2}) \r\n`
+        serial.writeString(str)
+    }
+
+    //% blockId=fpv_playAudio block="(FPV) play mp3 %file"
+    //% group="FPV" weight=40
+    export function fpv_playAudio(file: string): void {
+        let str = `K15 ${file} \r\n`
+        serial.writeString(str)
+    }
+
 }
 
 //% color="#fe99d4" weight=10 icon="\uf0e7"
