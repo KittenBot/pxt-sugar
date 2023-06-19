@@ -1,18 +1,18 @@
 {
-  "name": "sugar",
-  "version": "0.2.3",
-  "description": "Extension for Kittenbot Sugar",
-  "license": "MIT",
-  "dependencies": {
-      "core": "*",
-      "microphone": "*"
-  },
-  "files": [
-      "README.md",
-      "main.ts",
-      "_locales/zh-CN/sugar-strings.json",
-      "_locales/zh-TW/sugar-strings.json"
-  ],
-  "public": true,
-  "preferredEditor": "tsprj"
+    "name": "sugar",
+    "version": "0.2.3",
+    "description": "Extension for Kittenbot Sugar",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*",
+        "microphone": "*"
+    },
+    "files": [
+        "README.md",
+        "main.ts",
+        "_locales/zh-CN/sugar-strings.json",
+        "_locales/zh-TW/sugar-strings.json"
+    ],
+    "public": true,
+    "preferredEditor": "tsprj"
 }
