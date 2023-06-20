@@ -15,6 +15,7 @@
   "Sugar.Touch|block": "(Touch) %pin 觸摸？",
   "Sugar.Angle|block": "(Angle) 電位器數值 %pin",
   "Sugar.Light|block": "(Light) 環境亮度 %pin",
+  "Sugar.grayscale|block": "(Grayscale) 灰度數值 %pin",
   "Sugar.SoilMoisture|block": "(SoilMoisture) 土壤濕度 %pin",
   "Sugar.WaterLevelAna|block": "(WaterLevel) 雨滴水位濕度 %pin",
   "Sugar.WaterLevelDigi|block": "(WaterLevel) 雨滴水位感應到下雨 %pin",

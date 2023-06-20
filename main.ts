@@ -487,6 +487,12 @@ namespace Sugar {
         return pins.digitalReadPin(pin) == 1
     }
 
+    //% blockId=grayscale block="(Grayscale) Analog %pin"
+    //% group="analogIn" weight=79
+    export function grayscale(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
     //% blockId=waterlvl block="(WaterLevel) Analog %pin"
     //% group="analogIn" weight=79
     export function WaterLevelAna(pin: AnalogPin): number {
