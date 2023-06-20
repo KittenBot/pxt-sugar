@@ -742,6 +742,16 @@ namespace Sugar {
     export function asr_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         // serial.setRxBufferSize(6)
+        control.inBackground(() => {
+            while (1) {
+                let a = serial.readString()
+                if (a.slice(0, 3) == "asr") {
+                    cmd = parseInt(a.substr(3, 3))
+                    control.raiseEvent(asrEventId, cmd)
+                }
+                basic.pause(40)
+            }
+        })
     }
 
     //% blockId=asr_init_pw block="(ASR) init|Port %port"
@@ -755,64 +765,24 @@ namespace Sugar {
     //% group="ASR" weight=48
     export function on_asr_led(id: LEDCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
-                let a = serial.readString()
-                if (a.slice(0, 3) == "asr") {
-                    cmd = parseInt(a.substr(3, 3))
-                    control.raiseEvent(asrEventId, cmd)
-                }
-                basic.pause(40)
-            }
-        })
     }
 
     //% blockId=asr_cmd_actuator block="(ASR) On Actuator Speech |%id recognized"
     //% group="ASR" weight=47
     export function on_asr_act(id: ActCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
-                let a = serial.readString()
-                if (a.slice(0, 3) == "asr") {
-                    cmd = parseInt(a.substr(3, 3))
-                    control.raiseEvent(asrEventId, cmd)
-                }
-                basic.pause(40)
-            }
-        })
     }
 
     //% blockId=asr_cmd_measure block="(ASR) On Measurement Speech |%id recognized"
     //% group="ASR" weight=46
     export function on_asr_measure(id: MeasureCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
-                let a = serial.readString()
-                if (a.slice(0, 3) == "asr") {
-                    cmd = parseInt(a.substr(3, 3))
-                    control.raiseEvent(asrEventId, cmd)
-                }
-                basic.pause(40)
-            }
-        })
     }
 
     //% blockId=asr_cmd_custom block="(ASR) On Customized Speech |%id recognized"
     //% group="ASR" weight=45
     export function on_asr_custom(id: CustomCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
-        control.inBackground(() => {
-            while (1) {
-                let a = serial.readString()
-                if (a.slice(0, 3) == "asr") {
-                    cmd = parseInt(a.substr(3, 3))
-                    control.raiseEvent(asrEventId, cmd)
-                }
-                basic.pause(40)
-            }
-        })
     }
 
     //% blockId=asr_tts_int block="(ASR) peak Integer |%num"
@@ -919,9 +889,9 @@ namespace Sugar {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         // serial.setRxBufferSize(6)
         let sum: number = -1
-        while (1){
-            sum*=-1
-            if(sum==1){
+        while (1) {
+            sum *= -1
+            if (sum == 1) {
                 basic.showLeds(`
                     . . . . .
                     . . . . .
@@ -929,7 +899,7 @@ namespace Sugar {
                     . . . . .
                     . . . . .
                     `)
-            }else{
+            } else {
                 basic.showLeds(`
                     . . # . .
                     . . # . .
@@ -940,8 +910,7 @@ namespace Sugar {
             }
             serial.writeString("K0 \r\n")
             basic.pause(1000)
-            if (serial.readString().includes("K0")){
-                basic.showIcon(IconNames.Happy)
+            if (serial.readString().includes("K0")) {
                 break
             }
         }
@@ -952,7 +921,7 @@ namespace Sugar {
                 if (a.slice(0, 3) == "K11") {
                     qrcode = a.substr(4).trim()
                     control.raiseEvent(fpvEventId, QRcodeId)
-                }else if (a.slice(0, 3) == "K22") {
+                } else if (a.slice(0, 3) == "K22") {
                     mqttMessage = a.substr(4).trim()
                     control.raiseEvent(fpvEventId, TopicMesId)
                 } else if (a.slice(0, 3) == "K19") {
@@ -967,23 +936,23 @@ namespace Sugar {
         })
     }
 
-    //% blockId=fpv_setAllColor block="(FPV) Set the light color R %R G %G B %B"
-    //% group="FPV" weight=49
-    export function fpv_setAllColor(R: number, G: number, B: number): void {
-        basic.pause(500)
-        let str = `K25 (${R},${G},${B}) \r\n`
-        serial.writeString(str)
-        basic.pause(500)
-    }
+    // //% blockId=fpv_setAllColor block="(FPV) Set the light color R %R G %G B %B"
+    // //% group="FPV" weight=49
+    // export function fpv_setAllColor(R: number, G: number, B: number): void {
+    //     basic.pause(500)
+    //     let str = `K25 (${R},${G},${B}) \r\n`
+    //     serial.writeString(str)
+    //     basic.pause(500)
+    // }
 
-    //% blockId=fpv_setColor block="(FPV) Set the light color |R1 %R1 G1 %G1 B1 %B1|R2 %R2 G2 %G2 B2 %B2"
-    //% group="FPV" weight=48
-    export function fpv_setColor(R1: number, G1: number, B1: number, R2: number, G2: number, B2: number): void {
-        basic.pause(500)
-        let str = `K16 (${R1},${G1},${B1}) (${R2},${G2},${B2}) \r\n`
-        serial.writeString(str)
-        basic.pause(500)
-    }
+    // //% blockId=fpv_setColor block="(FPV) Set the light color |R1 %R1 G1 %G1 B1 %B1|R2 %R2 G2 %G2 B2 %B2"
+    // //% group="FPV" weight=48
+    // export function fpv_setColor(R1: number, G1: number, B1: number, R2: number, G2: number, B2: number): void {
+    //     basic.pause(500)
+    //     let str = `K16 (${R1},${G1},${B1}) (${R2},${G2},${B2}) \r\n`
+    //     serial.writeString(str)
+    //     basic.pause(500)
+    // }
 
     //% blockId=fpv_take_picture block="(FPV) Take pictures and save %picFile"
     //% group="FPV" weight=43
