@@ -14,5 +14,12 @@
         "_locales/zh-TW/sugar-strings.json"
     ],
     "public": true,
+    "targetVersions": {
+        "target": "6.0.8",
+        "targetId": "microbit"
+    },
+    "supportedTargets": [
+        "microbit"
+    ],
     "preferredEditor": "tsprj"
 }

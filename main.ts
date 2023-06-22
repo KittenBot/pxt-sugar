@@ -811,14 +811,83 @@ namespace Sugar {
     //% blockId=asr_tts_double block="(ASR) Speak Double |%num"
     //% group="ASR" weight=43
     export function asr_tts_double(num: number): void {
+        let binNum: string = ""
+        let integerNum: number = Math.floor(num)
+        let decimalsNum: number = num % 1
+        let move: number = 0
+        let significand: string = ""
+        let dispose: number = decimalsNum
+        while (1) {
+            dispose = dispose * 2
+            if(dispose  >= 1){
+                binNum += "1"
+                dispose = dispose % 1
+            }else{
+                binNum += "0"
+            }
+
+            if (dispose % 1 == 0) {
+                break
+            }
+        }
+        let i: number = 0
+        let integerBin : string = ""
+        if (num > 1) {
+            while (1) {
+                if (Math.floor(num) >> i == 1) {
+                    move = 1023 + i
+                    break
+                } else if (Math.floor(num) >> i & 1){
+                    integerBin = "1" + integerBin
+                }else{
+                    integerBin = "0" + integerBin
+                }
+                i++
+            }
+            significand = integerBin + binNum
+        } else {
+            //left move
+            let sf: boolean = false
+            while (1) {
+                if (i == binNum.length) {
+                    break
+                }
+                if (sf) {
+                    if (binNum[i] == "1") {
+                        significand += "1"
+                    } else {
+                        significand += "0"
+                    }
+                } else {
+                    if (binNum[i] == '1') {
+                        move = 1023 - (i + 1)
+                        sf = true
+                    }
+                }
+                i++
+            }
+        }
+        while (significand.length < 52) {
+            significand += "0"
+        }
+        
+        let symbol: number = 0
+        if (num < 0) {
+            symbol = 1
+        }
+
         let buf = pins.createBuffer(13);
         buf[0] = 0xAA;
         buf[1] = 0x55;
         buf[2] = TTS_DOUBLE_CMD;
-        for (let i = 8; i >= 0; i--) {
-            buf[3 + i] = num & 0xff;
-            num = num >> 8;
-        }
+        buf[10] = (symbol << 7) | (move >> 4)
+        buf[9] = ((0xf & move) << 4) | parseInt(significand.slice(0, 4), 2)
+        buf[8] = parseInt(significand.slice(4, 12), 2)
+        buf[7] = parseInt(significand.slice(12, 20), 2)
+        buf[6] = parseInt(significand.slice(20, 28), 2)
+        buf[5] = parseInt(significand.slice(28, 36), 2)
+        buf[4] = parseInt(significand.slice(36, 44), 2)
+        buf[3] = parseInt(significand.slice(44, 52), 2)
         buf[11] = 0x55;
         buf[12] = 0xAA;
         serial.writeBuffer(buf)
