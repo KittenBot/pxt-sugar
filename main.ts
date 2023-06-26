@@ -153,7 +153,7 @@ namespace Sugar {
         balcony_light_off = 215,
         //% block="bathroom light on"
         bathroom_light_on = 216,
-        //% block="bedroom light off"
+        //% block="bathroom light off"
         bathroom_light_off = 217,
         //% block="all light on"
         all_light_on = 218,
