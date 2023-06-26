@@ -100,6 +100,24 @@ namespace Sugar {
         //% block="btn_all"
         btn_all = 3
     }
+
+    export enum ColorPreset {
+        //% block="color_red"
+        color_red = 0xff0000,
+        //% block="color_blue"
+        color_blue = 0x0000ff,
+        //% block="color_green"
+        color_green = 0x00ff00,
+        //% block="color_yellow"
+        color_yellow = 0xffff00,
+        //% block="color_purple"
+        color_purple = 0xff00ff,
+        //% block="color_cyan"
+        color_cyan = 0x00ffff,
+        //% block="color_white"
+        color_white = 0xffffff,
+    }
+
     export enum LEDCmd {
         //% block="lamp on / light On"
         lamp_on = 200,
@@ -811,6 +829,7 @@ namespace Sugar {
     //% blockId=asr_tts_double block="(ASR) Speak Double |%num"
     //% group="ASR" weight=43
     export function asr_tts_double(num: number): void {
+        num = Math.floor(num * 100) / 100
         let binNum: string = ""
         let integerNum: number = Math.floor(num)
         let decimalsNum: number = num % 1
@@ -989,7 +1008,6 @@ namespace Sugar {
                 break
             }
         }
-
         control.inBackground(() => {
             while (1) {
                 let a = serial.readString()
@@ -1011,24 +1029,33 @@ namespace Sugar {
         })
     }
 
-    // //% blockId=fpv_setAllColor block="(FPV) Set the light color R %R G %G B %B"
-    // //% group="FPV" weight=49
-    // export function fpv_setAllColor(R: number, G: number, B: number): void {
-    //     basic.pause(500)
-    //     let str = `K25 (${R},${G},${B}) \r\n`
-    //     serial.writeString(str)
-    //     basic.pause(500)
-    // }
+    //% blockId=fpv_colorTuple block="(FPV) red %r green %g blue %b"
+    //% group="FPV" weight=49
+    export function fpv_colorTuple(r: number, g: number, b: number): number {
+        let color: number = 0
+        color = (r << 16) + (g << 8) + b
+        return color
+    }
 
-    // //% blockId=fpv_setColor block="(FPV) Set the light color |R1 %R1 G1 %G1 B1 %B1|R2 %R2 G2 %G2 B2 %B2"
-    // //% group="FPV" weight=48
-    // export function fpv_setColor(R1: number, G1: number, B1: number, R2: number, G2: number, B2: number): void {
-    //     basic.pause(500)
-    //     let str = `K16 (${R1},${G1},${B1}) (${R2},${G2},${B2}) \r\n`
-    //     serial.writeString(str)
-    //     basic.pause(500)
-    // }
+    //% blockId=colorDefault block="%color"
+    //% group="FPV" weight=49
+    export function colorDefault(color: ColorPreset): number {
+        return color
+    }
 
+    //% blockId=fpv_setColor block="(FPV) Set the light color |%color1=colorDefault |%color2=colorDefault"
+    //% group="FPV" weight=48
+    export function fpv_setColor(color1: number, color2: number): void {
+        basic.pause(500)
+        let str = `K16 (${(color1 >> 16) & 0xFF},${(color1 >> 8) & 0xFF},${color1 & 0xFF}) (${(color2 >> 16) & 0xFF},${(color2 >> 8) & 0xFF},${color2 & 0xFF}) \r\n`
+        serial.writeString(str)
+        basic.pause(500)
+    }
+
+    
+    /**
+     * @param picFile filePath; eg: pic.jpg
+     */
     //% blockId=fpv_take_picture block="(FPV) Take pictures and save %picFile"
     //% group="FPV" weight=43
     export function fpv_take_picture(picFile: string): void {
@@ -1038,6 +1065,9 @@ namespace Sugar {
         basic.pause(500)
     }
 
+    /**
+     * @param file filePath; eg: hello.mp3                                                                                                                                                                                                                                                                                            
+     */
     //% blockId=fpv_playAudio block="(FPV) play mp3 %file"
     //% group="FPV" weight=44
     export function fpv_playAudio(file: string): void {
@@ -1046,6 +1076,7 @@ namespace Sugar {
         serial.writeString(str)
         basic.pause(500)
     }
+    
 
     //% blockId=fpv_Qrcode_scan block="(FPV) scan QR code"
     //% group="FPV" weight=47
@@ -1055,7 +1086,7 @@ namespace Sugar {
         serial.writeString(str)
         basic.pause(500)
     }
-
+    
     //% blockId=fpv_QRcode block="(FPV)When the QR code is scanned"
     //% group="FPV" weight=46 draggableParameters=reporter
     export function fpv_QRcode(handler: (qrcode: string) => void) {
@@ -1064,7 +1095,10 @@ namespace Sugar {
         });
     }
 
-
+    /**
+     * @param address Service address; eg: iot.kittenbot.cn
+     * @param client device name; eg: sugar_camera
+     */
     //% blockId=fpv_mqtt_connectNoUser block="(FPV) connection mqtt server %address client %client"
     //% group="FPV" weight=41
     export function fpv_mqtt_connectNoUser(address: string, client: string): void {
@@ -1074,6 +1108,12 @@ namespace Sugar {
         basic.pause(500)
     }
 
+    /**
+     * @param address Service address; eg: iot.kittenbot.cn
+     * @param client device name; eg: sugar_camera
+     * @param userid user name; eg: username
+     * @param pwd password; eg: password
+     */
     //% blockId=fpv_mqtt_connect block="(FPV) connection mqtt server %address client %client username %userid password %pwd"
     //% group="FPV" weight=42
     export function fpv_mqtt_connect(address: string, client: string, userid: string, pwd: string): void {
@@ -1083,6 +1123,9 @@ namespace Sugar {
         basic.pause(500)
     }
 
+    /**
+     * @param topic topic name; eg: /topic
+     */
     //% blockId=fpv_mqtt_subscription block="(FPV) Subscribe to mqtt topics %topic"
     //% group="FPV" weight=40
     export function fpv_mqtt_subscription(topic: string): void {
@@ -1092,6 +1135,10 @@ namespace Sugar {
         basic.pause(500)
     }
 
+    /**
+     * @param topic topic name; eg: /topic
+     * @param message topic message; eg: hello
+     */
     //% blockId=fpv_mqtt_sendMessage block="(FPV) for topic %topic send message %message"
     //% group="FPV" weight=37
     export function fpv_mqtt_sendMessage(topic: string, message: string): void {
