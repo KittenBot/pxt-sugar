@@ -16,7 +16,7 @@ function i2cread(addr: number, reg: number, size: number) {
     return pins.i2cReadBuffer(addr, size);
 }
 
-//% color="#49cef7" weight=10 icon="\uf1b0"
+//% color="#49cef7" weight=10 icon="\uf1b0" block="Sugar" blockId="Sugar"
 //% groups='["Motion/PIR", "Linefollower/Tracker", "HallEffect", "Buttons", "LED", "Flame", "PotentialMeter", "LightLevel", "Moisture", "Rain Gauge", "Infra Transmitter", "Distance", "Environment", "Joystick"]'
 namespace Sugar {
     const TTS_INTEGER_CMD = 0x20          // tts id : signed integer
@@ -73,6 +73,7 @@ namespace Sugar {
     let asrText: string = ''
     let qrcode: string = ''
     let mqttMessage: string = ''
+    let distanceBuf = 0
 
     const PortSerial = [
         [SerialPin.P0, SerialPin.P8],
@@ -80,6 +81,13 @@ namespace Sugar {
         [SerialPin.P2, SerialPin.P13],
         [SerialPin.P14, SerialPin.P15]
     ]
+
+	export enum ValueUnit {
+        //% block="mm"
+        Millimeter,
+        //% block="cm"
+        Centimeters
+    }
 
     export enum SerialPorts {
         //% block="PORT1(TX:P0 / RX:P8)"
@@ -390,130 +398,130 @@ namespace Sugar {
 
 
     //% blockId=pir block="(PIR) motion detected %pin"
-    //% group="digitalIn" weight=90
+    //% group="DigitalIn" weight=90
     export function PIR(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=tracer block="(Tracker) black dectected %pin"
-    //% group="digitalIn" weight=89
+    //% group="DigitalIn" weight=89
     export function Tracker(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=hall block="(Hall) magnetic detected %pin"
-    //% group="digitalIn" weight=88
+    //% group="DigitalIn" weight=88
     export function Hall(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 0
     }
 
     //% blockId=button block="(Button) pressed %pin "
-    //% group="digitalIn" weight=87
+    //% group="DigitalIn" weight=87
     export function Button(pin: DigitalPin): boolean {
         pins.setPull(pin, PinPullMode.PullUp)
         return pins.digitalReadPin(pin) == 0
     }
 
     //% blockId=onButtonEvent block="on button|%pin pressed"
-    //% group="digitalIn" weight=86
+    //% group="DigitalIn" weight=86
     export function onButtonEvent(pin: DigitalPin, handler: () => void): void {
         pins.setPull(pin, PinPullMode.PullUp)
         pins.onPulsed(pin, PulseValue.Low, handler)
     }
 
     //% blockId=Crash block="(Crash) crash detected %pin "
-    //% group="digitalIn" weight=79
+    //% group="DigitalIn" weight=79
     export function Crash(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=Touch block="(Touch) touch detected %pin "
-    //% group="digitalIn" weight=78
+    //% group="DigitalIn" weight=78
     export function Touch(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=led_toggle block="(LED) %pin| %onoff"
-    //% group="digitalOut" weight=85
+    //% group="DigitalOut" weight=85
     export function ledOnoff(pin: DigitalPin, onoff: LEDSta) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=led_luminent block="(LED) %pin| set brightness(0-1023) %value"
     //% value.min=0 value.max=1023 value.defl=0
-    //% group="digitalOut" weight=84
+    //% group="DigitalOut" weight=84
     export function ledLuminent(pin: AnalogPin, value: number) {
         pins.analogWritePin(pin, value)
     }
 
     //% blockId=Buzzer block="(Active Buzzer) %pin| sound %onoff"
-    //% group="digitalOut" weight=83
+    //% group="DigitalOut" weight=83
     export function Buzzer(pin: DigitalPin, onoff: Switch) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=Laser block="(Laser) %pin| %onoff"
-    //% group="digitalOut" weight=82
+    //% group="DigitalOut" weight=82
     export function Laser(pin: DigitalPin, onoff: Switch) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=vibeMotor block="(Vibe Motor) %pin| %onoff"
-    //% group="digitalOut" weight=81
+    //% group="DigitalOut" weight=81
     export function vibeMotor(pin: DigitalPin, onoff: Switch) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=atomizer block="(Atomizer) %pin| %onoff"
-    //% group="digitalOut" weight=82
+    //% group="DigitalOut" weight=82
     export function atomizer(pin: DigitalPin, onoff: Switch) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=flameBool block="(Flame) fire Detected %pin "
-    //% group="digitalIn" weight=80
+    //% group="DigitalIn" weight=80
     export function FlameDigi(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=flameAnalog block="(Flame) value %pin"
-    //% group="analogIn" weight=84
+    //% group="AnalogIn" weight=84
     export function FlameAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=potential block="(Angle) value %pin"
-    //% group="analogIn" weight=83
+    //% group="AnalogIn" weight=83
     export function Angle(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=lightlvl block="(Light) value %pin"
-    //% group="analogIn" weight=82
+    //% group="AnalogIn" weight=82
     export function Light(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=soilmoisture block="(SoilMoisture) value %pin"
-    //% group="analogIn" weight=81
+    //% group="AnalogIn" weight=81
     export function SoilMoisture(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=rain block="(WaterLevel) value %pin"
-    //% group="digitalIn" weight=80
+    //% group="DigitalIn" weight=80
     export function WaterLevelDigi(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=grayscale block="(Grayscale) value %pin"
-    //% group="analogIn" weight=79
+    //% group="AnalogIn" weight=79
     export function grayscale(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=waterlvl block="(WaterLevel) value %pin"
-    //% group="analogIn" weight=79
+    //% group="AnalogIn" weight=79
     export function WaterLevelAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
@@ -752,6 +760,48 @@ namespace Sugar {
         }
     }
     TM1650_on()
+
+
+    /**
+     * signal pin
+     * @param pin singal pin; eg: DigitalPin.P1
+     * @param unit desired conversion unit
+     */
+    //% blockId=robotbit_holeultrasonicver block="(Ultrasonic Sensor) %pin distance unit %unit"
+    //% group="Ultrasonic" weight=40
+    export function HoleUltrasonic(pin: DigitalPin, unit: ValueUnit): number {
+        pins.setPull(pin, PinPullMode.PullNone);
+        // pins.setPull(pin, PinPullMode.PullDown);
+        pins.digitalWritePin(pin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(pin, 1);
+        control.waitMicros(10);
+        pins.digitalWritePin(pin, 0);
+        pins.setPull(pin, PinPullMode.PullUp);
+
+        // read pulse
+        let d = pins.pulseIn(pin, PulseValue.High, 30000);
+        let ret = d;
+        // filter timeout spikes
+        if (ret == 0 && distanceBuf != 0) {
+                ret = distanceBuf;
+        }
+        distanceBuf = d;
+        pins.digitalWritePin(pin, 0);
+        basic.pause(15)
+	    if (parseInt(control.hardwareVersion()) == 2) {
+            d = ret *10 /58;
+        }
+        else{
+            // return Math.floor(ret / 40 + (ret / 800));
+            d = ret * 15 / 58;
+        }
+        switch (unit) {
+            case ValueUnit.Millimeter: return Math.floor(d)
+            case ValueUnit.Centimeters: return Math.floor(d/10)
+            default: return d;
+        }
+    }
 
     /**
      * init serial port
@@ -1176,6 +1226,7 @@ namespace Sugar {
 
     //% blockId=fpv_asr block="(Camera) speech recognition |%s seconds"
     //% group="FPV Camera" weight=45
+    //% s.min=0 s.max=3 s.defl=2
     export function fpv_asr(s: number): void {
         basic.pause(500)
         let str = `K12 ${s} \r\n`
@@ -1186,7 +1237,7 @@ namespace Sugar {
 
 }
 
-//% color="#fe99d4" weight=10 icon="\uf0e7"
+//% color="#fe99d4" weight=10 icon="\uf0e7" block="SugarBox" blockId="SugarBox"
 //% groups='["Basic", "Actuators", "Encoded Motor", "Dual Encoded Motor", "Audio"]'
 namespace SugarBox {
     const MODE_IDLE = 0x0
