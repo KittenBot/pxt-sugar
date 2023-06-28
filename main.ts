@@ -464,7 +464,7 @@ namespace Sugar {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
-    //% blockId=flameBool block="(Flame) fire detected %pin "
+    //% blockId=flameBool block="(Flame) Flame Detected %pin "
     //% group="digitalIn" weight=80
     export function FlameDigi(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
