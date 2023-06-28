@@ -464,6 +464,12 @@ namespace Sugar {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
+    //% blockId=atomizer block="(Atomizer) %pin| %onoff"
+    //% group="digitalOut" weight=82
+    export function atomizer(pin: DigitalPin, onoff: Switch) {
+        pins.digitalWritePin(pin, onoff ? 1 : 0)
+    }
+
     //% blockId=flameBool block="(Flame) Flame Detected %pin "
     //% group="digitalIn" weight=80
     export function FlameDigi(pin: DigitalPin): boolean {

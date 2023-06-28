@@ -8,7 +8,7 @@
     "Sugar.ledLuminent|block": "(LED) %pin| 亮度 %value",
     "Sugar.Buzzer|block": "(Buzzer) 有源蜂鸣器 %pin| %onoff",
     "Sugar.Laser|block": "(Laser) 红点激光 %pin| %onoff",
-    "Sugar.atomizer|block": "(atomizer) 雾化模块 %pin| %onoff",
+    "Sugar.atomizer|block": "(Atomizer) 雾化模块 %pin| %onoff",
     "Sugar.vibeMotor|block": "(Vibe Motor) %pin| %onoff",
     "Sugar.FlameDigi|block": "(Flame) 检测到火焰 %pin ",
     "Sugar.FlameAna|block": "(Flame) 火焰强度 %pin ",
