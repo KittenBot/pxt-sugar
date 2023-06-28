@@ -1,11 +1,12 @@
 {
     "name": "sugar",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "description": "Extension for Kittenbot Sugar",
     "license": "MIT",
     "dependencies": {
         "core": "*",
-        "microphone": "*"
+        "microphone": "*",
+        "oled": "github:kittenbot/pxt-oled"
     },
     "files": [
         "README.md",
