@@ -50,6 +50,7 @@
     "Sugar.asr_tts_time|block": "(ASR) 語音播報讀出時間 小時|%hour 分鐘|%minute",
     "Sugar.asr_tts_words|block": "(ASR) 語音播報讀出語句 |%id",
     "Sugar.fpv_init|block": "(Camera) 初始化攝像頭模組 |Tx 引腳 %tx|Rx 引腳 %rx",
+    "Sugar.fpv_IPAddress|block": "(Camera) 獲取ip地址",
     "Sugar.fpv_setAllColor|block": "(Camera) 設置所有彩燈顔色 R %R G %G B %B",
     "Sugar.fpv_colorTuple|block": "紅 |%r 綠 |%g 藍 |%b",
     "Sugar.fpv_setColor|block": "(Camera) 設置彩燈顔色 |%color1=colorDefault |%color2=colorDefault",

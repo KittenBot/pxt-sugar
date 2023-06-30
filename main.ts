@@ -72,6 +72,7 @@ namespace Sugar {
     let cmd = 0
     let asrText: string = ''
     let qrcode: string = ''
+    let ipAddress: string = '0.0.0.0'
     let mqttMessage: string = ''
     let distanceBuf = 0
 
@@ -1025,7 +1026,7 @@ namespace Sugar {
      * @param rx Rx pin; eg: SerialPin.P12
      */
     //% blockId=fpv_init block="(Camera) init tx %tx rx %rx"
-    //% group="FPV Camera" weight=50
+    //% group="FPV Camera" weight=51
     export function fpv_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         // serial.setRxBufferSize(6)
@@ -1070,10 +1071,22 @@ namespace Sugar {
                 } else if (a.slice(0, 3) == "K12") {
                     asrText = a.substr(4).trim()
                     control.raiseEvent(fpvEventId, AsrTextId)
+                } else if (a.slice(0, 2) == "K4") {
+                    ipAddress = a.substr(3).trim()
                 }
                 basic.pause(40)
             }
         })
+    }
+
+    //% blockId=fpv_IPAddress block="(Camera) ip Address"
+    //% group="FPV Camera" weight=50
+    export function fpv_IPAddress(): string {
+        basic.pause(500)
+        let str = `K4 \r\n`
+        serial.writeString(str)
+        basic.pause(2000)
+        return ipAddress
     }
 
     //% blockId=fpv_colorTuple block="red %r green %g blue %b"
