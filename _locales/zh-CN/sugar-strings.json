@@ -15,6 +15,7 @@
     "Sugar.Crash|block": "(Crash) 碰撞模块 %pin 碰撞？",
     "Sugar.Touch|block": "(Touch) 触摸模块 %pin 触摸？",
     "Sugar.Angle|block": "(Angle) 电位器数值 %pin",
+    "Sugar.audio|block": "(Audio) 声音强度 %pin",
     "Sugar.Light|block": "(Light) 亮度强度 %pin",
     "Sugar.grayscale|block": "(Grayscale) 灰度数值 %pin",
     "Sugar.SoilMoisture|block": "(SoilMoisture) 土壤湿度 %pin",

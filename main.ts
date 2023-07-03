@@ -497,6 +497,12 @@ namespace Sugar {
         return pins.analogReadPin(pin)
     }
 
+    //% blockId=audio block="(Audio) value %pin"
+    //% group="AnalogIn" weight=83
+    export function audio(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
     //% blockId=lightlvl block="(Light) value %pin"
     //% group="AnalogIn" weight=82
     export function Light(pin: AnalogPin): number {
