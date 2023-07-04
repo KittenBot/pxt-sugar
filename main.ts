@@ -1095,6 +1095,13 @@ namespace Sugar {
         return ipAddress
     }
 
+    //% blockId=fpv_connectWifi block="(Camera) connect to wifi %ssid pwd %pwd"
+    //% group="FPV Camera" weight=50
+    export function fpv_connectWifi(ssid: string,pwd: string): void {
+        let str = `K26 ${ssid} ${pwd} \r\n`
+        serial.writeString(str)
+    }
+
     //% blockId=fpv_colorTuple block="red %r green %g blue %b"
     //% group="FPV Camera" weight=49
     export function fpv_colorTuple(r: number, g: number, b: number): number {
