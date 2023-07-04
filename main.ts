@@ -595,9 +595,9 @@ namespace Sugar {
         if (_aht20Ready()) {
             const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
             const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
-            const humi = Math.round(h * 0.000095)
+            const humi = Math.floor((h * 0.000095)*100)/100
             const t = ((n[3] & 0x0f) << 16 | (n[4] << 8) | n[5])
-            const temp = Math.round(t * 0.000191 - 50)
+            const temp = Math.floor((t * 0.000191 - 50)*100)/100
             return env === EnvType.Humidity ? humi : temp
         }
         return 0;
