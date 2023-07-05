@@ -3,7 +3,7 @@ KittenBot Team
 A series of sensors
 "sugar": "file:../pxt-sugar"
 */
-
+ 
 function i2cwrite(addr: number, reg: number, value: number[]) {
     let a = [reg]
     if (value.length)
@@ -74,6 +74,7 @@ namespace Sugar {
     let qrcode: string = ''
     let ipAddress: string = '0.0.0.0'
     let mqttMessage: string = ''
+    let mqttTopicL: string = ''
     let distanceBuf = 0
 
     const PortSerial = [
@@ -108,6 +109,17 @@ namespace Sugar {
         B = 2,
         //% block="A+B"
         AB = 3
+    }
+
+    export enum Language {
+        //% block="English"
+        E = 1737,
+        //% block="普通话"
+        M = 1537,
+        //% block="粤语"
+        Y = 1637,
+        //% block="四川话"
+        S = 1837
     }
 
     export enum ColorPreset {
@@ -1036,29 +1048,21 @@ namespace Sugar {
     export function fpv_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         // serial.setRxBufferSize(6)
-        let sum: number = -1
+        let sum: number = 0
         while (1) {
-            sum *= -1
-            if (sum == 1) {
-                basic.showLeds(`
-                    . . . . .
-                    . . . . .
-                    # # # # #
-                    . . . . .
-                    . . . . .
-                    `)
-            } else {
-                basic.showLeds(`
-                    . . # . .
-                    . . # . .
-                    . . # . .
-                    . . # . .
-                    . . # . .
-                    `)
+            
+            basic.clearScreen()
+            led.plot(sum, 2)
+            basic.pause(1000)
+            sum+=1
+            if(sum==5){
+                sum = 0
             }
+
             serial.writeString("K0 \r\n")
             basic.pause(1000)
             if (serial.readString().includes("K0")) {
+                basic.clearScreen()
                 break
             }
         }
@@ -1069,7 +1073,9 @@ namespace Sugar {
                     qrcode = a.substr(4).trim()
                     control.raiseEvent(fpvEventId, QRcodeId)
                 } else if (a.slice(0, 3) == "K22") {
-                    mqttMessage = a.substr(4).trim()
+                    let dataK22 = a.substr(4).trim().split(" ")
+                    mqttMessage = dataK22[0]
+                    mqttTopicL = dataK22[1]
                     control.raiseEvent(fpvEventId, TopicMesId)
                 } else if (a.slice(0, 3) == "K19") {
                     let btnID: number = parseInt(a.substr(4).trim())
@@ -1212,7 +1218,7 @@ namespace Sugar {
      */
     //% blockId=fpv_mqtt_sendMessage block="(Camera) send message %message to %topic"
     //% group="FPV Camera" weight=37
-    export function fpv_mqtt_sendMessage(topic: string, message: string): void {
+    export function fpv_mqtt_sendMessage(message: string, topic: string): void {
         basic.pause(500)
         let str = `K23 ${topic} ${message} \r\n`
         serial.writeString(str)
@@ -1230,9 +1236,9 @@ namespace Sugar {
 
     //% blockId=fpv_mqtt_message block="(Camera) on mqtt topic received"
     //% group="FPV Camera" weight=38 draggableParameters=reporter
-    export function fpv_mqtt_message(handler: (mqttMessage: string) => void) {
+    export function fpv_mqtt_message(handler: (mqttTopicL: string, mqttMessage: string) => void) {
         control.onEvent(fpvEventId, TopicMesId, () => {
-            handler(mqttMessage);
+            handler(mqttTopicL,mqttMessage);
         });
     }
 
@@ -1250,14 +1256,105 @@ namespace Sugar {
         });
     }
 
-    //% blockId=fpv_asr block="(Camera) speech recognition |%s seconds"
+    //% blockId=fpv_asr block="(Camera) speech recognition |%s seconds language |%vid"
     //% group="FPV Camera" weight=45
     //% s.min=0 s.max=3 s.defl=2
-    export function fpv_asr(s: number): void {
+    export function fpv_asr(s: number, vid: Language): void {
         basic.pause(500)
-        let str = `K12 ${s} \r\n`
+        let str = `K12 ${s} ${vid} \r\n`
         serial.writeString(str)
         basic.pause(500)
+    }
+
+    const COMMANDREG = 0x01
+    const COMIENREG = 0x02
+    const COMIRQREG = 0x04
+    const DIVIRQREG = 0x05
+    const ERRORREG = 0x06
+    const STATUS2REG = 0x08
+    const FIFODATAREG = 0x09
+    const FIFOLEVELREG = 0x0A
+    const CONTROLREG = 0x0C
+    const BITFRAMINGREG = 0x0D
+    const MODEREG = 0x11
+    const TXCONTROLREG = 0x14
+    const TXASKREG = 0x15
+    const CRCRESULTREGMSB = 0x21
+    const CRCRESULTREGLSB = 0x22
+    const TMODEREG = 0x2A
+    const TPRESCALERREG = 0x2B
+    const TRELOADREGH = 0x2C
+    const TRELOADREGL = 0x2D
+    const VERSIONREG = 0x37
+    const MRFC522_IDLE = 0x00
+    const MRFC522_CALCCRC = 0x03
+    const MRFC522_TRANSCEIVE = 0x0C
+    const MRFC522_MFAUTHENT = 0x0E
+    const MRFC522_SOFTRESET = 0x0F
+
+    const MIFARE_REQUEST = [0x26]
+    const MIFARE_WAKEUP = [0x52]
+    const MIFARE_ANTICOLCL1 = [0x93, 0x20]
+    const MIFARE_SELECTCL1 = [0x93, 0x70]
+    const MIFARE_ANTICOLCL2 = [0x95, 0x20]
+    const MIFARE_SELECTCL2 = [0x95, 0x70]
+    const MIFARE_HALT = [0x50, 0x00]
+    const MIFARE_AUTHKEY1 = [0x60]
+    const MIFARE_AUTHKEY2 = [0x61]
+    const MIFARE_READ = [0x30]
+    const MIFARE_WRITE = [0xA0]
+    const MIFARE_DECREMENT = [0xC0]
+    const MIFARE_INCREMENT = [0xC1]
+    const MIFARE_RESTORE = [0xC2]
+    const MIFARE_TRANSFER = [0xB0]
+
+    const MIFARE_USERDATA = [1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 17, 18,
+        20, 21, 22, 24, 25, 26, 28, 29, 30, 32, 33, 34, 36, 37,
+        38, 40, 41, 42, 44, 45, 46, 48, 49, 50, 52, 53, 54, 56,
+        57, 58, 60, 61, 62]
+
+    const MI_OK = 0
+    const MI_NOTAGERR = 1
+    const MI_ERR = 2
+
+    const MAX_LEN = 16
+
+    const i2caddress = 0x28
+
+    class rfid{
+        constructor(){
+            this.mrfc522_init()
+        }
+
+        showReaderDetails():number{
+            let version = this.mrfc522_read(VERSIONREG)
+            return 0
+        }
+
+        mrfc522_reset(){
+            this.mrfc522_write(COMMANDREG, MRFC522_SOFTRESET)
+        }
+
+        mrfc522_init(){
+            this.mrfc522_reset()
+        }
+
+        mrfc522_antennaOn(){
+
+        }
+
+        mrfc522_setBitMask(address: number, mask: number){
+
+        }
+
+        mrfc522_read(address: number):number{
+            let value: number = pins.i2cReadNumber(i2caddress,address)
+            return value
+        }
+
+        mrfc522_write(address: number, value: number) {
+            pins.i2cWriteNumber(i2caddress, address << 8 | value, NumberFormat.UInt16BE)
+        }
     }
 
 
@@ -1266,7 +1363,7 @@ namespace Sugar {
 //% color="#fe99d4" weight=10 icon="\uf0e7" block="SugarBox" blockId="SugarBox"
 //% groups='["Basic", "Actuators", "Encoded Motor", "Dual Encoded Motor", "Audio"]'
 namespace SugarBox {
-    const MODE_IDLE = 0x0
+    const MODE_IDLE = 0x08
     const MODE_SPEED = 0x1
     const MODE_HOLD = 0x2
     const MODE_RUNPOS = 0x4 // there is some end position
@@ -1583,5 +1680,4 @@ namespace SugarBox {
         const rnd = 2 * (degree / w) * diff
         _dualMotorRun(MODE_TURN, speed, diff, rnd)
     }
-
 }

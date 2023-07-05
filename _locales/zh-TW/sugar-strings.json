@@ -66,7 +66,7 @@
     "Sugar.fpv_mqtt_getmessage|block": "(Camera) 獲取mqtt話題消息",
     "Sugar.fpv_mqtt_message|block": "(Camera) 當收到mqtt話題消息",
     "Sugar.on_fpv_btn|block": "(Camera) 當按鈕 |%btn 被按下時",
-    "Sugar.fpv_asr|block": "(Camera) 語音識別 |%s 秒",
+    "Sugar.fpv_asr|block": "(Camera) 語音識別 |%s 秒 |%vid",
     "Sugar.fpv_asr_dispose|block": "(Camera) 當完成語音識別處理時",
     "Sugar.BTNCmd.A|block": "按鍵A",
     "Sugar.BTNCmd.B|block": "按鍵B",
