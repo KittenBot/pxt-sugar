@@ -111,17 +111,6 @@ namespace Sugar {
         AB = 3
     }
 
-    export enum Language {
-        //% block="English"
-        E = 1737,
-        //% block="普通话"
-        M = 1537,
-        //% block="粤语"
-        Y = 1637,
-        //% block="四川话"
-        S = 1837
-    }
-
     export enum ColorPreset {
         //% block="red"
         red = 0xff0000,
@@ -1190,6 +1179,8 @@ namespace Sugar {
     /**
      * @param address Service address; eg: iot.kittenbot.cn
      * @param client device name; eg: sugar_camera
+     * @param userid user name; eg: username
+     * @param pwd password; eg: password
      */
     //% blockId=fpv_mqtt_connect block="(Camera) connect mqtt server %address client %client username %userid password %pwd"
     //% group="FPV Camera" weight=42
@@ -1216,9 +1207,9 @@ namespace Sugar {
      * @param topic topic name; eg: /topic
      * @param message topic message; eg: hello
      */
-    //% blockId=fpv_mqtt_sendMessage block="(Camera) send message %message to %topic"
+    //% blockId=fpv_mqtt_sendMessage block="(Camera) Give the topic %topic send a %message"
     //% group="FPV Camera" weight=37
-    export function fpv_mqtt_sendMessage(message: string, topic: string): void {
+    export function fpv_mqtt_sendMessage(topic: string, message: string): void {
         basic.pause(500)
         let str = `K23 ${topic} ${message} \r\n`
         serial.writeString(str)
@@ -1247,7 +1238,7 @@ namespace Sugar {
     export function on_fpv_btn(btn: BTNCmd, handler: () => void) {
         control.onEvent(fpvEventId, btn, handler);
     }
-
+    
     //% blockId=fpv_asr_dispose block="(Camera) on speech recognition is complete"
     //% group="FPV Camera" weight=45 draggableParameters=reporter
     export function fpv_asr_dispose(handler: (asrText: string) => void) {
@@ -1256,12 +1247,12 @@ namespace Sugar {
         });
     }
 
-    //% blockId=fpv_asr block="(Camera) speech recognition |%s seconds language |%vid"
+    //% blockId=fpv_asr block="(Camera) speech recognition |%s seconds (English)"
     //% group="FPV Camera" weight=45
     //% s.min=0 s.max=3 s.defl=2
-    export function fpv_asr(s: number, vid: Language): void {
+    export function fpv_asr(s: number): void {
         basic.pause(500)
-        let str = `K12 ${s} ${vid} \r\n`
+        let str = `K12 ${s} 1737 \r\n`
         serial.writeString(str)
         basic.pause(500)
     }
