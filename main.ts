@@ -3,7 +3,7 @@ KittenBot Team
 A series of sensors
 "sugar": "file:../pxt-sugar"
 */
- 
+
 function i2cwrite(addr: number, reg: number, value: number[]) {
     let a = [reg]
     if (value.length)
@@ -14,6 +14,40 @@ function i2cwrite(addr: number, reg: number, value: number[]) {
 function i2cread(addr: number, reg: number, size: number) {
     pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE);
     return pins.i2cReadBuffer(addr, size);
+}
+
+function gestureMap(gestureId: number) {
+    let gestureTxt = ""
+    switch (gestureId) {
+        case 0x01:
+            gestureTxt = "right"
+            break;
+        case 0x02:
+            gestureTxt = "left"
+            break;
+        case 0x03:
+            gestureTxt = "back"
+            break;
+        case 0x04:
+            gestureTxt = "front"
+            break;
+        case 0x05:
+            gestureTxt = "pull"
+            break;
+        case 0x06:
+            gestureTxt = "down"
+            break;
+        case 0x07:
+            gestureTxt = "leave"
+            break;
+        case 0x08:
+            gestureTxt = "hover"
+            break;
+        default:
+            gestureTxt = null
+            break;
+    }
+    return gestureTxt;
 }
 
 //% color="#49cef7" weight=10 icon="\uf1b0" block="Sugar" blockId="Sugar"
@@ -69,6 +103,7 @@ namespace Sugar {
     let cosEvt: EvtAct = null;
     let asrEventId = 6666
     let fpvEventId = 7777
+    let gestureEventId = 8888
     let cmd = 0
     let asrText: string = ''
     let qrcode: string = ''
@@ -77,6 +112,10 @@ namespace Sugar {
     let mqttTopicL: string = ''
     let distanceBuf = 0
 
+    let GestureId = 33
+    let gesturesOperate = "";
+
+    ``
     const PortSerial = [
         [SerialPin.P0, SerialPin.P8],
         [SerialPin.P1, SerialPin.P12],
@@ -84,7 +123,7 @@ namespace Sugar {
         [SerialPin.P14, SerialPin.P15]
     ]
 
-	export enum ValueUnit {
+    export enum ValueUnit {
         //% block="mm"
         Millimeter,
         //% block="cm"
@@ -109,6 +148,25 @@ namespace Sugar {
         B = 2,
         //% block="A+B"
         AB = 3
+    }
+
+    export enum GestureType {
+        //% block="right"
+        right = 0x01,
+        //% block="left"
+        left = 0x02,
+        //% block="back"
+        back = 0x03,
+        //% block="front"
+        front = 0x04,
+        //% block="pull"
+        pull = 0x05,
+        //% block="down"
+        down = 0x06,
+        //% block="leave"
+        leave = 0x07,
+        //% block="hover"
+        hover = 0x08,
     }
 
     export enum ColorPreset {
@@ -596,9 +654,9 @@ namespace Sugar {
         if (_aht20Ready()) {
             const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
             const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
-            const humi = Math.floor((h * 0.000095)*100)/100
+            const humi = Math.floor((h * 0.000095) * 100) / 100
             const t = ((n[3] & 0x0f) << 16 | (n[4] << 8) | n[5])
-            const temp = Math.floor((t * 0.000191 - 50)*100)/100
+            const temp = Math.floor((t * 0.000191 - 50) * 100) / 100
             return env === EnvType.Humidity ? humi : temp
         }
         return 0;
@@ -792,21 +850,21 @@ namespace Sugar {
         let ret = d;
         // filter timeout spikes
         if (ret == 0 && distanceBuf != 0) {
-                ret = distanceBuf;
+            ret = distanceBuf;
         }
         distanceBuf = d;
         pins.digitalWritePin(pin, 0);
         basic.pause(15)
-	    if (parseInt(control.hardwareVersion()) == 2) {
-            d = ret *10 /58;
+        if (parseInt(control.hardwareVersion()) == 2) {
+            d = ret * 10 / 58;
         }
-        else{
+        else {
             // return Math.floor(ret / 40 + (ret / 800));
             d = ret * 15 / 58;
         }
         switch (unit) {
             case ValueUnit.Millimeter: return Math.floor(d)
-            case ValueUnit.Centimeters: return Math.floor(d/10)
+            case ValueUnit.Centimeters: return Math.floor(d / 10)
             default: return d;
         }
     }
@@ -893,10 +951,10 @@ namespace Sugar {
         let dispose: number = decimalsNum
         while (1) {
             dispose = dispose * 2
-            if(dispose  >= 1){
+            if (dispose >= 1) {
                 binNum += "1"
                 dispose = dispose % 1
-            }else{
+            } else {
                 binNum += "0"
             }
 
@@ -905,15 +963,15 @@ namespace Sugar {
             }
         }
         let i: number = 0
-        let integerBin : string = ""
+        let integerBin: string = ""
         if (num > 1) {
             while (1) {
                 if (Math.floor(num) >> i == 1) {
                     move = 1023 + i
                     break
-                } else if (Math.floor(num) >> i & 1){
+                } else if (Math.floor(num) >> i & 1) {
                     integerBin = "1" + integerBin
-                }else{
+                } else {
                     integerBin = "0" + integerBin
                 }
                 i++
@@ -944,7 +1002,7 @@ namespace Sugar {
         while (significand.length < 52) {
             significand += "0"
         }
-        
+
         let symbol: number = 0
         if (num < 0) {
             symbol = 1
@@ -1027,6 +1085,49 @@ namespace Sugar {
         serial.writeBuffer(buf)
     }
 
+
+    /**
+     * init serial port
+     * @param tx Tx pin; eg: SerialPin.P2
+     * @param rx Rx pin; eg: SerialPin.P12
+     */
+    //% blockId=gesture_init block="(Gesture) init tx %tx rx %rx"
+    //% group="Gesture" weight=51
+    export function gesture_init(tx: SerialPin, rx: SerialPin): void {
+        serial.redirect(tx, rx, BaudRate.BaudRate9600)
+        control.inBackground(() => {
+            while (1) {
+                let a = serial.readBuffer(4)
+                if (a) {
+                    if (a.length >= 4) {
+                        if (a[0] == 0xAA && a[3] == 0x55) {
+                            gesturesOperate = gestureMap(a[1])
+                            control.raiseEvent(gestureEventId, a[1])
+                        }
+                    }
+                }
+                basic.pause(40)
+            }
+        })
+    }
+
+    //% blockId=get_gesture block="(Gesture) gesture is |%gestureType "
+    //% group="Gesture" weight=50
+    export function get_gesture(): string {
+        let transfer = gesturesOperate
+        gesturesOperate = null
+        return transfer
+
+    }
+
+    //% blockId=gesture_dispose block="(Gesture)When %gestureType gesture is received"
+    //% group="Gesture" weight=46
+    export function gesture_dispose(gestureType: GestureType,handler: () => void) {
+        control.onEvent(gestureEventId, gestureType, handler);
+    }
+
+
+
     /**
      * init serial port
      * @param tx Tx pin; eg: SerialPin.P2
@@ -1039,12 +1140,12 @@ namespace Sugar {
         // serial.setRxBufferSize(6)
         let sum: number = 0
         while (1) {
-            
+
             basic.clearScreen()
             led.plot(sum, 2)
             basic.pause(1000)
-            sum+=1
-            if(sum==5){
+            sum += 1
+            if (sum == 5) {
                 sum = 0
             }
 
@@ -1092,7 +1193,7 @@ namespace Sugar {
 
     //% blockId=fpv_connectWifi block="(Camera) connect to wifi %ssid pwd %pwd"
     //% group="FPV Camera" weight=50
-    export function fpv_connectWifi(ssid: string,pwd: string): void {
+    export function fpv_connectWifi(ssid: string, pwd: string): void {
         let str = `K26 ${ssid} ${pwd} \r\n`
         serial.writeString(str)
     }
@@ -1120,7 +1221,7 @@ namespace Sugar {
         basic.pause(500)
     }
 
-    
+
     /**
      * @param picFile filePath; eg: pic.jpg
      */
@@ -1144,7 +1245,7 @@ namespace Sugar {
         serial.writeString(str)
         basic.pause(500)
     }
-    
+
 
     //% blockId=fpv_Qrcode_scan block="(Camera) scan QRcode"
     //% group="FPV Camera" weight=47
@@ -1154,7 +1255,7 @@ namespace Sugar {
         serial.writeString(str)
         basic.pause(500)
     }
-    
+
     //% blockId=fpv_QRcode block="(Camera)on QRcode is scanned"
     //% group="FPV Camera" weight=46 draggableParameters=reporter
     export function fpv_QRcode(handler: (qrcode: string) => void) {
@@ -1229,7 +1330,7 @@ namespace Sugar {
     //% group="FPV Camera" weight=38 draggableParameters=reporter
     export function fpv_mqtt_message(handler: (mqttTopicL: string, mqttMessage: string) => void) {
         control.onEvent(fpvEventId, TopicMesId, () => {
-            handler(mqttTopicL,mqttMessage);
+            handler(mqttTopicL, mqttMessage);
         });
     }
 
@@ -1238,7 +1339,7 @@ namespace Sugar {
     export function on_fpv_btn(btn: BTNCmd, handler: () => void) {
         control.onEvent(fpvEventId, btn, handler);
     }
-    
+
     //% blockId=fpv_asr_dispose block="(Camera) on speech recognition is complete"
     //% group="FPV Camera" weight=45 draggableParameters=reporter
     export function fpv_asr_dispose(handler: (asrText: string) => void) {
@@ -1312,34 +1413,34 @@ namespace Sugar {
 
     const i2caddress = 0x28
 
-    class rfid{
-        constructor(){
+    class rfid {
+        constructor() {
             this.mrfc522_init()
         }
 
-        showReaderDetails():number{
+        showReaderDetails(): number {
             let version = this.mrfc522_read(VERSIONREG)
             return 0
         }
 
-        mrfc522_reset(){
+        mrfc522_reset() {
             this.mrfc522_write(COMMANDREG, MRFC522_SOFTRESET)
         }
 
-        mrfc522_init(){
+        mrfc522_init() {
             this.mrfc522_reset()
         }
 
-        mrfc522_antennaOn(){
+        mrfc522_antennaOn() {
 
         }
 
-        mrfc522_setBitMask(address: number, mask: number){
+        mrfc522_setBitMask(address: number, mask: number) {
 
         }
 
-        mrfc522_read(address: number):number{
-            let value: number = pins.i2cReadNumber(i2caddress,address)
+        mrfc522_read(address: number): number {
+            let value: number = pins.i2cReadNumber(i2caddress, address)
             return value
         }
 

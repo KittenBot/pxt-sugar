@@ -49,6 +49,9 @@
     "Sugar.asr_tts_date|block": "(ASR) 語音播報讀出日期 年|%year 月|%month 日|%day",
     "Sugar.asr_tts_time|block": "(ASR) 語音播報讀出時間 小時|%hour 分鐘|%minute",
     "Sugar.asr_tts_words|block": "(ASR) 語音播報讀出語句 |%id",
+    "Sugar.gesture_init|block": "(Gesture) 手勢模塊 初始化|Tx 引脚 %tx|Rx 引脚 %rx",
+    "Sugar.get_gesture|block": "(Gesture) 獲取上一次手勢",
+    "Sugar.gesture_dispose|block": "(Gesture) 儅檢測到 %gestureType 時",
     "Sugar.fpv_init|block": "(Camera) 初始化攝像頭模組 |Tx 引腳 %tx|Rx 引腳 %rx",
     "Sugar.fpv_connectWifi|block": "(Camera) 鏈接wifi %ssid 密碼 %pwd",
     "Sugar.fpv_IPAddress|block": "(Camera) 獲取ip地址",
@@ -224,5 +227,7 @@
     "{id:group}Basic": "基礎",
     "{id:group}Actuators": "電機舵機",
     "{id:group}Encoded Motor": "編碼電機(單)",
-    "{id:group}Dual Encoded Motor": "編碼電機(雙)"
+    "{id:group}Dual Encoded Motor": "編碼電機(雙)",
+
+    "{id:group}Gesture": "手勢模塊"
 }
