@@ -456,7 +456,6 @@ namespace Sugar {
         Y = 1
     }
 
-
     //% blockId=pir block="(PIR) motion detected %pin"
     //% group="DigitalIn" weight=90
     export function PIR(pin: DigitalPin): boolean {
@@ -868,6 +867,46 @@ namespace Sugar {
             default: return d;
         }
     }
+
+    function sleep_simulate() {
+        //microbit can't do 1-millisecond delay,so in this way
+        for (let index = 0; index < 400; index++) {
+        }
+    }
+
+    /**
+     * get 4x4keyboard value
+     * @param scl Tx pin; eg: DigitalPin.P2
+     * @param sdo Rx pin; eg: DigitalPin.P12
+     */
+    //% blockId=keyboard_getKey block="(4x4 keyboard) get value scl %scl sdo %sdo"
+    //% group="4x4keyboard" weight=50
+    export function keyboard_getKey(scl: DigitalPin, sdo: DigitalPin): string {
+        let keyList: number[] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+        let keyText: string[] = ["*", "7", "4", "1", "3", "6", "9", "#", "A", "B", "C", "D", "0", "8", "5", "2"];
+        let i = 0;
+        pins.digitalWritePin(scl, 1)
+        basic.pause(1)
+        i = 0
+        for (let index = 0; index < keyList.length; index++) {
+            pins.digitalWritePin(scl, 0)
+            sleep_simulate()
+            keyList[i] = pins.digitalReadPin(sdo)
+            pins.digitalWritePin(scl, 1)
+            sleep_simulate()
+            i += 1
+        }
+        basic.pause(1)
+        for(let index = 0;index < keyList.length;index++){
+            if(keyList[index] == 0){
+                return keyText[index]
+            }
+        }
+        return "None"
+
+    }
+
+
 
     /**
      * init serial port

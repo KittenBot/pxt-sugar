@@ -38,6 +38,7 @@
     "Sugar.envUpdate|block": "(ENV.II型) 氣壓海拔模塊 更新數據",
     "Sugar.envGetData|block": "(ENV.II型) 氣壓海拔模塊 獲取 %pin",
     "Sugar.HoleUltrasonic|block": "貓耳洞超聲波|腳位 %pin|單位 %unit",
+    "Sugar.keyboard_getKey|block": "(4x4keyboard) 獲取被按下的按鈕  scl %scl sdo %sdo",
     "Sugar.asr_init|block": "(ASR) 初始化語音模組 |Tx 引腳 %tx|Rx 引腳 %rx",
     "Sugar.asr_init_pw|block": "(ASR) 初始化語音模組|Port %port",
     "Sugar.on_asr_led|block": "(ASR) 當聽到燈控類指令 |%id ",
@@ -229,5 +230,6 @@
     "{id:group}Encoded Motor": "編碼電機(單)",
     "{id:group}Dual Encoded Motor": "編碼電機(雙)",
 
-    "{id:group}Gesture": "手勢模塊"
+    "{id:group}Gesture": "手勢模塊",
+    "{id:group}4x4keyboard": "4x4矩陣鍵盤"
 }
