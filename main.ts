@@ -150,6 +150,15 @@ namespace Sugar {
         AB = 3
     }
 
+    export enum PmMenu{
+        //% block="PM1.0"
+        PM1 = 0,
+        //% block="PM2.5"
+        PM25 = 1,
+        //% block="PM10"
+        PM10 = 2
+    }
+
     export enum GestureType {
         //% block="right"
         right = 0x01,
@@ -624,6 +633,25 @@ namespace Sugar {
         }
         pins.i2cWriteNumber(VL53L0X_ADDR, 0x1, NumberFormat.UInt8BE);
         return pins.i2cReadNumber(VL53L0X_ADDR, NumberFormat.UInt16LE);
+    }
+
+    const PM_ADDR = 0x12;
+
+    //% blockId=pm block="(PM) get %pmType data(µg/m³)"
+    //% group="I2C" weight=76
+    export function PMdata(pmType: PmMenu): number {
+        let buffer = pins.i2cReadBuffer(PM_ADDR, 32);
+        let sum = 0
+        for(let i=0;i<30;i++){
+            sum+=buffer[i]
+        }
+        let data = [-1, -1, -1]
+        if(sum==((buffer[30]<<8)|buffer[31])){
+            data[0] = (buffer[0x04] << 8) | buffer[0x05]
+            data[1] = (buffer[0x06] << 8) | buffer[0x07]
+            data[2] = (buffer[0x08] << 8) | buffer[0x09]
+        }
+        return data[pmType]
     }
 
     const AHT20_ADDR = 0x38
