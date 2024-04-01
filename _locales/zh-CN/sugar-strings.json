@@ -218,6 +218,7 @@
     "Sugar.WordsID.ok|block": "好的",
     "Sugar.ValueUnit.Millimeter|block": "毫米",
     "Sugar.ValueUnit.Centimeters|block": "厘米",
+    "Sugar.sugarDSTemperature|block":"ds18b20 获取当前水温 %pin",
     "{id:category}Sugar": "方糖",
     "{id:group}DigitalIn": "数字输入",
     "{id:group}DigitalOut": "数字输出",

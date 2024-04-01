@@ -111,6 +111,7 @@ namespace Sugar {
     let mqttMessage: string = ''
     let mqttTopicL: string = ''
     let distanceBuf = 0
+    let temp = 25
 
     let GestureId = 33
     let gesturesOperate = "";
@@ -860,6 +861,21 @@ namespace Sugar {
     }
     TM1650_on()
 
+    //% shim=dstemp::celsius
+    export function celsius(pin: DigitalPin): number {
+        return 32.6;
+    }
+    //% blockId=sugarDSTemperature block="ds18b20 Get Water Temperature Pin %pin"
+    //% group="Resistor Water Temperature Sensor" weight=99
+    export function sugarDSTemperature(pin: DigitalPin): number {
+        temp = celsius(pin)
+        while (temp >= 85 || temp <= -300) {
+            temp = celsius(pin)
+            basic.pause(100)
+        }
+
+        return Math.round(temp)
+    }
 
     /**
      * signal pin
