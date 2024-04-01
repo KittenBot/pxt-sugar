@@ -5,6 +5,7 @@
     "Sugar.Button|block": "(Button) 被按下 %pin",
     "Sugar.onButtonEvent|block": "当按钮 %pin 被按下时",
     "Sugar.ledOnoff|block": "(LED) %pin| %onoff",
+    "Sugar.StringLightsOnoff|block": "(LED灯串) %pin| %onoff",
     "Sugar.ledLuminent|block": "(LED) %pin| 亮度 %value",
     "Sugar.Buzzer|block": "(Buzzer) 有源蜂鸣器 %pin| %onoff",
     "Sugar.Laser|block": "(Laser) 红点激光 %pin| %onoff",

@@ -522,6 +522,12 @@ namespace Sugar {
         pins.analogWritePin(pin, value)
     }
 
+    //% blockId=string_lights_toggle block="(String Lights) %pin| %onoff"
+    //% group="DigitalOut" weight=85
+    export function StringLightsOnoff(pin: DigitalPin, onoff: LEDSta) {
+        pins.digitalWritePin(pin, onoff ? 1 : 0)
+    }
+
     //% blockId=Buzzer block="(Active Buzzer) %pin| sound %onoff"
     //% group="DigitalOut" weight=83
     export function Buzzer(pin: DigitalPin, onoff: Switch) {
