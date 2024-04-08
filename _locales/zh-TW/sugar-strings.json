@@ -26,6 +26,7 @@
     "Sugar.tempSensor|block": "(DS18B20) 溫度傳感器 %pin",
     "Sugar.TOFDistance|block": "(TOF) 激光測距 (毫米)",
     "Sugar.PMdata|block": "(PM) 獲取 %pmType 數據(µg/m³)",
+    "Sugar.AIR|block": "(AIR) 空氣質量 %air ",
     "Sugar.ENV|block": "(ENV.I型) 環境溫濕度模組 %env",
     "Sugar.joyState|block": "(Joystick) 搖桿狀態 %state 觸發",
     "Sugar.joyValue|block": " (Joystick) 搖桿方向 %dir 數值",
