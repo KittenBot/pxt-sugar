@@ -439,6 +439,13 @@ namespace Sugar {
         FTemp = 3
     }
 
+    export enum AirType {
+        //% block="CO2(ppm)"
+        CO2 = 0,
+        //% block="TVOC(ppm)"
+        TVOC = 1
+    }
+
     export enum LEDSta {
         //% block="OFF"
         Off = 0,
@@ -659,6 +666,35 @@ namespace Sugar {
             data[2] = (buffer[0x08] << 8) | buffer[0x09]
         }
         return data[pmType]
+    }
+
+    const CO2_ADDR = 0x58
+    let co2Inited = false;
+
+    //% blockId=co2 block="(CO2) value %air"
+    //% group="I2C" weight=74
+    export function AIR(air: AirType): number {
+        if (!co2Inited) {
+            pins.i2cWriteNumber(CO2_ADDR, 0x2003, NumberFormat.UInt16BE);
+            basic.pause(1000)
+            co2Inited = true;
+        }
+        pins.i2cWriteNumber(CO2_ADDR, 0x2008, NumberFormat.UInt16BE);
+        basic.pause(550)
+        let buffer = pins.i2cReadBuffer(CO2_ADDR, 6);
+        let data = [-1, -1];
+        // 解析数据
+        data[0] = (buffer[0] << 8) | buffer[1]; // CO2eq
+        data[1] = (buffer[3] << 8) | buffer[4]; // TVOC
+        basic.pause(50)
+        //console.log('CO2eq=' + data[0])
+        //console.log('TVOC=' + data[1])
+        if (air === AirType.CO2) {
+            return data[0]
+        }
+        else {
+            return data[1]
+        }
     }
 
     const AHT20_ADDR = 0x38
