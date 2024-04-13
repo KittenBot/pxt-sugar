@@ -85,7 +85,7 @@ using namespace pxt;
 #endif
 #endif
 
-namespace dstemp { 
+namespace dstempSugar { 
 
     // ************* Forward Decalarations
     void loopUntilSent(ManagedString str);
