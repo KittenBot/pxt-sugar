@@ -11,7 +11,7 @@
     "files": [
         "README.md",
         "main.ts",
-        "dstemp.cpp",
+        "dstempSugar.cpp",
         "_locales/zh-CN/sugar-strings.json",
         "_locales/zh-TW/sugar-strings.json"
     ],
