@@ -897,7 +897,7 @@ namespace Sugar {
     }
     TM1650_on()
 
-    //% shim=dstemp::celsius
+    //% shim=dstempSugar::celsius
     export function celsius(pin: DigitalPin): number {
         return 32.6;
     }
