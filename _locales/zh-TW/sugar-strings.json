@@ -38,6 +38,9 @@
     "Sugar.TM1650_showDpAt|block": "(TM1650) 數碼管 %num 顯示點 %bit",
     "Sugar.TM1650_setIntensity|block": "(TM1650) 數碼管 設置亮度 %dat",
     "Sugar.TM1650_showNumber|block": "(TM1650) 數碼管 顯示數字 %num",
+    "Sugar.scd40co2|block": "CO2(ppm)",
+    "Sugar.scd40temp|block": "温度(℃)",
+    "Sugar.scd40hum|block": "湿度(\\%)",
     "Sugar.envUpdate|block": "(ENV.II型) 氣壓海拔模塊 更新數據",
     "Sugar.envGetData|block": "(ENV.II型) 氣壓海拔模塊 獲取 %pin",
     "Sugar.HoleUltrasonic|block": "貓耳洞超聲波|腳位 %pin|單位 %unit",
@@ -233,7 +236,6 @@
     "{id:group}Actuators": "電機舵機",
     "{id:group}Encoded Motor": "編碼電機(單)",
     "{id:group}Dual Encoded Motor": "編碼電機(雙)",
-
     "{id:group}Gesture": "手勢模塊",
     "{id:group}4x4keyboard": "4x4矩陣鍵盤"
 }

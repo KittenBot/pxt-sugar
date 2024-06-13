@@ -151,7 +151,7 @@ namespace Sugar {
         AB = 3
     }
 
-    export enum PmMenu{
+    export enum PmMenu {
         //% block="PM1.0"
         PM1 = 0,
         //% block="PM2.5"
@@ -649,6 +649,65 @@ namespace Sugar {
         return pins.i2cReadNumber(VL53L0X_ADDR, NumberFormat.UInt16LE);
     }
 
+    const SCD40_ADDR = 0x62;
+    let scd40Inited = false;
+
+    let scd40buf = pins.createBuffer(2)
+
+    let co2 = 0
+    let temperature = 0
+    let relative_humidity = 0
+
+    function scd40update() {
+        if (!scd40Inited) {
+            pins.i2cWriteNumber(SCD40_ADDR, 0x21b1, NumberFormat.UInt16BE)
+            basic.pause(500)
+            scd40Inited = true
+        }
+        pins.i2cWriteNumber(SCD40_ADDR, 0xe4b8, NumberFormat.UInt16BE)
+        basic.pause(1)
+        let ready = pins.i2cReadNumber(SCD40_ADDR, NumberFormat.UInt16BE, false);
+        pins.i2cReadNumber(SCD40_ADDR, NumberFormat.UInt8BE, false);
+        let data_ready = ready & 0x07FF;
+        if (data_ready > 0) {
+            pins.i2cWriteNumber(SCD40_ADDR, 0xec05, NumberFormat.UInt16BE)
+            basic.pause(1)
+            let buffer = pins.i2cReadBuffer(SCD40_ADDR, 6 * 3, false);
+            let words: number[] = [];
+            for (let i = 0; i < 6; i++) {
+                words.push(buffer.getNumber(NumberFormat.UInt16BE, 3 * i));
+            }
+            co2 = words[0];
+            let adc_t = words[1];
+            let adc_rh = words[2];
+            temperature = Math.round((-45 + (175 * adc_t / (1 << 16))) * 100) / 100
+            relative_humidity = Math.round((100 * adc_rh / (1 << 16)) * 100) / 100
+        }
+    }
+
+    //% blockId="scd40 co2" block="CO2(ppm)"
+    //% group="I2C" weight=79
+    export function scd40co2(): number {
+        scd40update()
+        return co2
+    }
+
+    //% blockId="scd40 temperature" block="temperature(°C)"
+    //% group="I2C" weight=78
+    export function scd40temp(): number {
+        scd40update()
+        return temperature
+    }
+
+    //% blockId="scd40 humidity" block="humidity(\\%)"
+    //% group="I2C" weight=77
+    export function scd40hum(): number {
+        scd40update()
+        return relative_humidity
+    }
+
+
+
     const PM_ADDR = 0x12;
 
     //% blockId=pm block="(PM) get %pmType data(µg/m³)"
@@ -656,11 +715,11 @@ namespace Sugar {
     export function PMdata(pmType: PmMenu): number {
         let buffer = pins.i2cReadBuffer(PM_ADDR, 32);
         let sum = 0
-        for(let i=0;i<30;i++){
-            sum+=buffer[i]
+        for (let i = 0; i < 30; i++) {
+            sum += buffer[i]
         }
         let data = [-1, -1, -1]
-        if(sum==((buffer[30]<<8)|buffer[31])){
+        if (sum == ((buffer[30] << 8) | buffer[31])) {
             data[0] = (buffer[0x04] << 8) | buffer[0x05]
             data[1] = (buffer[0x06] << 8) | buffer[0x07]
             data[2] = (buffer[0x08] << 8) | buffer[0x09]
@@ -968,7 +1027,7 @@ namespace Sugar {
     //% blockId=keyboard_getKey block="(4x4 keyboard) get value scl %scl sdo %sdo"
     //% group="4x4keyboard" weight=50
     export function keyboard_getKey(scl: DigitalPin, sdo: DigitalPin): string {
-        let keyList: number[] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+        let keyList: number[] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
         let keyText: string[] = ["*", "7", "4", "1", "3", "6", "9", "#", "A", "B", "C", "D", "0", "8", "5", "2"];
         let i = 0;
         pins.digitalWritePin(scl, 1)
@@ -983,8 +1042,8 @@ namespace Sugar {
             i += 1
         }
         basic.pause(1)
-        for(let index = 0;index < keyList.length;index++){
-            if(keyList[index] == 0){
+        for (let index = 0; index < keyList.length; index++) {
+            if (keyList[index] == 0) {
                 return keyText[index]
             }
         }
@@ -1247,7 +1306,7 @@ namespace Sugar {
 
     //% blockId=gesture_dispose block="(Gesture)When %gestureType gesture is received"
     //% group="Gesture" weight=46
-    export function gesture_dispose(gestureType: GestureType,handler: () => void) {
+    export function gesture_dispose(gestureType: GestureType, handler: () => void) {
         control.onEvent(gestureEventId, gestureType, handler);
     }
 
