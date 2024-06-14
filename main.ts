@@ -1542,6 +1542,53 @@ namespace Sugar {
         basic.pause(500)
     }
 
+    export enum SPOnOff {
+        ON = 1,
+        OFF = 0,
+    }
+
+    //% blockId=solarpwrOnOff block="(solar power) set output status %state"
+    //% group="solar power" weight=40
+    export function solarpwrOnOff(state: SPOnOff): void {
+        const buff = pins.createBuffer(2) // reg, int16
+        buff[0] = 0x03
+        buff[1] = state
+        pins.i2cWriteBuffer(37, buff) 
+    }
+
+    //% blockId=solarpwrBatteryLevel block="(solar power) battery level(V)"
+    //% group="solar power" weight=39
+    export function solarpwrBatteryLevel(): number {
+        const buff = pins.createBuffer(2) // reg, int16
+        buff[0] = 0x02
+        pins.i2cWriteBuffer(37, buff)
+        let data = pins.i2cReadBuffer(37,4)
+        let sign:boolean = !(data[3] & 0b10000000)
+        let exponent = ((data[3] & 0b01111111) << 1) + (data[2] >> 7) - 127
+        let significand = ((data[2] & 0b01111111) << 16) + ((data[1]) << 8) + data[0]
+        let integerBit = 0
+        let middle = 0b10000000000000000000000
+        if (exponent > -1){
+            integerBit = (significand >> (23 - exponent)) + (1 << exponent)
+            middle = middle >> exponent
+        }
+        let decimalBit = 0        
+        let decBit = 0
+        let ex = 0
+        significand = (0b11111111111111111111111 >> exponent) & significand
+        for (let index = 0; index <= 23 - exponent;index ++){
+            decBit-=1
+            if (significand & middle){
+                ex = 1
+            }else{
+                ex = 0
+            }
+            decimalBit += ex * 2 ** decBit
+            middle = middle >> 1
+        }
+        return decimalBit + integerBit
+    }
+
     const COMMANDREG = 0x01
     const COMIENREG = 0x02
     const COMIRQREG = 0x04
