@@ -1592,7 +1592,7 @@ namespace Sugar {
         //% block="year"
         Year = 0,
         //% block="months"
-        Monthsmonths = 1,
+        Months = 1,
         //% block="day"
         Day = 2,
         //% block="hour"
@@ -1612,10 +1612,11 @@ namespace Sugar {
         return data[date]
     }
 
-    //% blockId=solarpwrSetDate block="(solar power) set date year %y moths %month hour %h minute %minute sec %s"
+    //% blockId=solarpwrSetDate block="(solar power) set date year %y moths %month day %d hour %h minute %minute sec %s"
     //% group="solar power" weight=38
     export function solarpwrSetDate(y: number, month: number, d: number,h: number, minute: number, s: number): void {
         const buff = pins.createBuffer(1+6) // reg, int16
+        y = y % 100
         buff[0] = 0x05
         buff[1] = y
         buff[2] = month
@@ -1624,8 +1625,20 @@ namespace Sugar {
         buff[5] = minute
         buff[6] = s
         pins.i2cWriteBuffer(37, buff)
-        let data = pins.i2cReadBuffer(37, 6)
     }
+
+    //% blockId=solarpwrSetAlarm block="(solar power) set alarm hour %h minute %minute sec %s"
+    //% group="solar power" weight=37
+    export function solarpwrSetAlarm( h: number, minute: number, s: number): void {
+        const buff = pins.createBuffer(1 + 3) // reg, int16
+        buff[0] = 0x04
+        buff[1] = h
+        buff[2] = minute
+        buff[3] = s
+        pins.i2cWriteBuffer(37, buff)
+    }
+
+
 
 
     const COMMANDREG = 0x01

@@ -1,6 +1,6 @@
 {
     "name": "sugar",
-    "version": "0.3.7",
+    "version": "0.3.8",
     "description": "Extension for Kittenbot Sugar",
     "license": "MIT",
     "dependencies": {
