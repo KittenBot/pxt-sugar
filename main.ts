@@ -685,21 +685,21 @@ namespace Sugar {
         }
     }
 
-    //% blockId="scd40 co2" block="CO2(ppm)"
+    //% blockId="scd40 co2" block="(PM)CO2(ppm)"
     //% group="I2C" weight=79
     export function scd40co2(): number {
         scd40update()
         return co2
     }
 
-    //% blockId="scd40 temperature" block="temperature(°C)"
+    //% blockId="scd40 temperature" block="(PM)temperature(°C)"
     //% group="I2C" weight=78
     export function scd40temp(): number {
         scd40update()
         return temperature
     }
 
-    //% blockId="scd40 humidity" block="humidity(\\%)"
+    //% blockId="scd40 humidity" block="(PM)humidity(\\%)"
     //% group="I2C" weight=77
     export function scd40hum(): number {
         scd40update()
@@ -708,24 +708,24 @@ namespace Sugar {
 
 
 
-    const PM_ADDR = 0x12;
+    // const PM_ADDR = 0x12;
 
-    //% blockId=pm block="(PM) get %pmType data(µg/m³)"
-    //% group="I2C" weight=76
-    export function PMdata(pmType: PmMenu): number {
-        let buffer = pins.i2cReadBuffer(PM_ADDR, 32);
-        let sum = 0
-        for (let i = 0; i < 30; i++) {
-            sum += buffer[i]
-        }
-        let data = [-1, -1, -1]
-        if (sum == ((buffer[30] << 8) | buffer[31])) {
-            data[0] = (buffer[0x04] << 8) | buffer[0x05]
-            data[1] = (buffer[0x06] << 8) | buffer[0x07]
-            data[2] = (buffer[0x08] << 8) | buffer[0x09]
-        }
-        return data[pmType]
-    }
+    // //% blockId=pm block="(PM) get %pmType data(µg/m³)"
+    // //% group="I2C" weight=76
+    // export function PMdata(pmType: PmMenu): number {
+    //     let buffer = pins.i2cReadBuffer(PM_ADDR, 32);
+    //     let sum = 0
+    //     for (let i = 0; i < 30; i++) {
+    //         sum += buffer[i]
+    //     }
+    //     let data = [-1, -1, -1]
+    //     if (sum == ((buffer[30] << 8) | buffer[31])) {
+    //         data[0] = (buffer[0x04] << 8) | buffer[0x05]
+    //         data[1] = (buffer[0x06] << 8) | buffer[0x07]
+    //         data[2] = (buffer[0x08] << 8) | buffer[0x09]
+    //     }
+    //     return data[pmType]
+    // }
 
     const CO2_ADDR = 0x58
     let co2Inited = false;
@@ -1559,7 +1559,7 @@ namespace Sugar {
     //% blockId=solarpwrBatteryLevel block="(solar power) battery level(V)"
     //% group="solar power" weight=39
     export function solarpwrBatteryLevel(): number {
-        const buff = pins.createBuffer(2) // reg, int16
+        const buff = pins.createBuffer(1) // reg, int16
         buff[0] = 0x02
         pins.i2cWriteBuffer(37, buff)
         let data = pins.i2cReadBuffer(37,4)
@@ -1588,6 +1588,45 @@ namespace Sugar {
         }
         return decimalBit + integerBit
     }
+    export enum SolarpwrDate {
+        //% block="year"
+        Year = 0,
+        //% block="months"
+        Monthsmonths = 1,
+        //% block="day"
+        Day = 2,
+        //% block="hour"
+        Hour = 3,
+        //% block="minute"
+        Minute = 4,
+        //% block="sec"
+        Sec = 5,
+    }
+    //% blockId=solarpwrGetDate block="(solar power) get date %date"
+    //% group="solar power" weight=38
+    export function solarpwrGetDate(date: SolarpwrDate): number {
+        const buff = pins.createBuffer(1) // reg, int16
+        buff[0] = 0x06
+        pins.i2cWriteBuffer(37, buff)
+        let data = pins.i2cReadBuffer(37, 6)
+        return data[date]
+    }
+
+    //% blockId=solarpwrSetDate block="(solar power) set date year %y moths %month hour %h minute %minute sec %s"
+    //% group="solar power" weight=38
+    export function solarpwrSetDate(y: number, month: number, d: number,h: number, minute: number, s: number): void {
+        const buff = pins.createBuffer(1+6) // reg, int16
+        buff[0] = 0x05
+        buff[1] = y
+        buff[2] = month
+        buff[3] = d
+        buff[4] = h
+        buff[5] = minute
+        buff[6] = s
+        pins.i2cWriteBuffer(37, buff)
+        let data = pins.i2cReadBuffer(37, 6)
+    }
+
 
     const COMMANDREG = 0x01
     const COMIENREG = 0x02
