@@ -234,6 +234,7 @@
     "Sugar.SolarpwrDate.Hour|block":"时",
     "Sugar.SolarpwrDate.Minute|block":"分",
     "Sugar.SolarpwrDate.Sec|block":"秒",
+    "Sugar.loadcellGetWeight|block": "(称重模块)获取重量(克)",
     "{id:category}Sugar": "方糖",
     "{id:group}DigitalIn": "数字输入",
     "{id:group}DigitalOut": "数字输出",

@@ -632,6 +632,31 @@ namespace Sugar {
     //     return  '温度：16℃'
     // }
 
+    
+    let loadcellInit = false;
+    let loadcell: SugarLoadcell;
+    //% blockId=loadcell block="(loadcell) weight(g)"
+    //% group="I2C" weight=77
+    export function loadcellGetWeight(): number {
+        if (!loadcellInit){
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        return loadcell.getWeight()
+    }
+
+    // //% blockId=loadcellCali block="(loadcell) calibrate scale"
+    // //% group="I2C" weight=77
+    // export function loadcellCalibrateScale(): void {
+    //     if (!loadcellInit) {
+    //         loadcell = new SugarLoadcell()
+    //         loadcell.begin()
+    //         loadcellInit = true
+    //     }
+    //     loadcell.calibrateScale()
+    // }
+
     const VL53L0X_ADDR = 0x5e;
     let vl53Inited = false;
 
@@ -2055,4 +2080,5 @@ namespace SugarBox {
         const rnd = 2 * (degree / w) * diff
         _dualMotorRun(MODE_TURN, speed, diff, rnd)
     }
+    
 }
