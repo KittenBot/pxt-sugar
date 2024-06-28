@@ -220,7 +220,7 @@
     "Sugar.WordsID.degree_centigrade|block": "Degrees",
     "Sugar.WordsID.ok|block": "Ok",
     "Sugar.ValueUnit.Millimeter|block": "毫米",
-    "Sugar.ValueUnit.Centimeters|block": "厘米",    
+    "Sugar.ValueUnit.Centimeters|block": "厘米",
     "Sugar.sugarDSTemperature|block": "ds18b20 获取当前水温 %pin",
     "Sugar.solarpwrOnOff|block": "(太陽能模塊) 輸出狀態設置爲 %state",
     "Sugar.solarpwrBatteryLevel|block": "(太陽能模塊) 電池電壓(伏)",
@@ -249,5 +249,11 @@
     "{id:group}Encoded Motor": "編碼電機(單)",
     "{id:group}Dual Encoded Motor": "編碼電機(雙)",
     "{id:group}Gesture": "手勢模塊",
-    "{id:group}4x4keyboard": "4x4矩陣鍵盤"
+    "{id:group}4x4keyboard": "4x4矩陣鍵盤",
+    "Sugar.colorUpdate|block": "(顔色識別)更新模塊數據",
+    "Sugar.getRGB|block": "(顔色識別)獲取顔色%index",
+    "Sugar.getHex|block": "(顔色識別)獲取顔色(hex)",
+    "Sugar.Colorindex.read|block": "紅",
+    "Sugar.Colorindex.green|block": "綠",
+    "Sugar.Colorindex.black|block": "藍"
 }

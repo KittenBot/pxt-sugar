@@ -1,6 +1,6 @@
 {
     "name": "sugar",
-    "version": "0.3.9",
+    "version": "0.3.10",
     "description": "Extension for Kittenbot Sugar",
     "license": "MIT",
     "dependencies": {
@@ -14,7 +14,8 @@
         "dstempSugar.cpp",
         "_locales/zh-CN/sugar-strings.json",
         "_locales/zh-TW/sugar-strings.json",
-        "sugarLoadcell.ts"
+        "sugarLoadcell.ts",
+        "sugarColor.ts"
     ],
     "public": true,
     "targetVersions": {

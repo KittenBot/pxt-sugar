@@ -632,13 +632,55 @@ namespace Sugar {
     //     return  '温度：16℃'
     // }
 
-    
+    let sugarColorInit = false;
+    let sugarColor: SugarColor;
+    //% blockId=colorUpdate block="(color recognition) update data"
+    //% group="I2C" weight=82
+    export function colorUpdate(): void {
+
+        if (!sugarColorInit) {
+            sugarColor = new SugarColor()
+            sugarColorInit = true
+        }
+        sugarColor.update()
+    }
+
+
+    export enum Colorindex {
+        //% block="red"
+        Red = 0,
+        //% block="green"
+        Green = 1,
+        //% block="blue"
+        Blue = 2,
+    }
+
+    //% blockId=getRGB block="(color recognition) get RGB %index"
+    //% group="I2C" weight=81
+    export function getRGB(index: Colorindex): number {
+        if (!sugarColorInit) {
+            sugarColor = new SugarColor()
+            sugarColorInit = true
+        }
+        return sugarColor.getRGB(index)
+    }
+
+    //% blockId=getHex block="(color recognition) get color(hex)"
+    //% group="I2C" weight=80
+    export function getHex(): number {
+        if (!sugarColorInit) {
+            sugarColor = new SugarColor()
+            sugarColorInit = true
+        }
+        return sugarColor.getHex()
+    }
+
     let loadcellInit = false;
     let loadcell: SugarLoadcell;
     //% blockId=loadcell block="(loadcell) weight(g)"
     //% group="I2C" weight=77
     export function loadcellGetWeight(): number {
-        if (!loadcellInit){
+        if (!loadcellInit) {
             loadcell = new SugarLoadcell()
             loadcell.begin()
             loadcellInit = true
@@ -1578,7 +1620,7 @@ namespace Sugar {
         const buff = pins.createBuffer(2) // reg, int16
         buff[0] = 0x03
         buff[1] = state
-        pins.i2cWriteBuffer(37, buff) 
+        pins.i2cWriteBuffer(37, buff)
     }
 
     //% blockId=solarpwrBatteryLevel block="(solar power) battery level(V)"
@@ -1587,25 +1629,25 @@ namespace Sugar {
         const buff = pins.createBuffer(1) // reg, int16
         buff[0] = 0x02
         pins.i2cWriteBuffer(37, buff)
-        let data = pins.i2cReadBuffer(37,4)
-        let sign:boolean = !(data[3] & 0b10000000)
+        let data = pins.i2cReadBuffer(37, 4)
+        let sign: boolean = !(data[3] & 0b10000000)
         let exponent = ((data[3] & 0b01111111) << 1) + (data[2] >> 7) - 127
         let significand = ((data[2] & 0b01111111) << 16) + ((data[1]) << 8) + data[0]
         let integerBit = 0
         let middle = 0b10000000000000000000000
-        if (exponent > -1){
+        if (exponent > -1) {
             integerBit = (significand >> (23 - exponent)) + (1 << exponent)
             middle = middle >> exponent
         }
-        let decimalBit = 0        
+        let decimalBit = 0
         let decBit = 0
         let ex = 0
         significand = (0b11111111111111111111111 >> exponent) & significand
-        for (let index = 0; index <= 23 - exponent;index ++){
-            decBit-=1
-            if (significand & middle){
+        for (let index = 0; index <= 23 - exponent; index++) {
+            decBit -= 1
+            if (significand & middle) {
                 ex = 1
-            }else{
+            } else {
                 ex = 0
             }
             decimalBit += ex * 2 ** decBit
@@ -1639,8 +1681,8 @@ namespace Sugar {
 
     //% blockId=solarpwrSetDate block="(solar power) set date year %y moths %month day %d hour %h minute %minute sec %s"
     //% group="solar power" weight=38
-    export function solarpwrSetDate(y: number, month: number, d: number,h: number, minute: number, s: number): void {
-        const buff = pins.createBuffer(1+6) // reg, int16
+    export function solarpwrSetDate(y: number, month: number, d: number, h: number, minute: number, s: number): void {
+        const buff = pins.createBuffer(1 + 6) // reg, int16
         y = y % 100
         buff[0] = 0x05
         buff[1] = y
@@ -1654,7 +1696,7 @@ namespace Sugar {
 
     //% blockId=solarpwrSetAlarm block="(solar power) set alarm hour %h minute %minute sec %s"
     //% group="solar power" weight=37
-    export function solarpwrSetAlarm( h: number, minute: number, s: number): void {
+    export function solarpwrSetAlarm(h: number, minute: number, s: number): void {
         const buff = pins.createBuffer(1 + 3) // reg, int16
         buff[0] = 0x04
         buff[1] = h
@@ -2080,5 +2122,5 @@ namespace SugarBox {
         const rnd = 2 * (degree / w) * diff
         _dualMotorRun(MODE_TURN, speed, diff, rnd)
     }
-    
+
 }
