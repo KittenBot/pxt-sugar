@@ -677,27 +677,55 @@ namespace Sugar {
 
     let loadcellInit = false;
     let loadcell: SugarLoadcell;
+
+    /**
+     * init loadcell
+     * @param zeroOffset is zero offset, eg: 2071.921875
+     * @param factor is calibration factor, eg: 1.53034747292419
+     */
+    //% blockId=loadcellBegin block="(loadcell) begin zeroOffset %zeroOffset factor %factor"
+    //% group="I2C" weight=87
+    export function loadcellBegin(zeroOffset: number, factor: number): void {
+        if (!loadcellInit) {
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        loadcell.begin(true, zeroOffset, factor)
+    }
+
+    //% blockId=loadcellCali block="(loadcell) calibrate scale"
+    //% group="I2C" weight=86
+    export function loadcellCalibrateScale(): void {
+        if (!loadcellInit) {
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        loadcell.calibrateScale()
+    }
+
+    //% blockId=loadcellsetPeel block="(loadcell) net weight"
+    //% group="I2C" weight=85
+    export function loadcellCalibrateSetPeel(): void {
+        if (!loadcellInit) {
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        loadcell.setPeel()
+    }
+
     //% blockId=loadcell block="(loadcell) weight(g)"
-    //% group="I2C" weight=77
+    //% group="I2C" weight=84
     export function loadcellGetWeight(): number {
         if (!loadcellInit) {
             loadcell = new SugarLoadcell()
             loadcell.begin()
             loadcellInit = true
         }
-        return loadcell.getWeight()
+        return loadcell.getWeightPeel()
     }
-
-    // //% blockId=loadcellCali block="(loadcell) calibrate scale"
-    // //% group="I2C" weight=77
-    // export function loadcellCalibrateScale(): void {
-    //     if (!loadcellInit) {
-    //         loadcell = new SugarLoadcell()
-    //         loadcell.begin()
-    //         loadcellInit = true
-    //     }
-    //     loadcell.calibrateScale()
-    // }
 
     const VL53L0X_ADDR = 0x5e;
     let vl53Inited = false;

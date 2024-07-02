@@ -95,8 +95,10 @@ class SugarLoadcell {
 
     _zeroOffset: number;
     _calibrationFactor: number;
+    _peel: number;
 
     begin(initialize: boolean = true, zeroOffset: number = 2071.921875, factor: number = 1.53034747292419): boolean {
+        this._peel = 0
         let result = true
         if (initialize) {
             result = result && this.reset()
@@ -112,7 +114,7 @@ class SugarLoadcell {
             this.setZeroOffset(zeroOffset)
             this.setCalibrationFactor(factor)
         }
-
+        
         return result
     }
 
@@ -308,6 +310,10 @@ class SugarLoadcell {
     getCalibrationFactor(): number {
         return this._calibrationFactor
     }
+    
+    setPeel(): void{
+        this._peel = this.getWeight()
+    }
 
     getWeight(allow_negative_weights: boolean = true, samples_to_take: number = 8): number {
         let on_scale = this.getAverage(samples_to_take)
@@ -320,10 +326,12 @@ class SugarLoadcell {
         return weight
     }
 
+    getWeightPeel(): number{
+        return this.getWeight() - this._peel
+    }
+
     calibrateScale(): void {
         serial.writeString("start calibrate.\n")
-        serial.writeString("Empty the scale and level it. Press enter when ready.\n")
-        serial.readLine()
         this.calculateZeroOffset(64)
         serial.writeValue("new unloaded value", this.getZeroOffset())
         serial.writeString("Place an object of known weight on the scale and press enter when ready.\n")
