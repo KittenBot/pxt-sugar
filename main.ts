@@ -780,21 +780,21 @@ namespace Sugar {
         }
     }
 
-    //% blockId="scd40 co2" block="(PM)CO2(ppm)"
+    //% blockId="scd40 co2" block="(CO2)CO2(ppm)"
     //% group="I2C" weight=79
     export function scd40co2(): number {
         scd40update()
         return co2
     }
 
-    //% blockId="scd40 temperature" block="(PM)temperature(°C)"
+    //% blockId="scd40 temperature" block="(CO2)temperature(°C)"
     //% group="I2C" weight=78
     export function scd40temp(): number {
         scd40update()
         return temperature
     }
 
-    //% blockId="scd40 humidity" block="(PM)humidity(\\%)"
+    //% blockId="scd40 humidity" block="(CO2)humidity(\\%)"
     //% group="I2C" weight=77
     export function scd40hum(): number {
         scd40update()
