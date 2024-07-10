@@ -1365,6 +1365,21 @@ namespace Sugar {
     }
 
 
+    let sugar_GPS:SugarGPS
+    let gpsInit:boolean = false
+    /**
+     * init serial port
+     * @param tx Tx pin; eg: SerialPin.P2
+     * @param rx Rx pin; eg: SerialPin.P12
+     */
+    //% blockId=GPS_init block="(GPS) init tx %tx rx %rx"
+    //% group="GPS" weight=51
+    export function gps_init(tx: SerialPin, rx: SerialPin): void {
+        if(!gpsInit){
+            sugar_GPS = new SugarGPS(tx,rx)
+        }
+    }
+
     /**
      * init serial port
      * @param tx Tx pin; eg: SerialPin.P2
