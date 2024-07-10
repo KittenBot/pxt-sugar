@@ -1366,20 +1366,100 @@ namespace Sugar {
     }
 
 
-    let sugar_GPS:SugarGPS
-    let gpsInit:boolean = false
+    let sugar_gps: SugarGPS
     /**
      * init serial port
      * @param tx Tx pin; eg: SerialPin.P2
      * @param rx Rx pin; eg: SerialPin.P12
      */
     //% blockId=GPS_init block="(GPS) init tx %tx rx %rx"
-    //% group="GPS" weight=51
+    //% group="GPS" weight=69
     export function gps_init(tx: SerialPin, rx: SerialPin): void {
-        if(!gpsInit){
-            sugar_GPS = new SugarGPS(tx,rx)
-        }
+        sugar_gps = new SugarGPS(tx, rx)
     }
+
+
+    //% blockId=gps_satellite_quantity block="(GPS) satellite quantity"
+    //% group="GPS" weight=68
+    export function gps_satellite_quantity(): number {
+        return sugar_gps.satellite_quantity
+    }
+
+    //% blockId=gps_true_ground_track block="(GPS) true ground track"
+    //% group="GPS" weight=67
+    export function gps_true_ground_track(): number {
+        return sugar_gps.true_ground_track
+    }
+
+    //% blockId=gps_speed_over_ground block="(GPS) speed over ground"
+    //% group="GPS" weight=66
+    export function gps_speed_over_ground(): number {
+        return sugar_gps.speed_over_ground
+    }
+
+    export enum GPSCoordDir {
+        //% block="latitude"
+        Latitude = 0,
+        //% block="longitude"
+        Longitude = 1
+    }
+
+    //% blockId=gps_coordinate_direction block="(GPS) coordinate direction %dir"
+    //% group="GPS" weight=65
+    export function gps_coordinate_direction(dir: GPSCoordDir): string {
+        if (dir) {
+            return sugar_gps.longitude_direction
+        }
+        return sugar_gps.latitude_direction
+    }
+
+
+    export enum GPSCoord {
+        //% block="latitude"
+        Latitude = 0,
+        //% block="longitude"
+        Longitude = 1
+    }
+
+    //% blockId=gps_coordinate block="(GPS) coordinate %coord"
+    //% group="GPS" weight=64
+    export function gps_coordinate(coord: GPSCoord): number {
+        if (coord) {
+            return sugar_gps.longitude
+        }
+        return sugar_gps.latitude
+    }
+
+    //% blockId=gps_altitude block="(GPS) altitude"
+    //% group="GPS" weight=63
+    export function gps_altitude(): number {
+        return sugar_gps.altitude
+    }
+    export enum GPSTime {
+        //% block="hour"
+        Hour = 0,
+        //% block="minute"
+        Minute = 1,
+        //% block="second"
+        Second = 2
+    }
+
+    //% blockId=gps_time block="(GPS) get time %dateType"
+    //% group="GPS" weight=64
+    export function gps_time(dateType: GPSTime): number {
+        if (dateType == 0) {
+            return sugar_gps.hour
+        } else if (dateType == 1) {
+            return sugar_gps.minute
+        } else if (dateType == 1) {
+            return sugar_gps.sec
+        }
+        return -1
+    }
+
+
+
+
 
     /**
      * init serial port
@@ -1387,7 +1467,7 @@ namespace Sugar {
      * @param rx Rx pin; eg: SerialPin.P12
      */
     //% blockId=gesture_init block="(Gesture) init tx %tx rx %rx"
-    //% group="Gesture" weight=51
+    //% group="Gesture" 
     export function gesture_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate9600)
         control.inBackground(() => {

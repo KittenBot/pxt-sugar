@@ -47,22 +47,24 @@ class SugarGPS {
                     }
                     let data2 = a.split(",")
                     if (data2[0] == "$GNGGA") {
-                        this.satellite_quantity = parseInt(data2[7])
-                        this.latitude_direction = data2[3]
-                        this.longitude_direction = data2[5]
-                        this.latitude = parseFloat(data2[2])
-                        this.longitude = parseFloat(data2[4])
-                        this.altitude = parseFloat(data2[9])
+                        this.satellite_quantity = parseInt(data2[7]) ? parseInt(data2[7]) : this.satellite_quantity
+                        this.latitude_direction = data2[3] ? data2[3] : this.latitude_direction
+                        this.longitude_direction = data2[5] ? data2[5] : this.longitude_direction
+                        this.latitude = parseFloat(data2[2]) ? parseFloat(data2[2]) : this.latitude
+                        this.longitude = parseFloat(data2[4]) ? parseFloat(data2[4]) : this.longitude
+                        this.altitude = parseFloat(data2[9]) ? parseFloat(data2[9]) : this.altitude
                         let hms: string = data2[1]
-                        this.hour = parseInt(hms.substr(0, 2)) + 8
-                        if (this.hour > 24) {
-                            this.hour -= 24
+                        if(hms){
+                            this.hour = parseInt(hms.substr(0, 2)) + 8
+                            if (this.hour > 24) {
+                                this.hour -= 24
+                            }
+                            this.minute = parseInt(hms.substr(2, 2))
+                            this.sec = parseInt(hms.substr(4, 2))
                         }
-                        this.minute = parseInt(hms.substr(2, 2))
-                        this.sec = parseInt(hms.substr(4, 2))
                     } else if (data2[0] == "$GNVTG") {
-                        this.true_ground_track = parseFloat(data2[1])
-                        this.speed_over_ground = parseFloat(data2[7])
+                        this.true_ground_track = parseFloat(data2[1]) ? this.true_ground_track : this.true_ground_track
+                        this.speed_over_ground = parseFloat(data2[7]) ? this.speed_over_ground : this.speed_over_ground
                     }
                 }
                 basic.pause(2000)

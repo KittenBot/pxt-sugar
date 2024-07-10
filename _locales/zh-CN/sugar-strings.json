@@ -259,5 +259,20 @@
     "Sugar.getHex|block": "(颜色识别)获取颜色(hex)",
     "Sugar.Colorindex.read|block": "红",
     "Sugar.Colorindex.green|block": "绿",
-    "Sugar.Colorindex.black|block": "蓝"
+    "Sugar.Colorindex.black|block": "蓝",
+    "Sugar.gps_init|block": "初始化方糖GPS模块 TX %tx RX %rx",
+    "Sugar.gps_satellite_quantity|block": "(GPS)获取卫星数量",
+    "Sugar.gps_true_ground_track|block": "(GPS)对地真北航向(度)",
+    "Sugar.gps_speed_over_ground|block": "(GPS)对地速度(千米/小时)",
+    "Sugar.gps_coordinate_direction|block": "(GPS) %dir 方向",
+    "Sugar.gps_coordinate|block": "(GPS) %coord",
+    "Sugar.gps_altitude|block": "(GPS)海拔高度",
+    "Sugar.gps_time|block": "(GPS)获取时间 %dateType",
+    "Sugar.GPSCoordDir.Latitude|block":"纬度",
+    "Sugar.GPSCoordDir.Longitude|block":"经度",
+    "Sugar.GPSCoord.Latitude|block":"纬度",
+    "Sugar.GPSCoord.Longitude|block":"经度",
+    "Sugar.GPSTime.Hour|block":"时",
+    "Sugar.GPSTime.Minute|block":"分",
+    "Sugar.GPSTime.Second|block":"秒"
 }
