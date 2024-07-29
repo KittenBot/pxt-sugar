@@ -25,11 +25,21 @@ class SugarGPS {
         this.hour = 0;
         this.minute = 0;
         this.sec = 0;
-        serial.writeLine("$PCAS01,5*19\r")
+        let setBaud = pins.createBuffer(14)
+        let setBaudCode = [0x24, 0x50, 0x43, 0x41, 0x53, 0x30, 0x31, 0x2C, 0x35, 0x2A, 0x31, 0x39, 0x0D, 0x0A]
+        for (let i = 0; i < 14; i++) {
+            setBaud[i] = setBaudCode[i]
+        }
+        serial.writeBuffer(setBaud)
         basic.pause(100)
         serial.setBaudRate(115200)
         basic.pause(100)
-        serial.writeLine("$PCAS03,1,0,0,0,0,1,0,0,0,0,0,0,0*1E\r")
+        let setSend = pins.createBuffer(38)
+        let setSendCode = [0x24, 0x50, 0x43, 0x41, 0x53, 0x30, 0x33, 0x2C, 0x31, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x31, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x30, 0x2C, 0x30, 0x2A, 0x31, 0x45, 0x0D, 0x0A]
+        for (let i = 0; i < 38; i++) {
+            setSend[i] = setSendCode[i]
+        }
+        serial.writeBuffer(setSend)
         basic.pause(100)
         control.inBackground(() => {
             while (1) {
@@ -54,7 +64,7 @@ class SugarGPS {
                         this.longitude = parseFloat(data2[4]) ? parseFloat(data2[4]) : this.longitude
                         this.altitude = parseFloat(data2[9]) ? parseFloat(data2[9]) : this.altitude
                         let hms: string = data2[1]
-                        if(hms){
+                        if (hms) {
                             this.hour = parseInt(hms.substr(0, 2)) + 8
                             if (this.hour > 24) {
                                 this.hour -= 24
