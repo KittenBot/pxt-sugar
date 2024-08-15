@@ -16,7 +16,8 @@
         "_locales/zh-TW/sugar-strings.json",
         "sugarLoadcell.ts",
         "sugarColor.ts",
-        "sugarGPS.ts"
+        "sugarGPS.ts",
+        "sugarUV.ts"
     ],
     "public": true,
     "targetVersions": {
