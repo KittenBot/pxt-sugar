@@ -29,42 +29,44 @@ let GAIN_18 = 0x4
 class SugarUV {
     id:number;
     constructor() {
-        this.id = this.read_byte(LTR390_PART_ID)
+        this.id = this.read_mem(LTR390_PART_ID,1)[0]
         if(this.id != 0xb2){
             serial.writeLine("Warning!Unknown device model")
         }
         this.setIntVal(5,20)
     }
 
-    read_byte(cmd: number): number {
-        pins.i2cWriteNumber(ADDR, cmd, 1)
-        return pins.i2cReadNumber(ADDR, 1)
+    read_mem(cmd:number,size:number):Buffer{
+        pins.i2cWriteNumber(ADDR, cmd, NumberFormat.UInt8BE)
+        let data = pins.i2cReadBuffer(0x53, size)
+        return data
     }
 
     write_byte(cmd: number, val: number): void {
-        pins.i2cWriteNumber(ADDR, cmd, val)
+        pins.i2cWriteBuffer(ADDR, Buffer.fromArray([cmd, val]))
     }
 
     setIntVal(low: number, high: number) {
-        pins.i2cWriteNumber(ADDR, 0x00, 0x00)
-        pins.i2cWriteNumber(ADDR, 0x04, 0x22)
-        pins.i2cWriteNumber(ADDR, 0x05, 0x01)
-        pins.i2cWriteNumber(ADDR, 0x19, 0x10)
-        pins.i2cWriteNumber(ADDR, 0x1A, 0x00)
-        pins.i2cWriteNumber(ADDR, 0x21, high & 0xff)
-        pins.i2cWriteNumber(ADDR, 0x22, (high >> 8) & 0xff)
-        pins.i2cWriteNumber(ADDR, 0x23, (high >> 16) & 0x0f)
-        pins.i2cWriteNumber(ADDR, 0x24, low & 0xff)
-        pins.i2cWriteNumber(ADDR, 0x25, (low >> 8) & 0xff)
-        pins.i2cWriteNumber(ADDR, 0x26, (low >> 16) & 0x0f)
+        this.write_byte(0x00, 0x00)
+        this.write_byte(0x04, 0x22)
+        this.write_byte(0x05, 0x01)
+        this.write_byte(0x19, 0x10)
+        this.write_byte(0x1A, 0x00)
+        this.write_byte(0x21, high & 0xff)
+        this.write_byte(0x22, (high >> 8) & 0xff)
+        this.write_byte(0x23, (high >> 16) & 0x0f)
+        this.write_byte(0x24, low & 0xff)
+        this.write_byte(0x25, (low >> 8) & 0xff)
+        this.write_byte(0x26, (low >> 16) & 0x0f)
     }
 
     uvi(): number {
         this.write_byte(LTR390_INT_CFG, 0x34)
         this.write_byte(LTR390_MAIN_CTRL, 0x0A)
-        let data1 = this.read_byte(LTR390_UVSDATA)
-        let data2 = this.read_byte(LTR390_UVSDATA + 1)
-        let data3 = this.read_byte(LTR390_UVSDATA + 2)
+        let data = this.read_mem(LTR390_UVSDATA,3)
+        let data1 = data[0]
+        let data2 = data[1]
+        let data3 = data[2]
         let uv = (data3 << 16) | (data2 << 8) | data1
         uv = (
             (uv / 4.000046)
@@ -82,9 +84,10 @@ class SugarUV {
     als(): number {
         this.write_byte(LTR390_INT_CFG, 0x14)
         this.write_byte(LTR390_MAIN_CTRL, 0x02)
-        let data1 = this.read_byte(LTR390_ALSDATA)
-        let data2 = this.read_byte(LTR390_ALSDATA + 1)
-        let data3 = this.read_byte(LTR390_ALSDATA + 2)
+        let data = this.read_mem(LTR390_ALSDATA, 3)
+        let data1 = data[0]
+        let data2 = data[1]
+        let data3 = data[2]
         let als = (data3 << 16) | (data2 << 8) | data1
         als = (als / 4.000046 * 0.6) / (3 * 0.25) * 1
         return Math.round(als)
