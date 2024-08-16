@@ -268,11 +268,13 @@
     "Sugar.gps_coordinate|block": "(GPS) %coord",
     "Sugar.gps_altitude|block": "(GPS)海拔高度",
     "Sugar.gps_time|block": "(GPS)获取时间 %dateType",
-    "Sugar.GPSCoordDir.Latitude|block":"纬度",
-    "Sugar.GPSCoordDir.Longitude|block":"经度",
-    "Sugar.GPSCoord.Latitude|block":"纬度",
-    "Sugar.GPSCoord.Longitude|block":"经度",
-    "Sugar.GPSTime.Hour|block":"时",
-    "Sugar.GPSTime.Minute|block":"分",
-    "Sugar.GPSTime.Second|block":"秒"
+    "Sugar.GPSCoordDir.Latitude|block": "纬度",
+    "Sugar.GPSCoordDir.Longitude|block": "经度",
+    "Sugar.GPSCoord.Latitude|block": "纬度",
+    "Sugar.GPSCoord.Longitude|block": "经度",
+    "Sugar.GPSTime.Hour|block": "时",
+    "Sugar.GPSTime.Minute|block": "分",
+    "Sugar.GPSTime.Second|block": "秒",
+    "Sugar.uviValue|block": "紫外线指数(UV Index)",
+    "Sugar.alsValue|block": "光照度(lux)"
 }

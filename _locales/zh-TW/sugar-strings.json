@@ -274,5 +274,7 @@
     "Sugar.GPSCoord.Longitude|block": "经度",
     "Sugar.GPSTime.Hour|block": "时",
     "Sugar.GPSTime.Minute|block": "分",
-    "Sugar.GPSTime.Second|block": "秒"
+    "Sugar.GPSTime.Second|block": "秒",
+    "Sugar.uviValue|block": "光照指數(UV Index)",
+    "Sugar.alsValue|block": "光照度(lux)"
 }

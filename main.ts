@@ -633,6 +633,30 @@ namespace Sugar {
     //     return  '温度：16℃'
     // }
 
+    let sugarUVInit = false;
+    let sugarUV: SugarUV;
+    //% blockId=als block="(uv) get ALS"
+    //% group="I2C" weight=84
+    export function alsValue(): number {
+
+        if (!sugarUVInit) {
+            sugarUV = new SugarUV()
+            sugarUVInit = true
+        }
+        return sugarUV.als()
+    }
+
+    //% blockId=uvi block="(uv) get UVI"
+    //% group="I2C" weight=83
+    export function uviValue(): number {
+
+        if (!sugarUVInit) {
+            sugarUV = new SugarUV()
+            sugarUVInit = true
+        }
+        return sugarUV.uvi()
+    }
+
     let sugarColorInit = false;
     let sugarColor: SugarColor;
     //% blockId=colorUpdate block="(color recognition) update data"
