@@ -700,9 +700,52 @@ namespace Sugar {
         return sugarColor.getHex()
     }
 
+    let sugarRFIDInit = false;
+    let sugarRFID: SugarRFID;
+    /**
+     * read uid
+     */
+    //% blockId=sugarRfidReadUid block="(RFID) read card uid"
+    //% group="I2C" weight=90
+    export function sugarRfidReadUid(): string {
+        if (!sugarRFIDInit) {
+            sugarRFID = new SugarRFID()
+            sugarRFIDInit = true
+        }
+        return sugarRFID.scanCar()
+    }
+
+    /**
+     * write block
+     */
+    //% blockId=sugarRfidWriteBlock block="(RFID) write block %blockAddress write %data"
+    //% blockAddress.min=0 blockAddress.max=46
+    //% group="I2C" weight=89
+    export function sugarRfidWriteBlock(blockAddress:number,data:string): void {
+        if (!sugarRFIDInit) {
+            sugarRFID = new SugarRFID()
+            sugarRFIDInit = true
+        }
+        sugarRFID.writeBlock(blockAddress,data)
+    }
+
+    /**
+     * read block
+     */
+    //% blockId=sugarRfidReadBlock block="(RFID) read block %blockAddress"
+    //% blockAddress.min=0 blockAddress.max=46
+    //% group="I2C" weight=88
+    export function sugarRfidReadBlock(blockAddress: number): string {
+        if (!sugarRFIDInit) {
+            sugarRFID = new SugarRFID()
+            sugarRFIDInit = true
+        }
+        return sugarRFID.readBlock(blockAddress)
+    }
+    
+
     let loadcellInit = false;
     let loadcell: SugarLoadcell;
-
     /**
      * init loadcell
      * @param zeroOffset is zero offset, eg: 2071.921875

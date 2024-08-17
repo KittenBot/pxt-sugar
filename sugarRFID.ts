@@ -64,7 +64,7 @@ const MI_ERR = 2
 
 const MAX_LEN = 16
 
-const RFIDADDR = 0x28
+const ADDRRFID = 0x28
 
 const AVAILABLEBLOCK = [1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 17, 18, 20, 21, 22, 24, 25, 26, 28, 29, 30, 32, 33, 34, 36, 37, 38, 40, 41, 42, 44, 45, 46, 48, 49, 50, 52, 53, 54, 56, 57, 58, 60, 61, 62]
 //8位内数字转hex字符串
@@ -81,8 +81,8 @@ class SugarRFID {
     }
 
     read_mem(cmd: number, size: number): Buffer {
-        pins.i2cWriteNumber(RFIDADDR, cmd, NumberFormat.UInt8BE);
-        let data = pins.i2cReadBuffer(RFIDADDR, size);
+        pins.i2cWriteNumber(ADDRRFID, cmd, NumberFormat.UInt8BE);
+        let data = pins.i2cReadBuffer(ADDRRFID, size);
         return data
     }
 
@@ -96,7 +96,7 @@ class SugarRFID {
         let buf = pins.createBuffer(2);
         buf[0] = address;
         buf[1] = value;
-        pins.i2cWriteBuffer(RFIDADDR, buf);
+        pins.i2cWriteBuffer(ADDRRFID, buf);
     }
 
     MRFC522_setBitMask(address: number, mask: number) {

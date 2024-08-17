@@ -276,5 +276,9 @@
     "Sugar.GPSTime.Minute|block": "分",
     "Sugar.GPSTime.Second|block": "秒",
     "Sugar.uviValue|block": "光照指數(UV Index)",
-    "Sugar.alsValue|block": "光照度(lux)"
+    "Sugar.alsValue|block": "光照度(lux)",
+
+    "Sugar.sugarRfidReadUid|block": "(RFID)獲取卡片uid",
+    "Sugar.sugarRfidWriteBlock|block": "(RFID)向塊 %blockAddress 寫入數據 %data",
+    "Sugar.sugarRfidReadBlock|block": "(RFID)讀取塊 %blockAddress"
 }
