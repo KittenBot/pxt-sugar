@@ -118,7 +118,9 @@ class SugarRFID {
 
     MRFC522_clearBitMask(address: number, mask: number) {
         let value = this.MRFC522_read(address);
-        this.MRFC522_write(address, value & (~mask));
+        let value2 = value & (~mask)
+        //serial.writeValue("value2", value2)
+        this.MRFC522_write(address, value2);
     }
 
 
@@ -139,12 +141,12 @@ class SugarRFID {
     showReaderDetails() {
         let version = this.MRFC522_read(VERSIONREG);
         if (version == 0x91) {
-            serial.writeLine('MRFC522 Software Version: ' + version.toString() + ' = v1.0');
+            //serial.writeLine('MRFC522 Software Version: ' + version.toString() + ' = v1.0');
         } else if (version == 0x92) {
-            serial.writeLine('MRFC522 Software Version: ' + version.toString() + ' = v2.0');
+            //serial.writeLine('MRFC522 Software Version: ' + version.toString() + ' = v2.0');
         }
         else {
-            serial.writeLine('MRFC522 Software Version: ' + version.toString() + '');
+            //serial.writeLine('MRFC522 Software Version: ' + version.toString() + '');
         }
     }
 
@@ -328,17 +330,20 @@ class SugarRFID {
         let backBits: number = 0;
 
         let buffer: number[] = [];
-        buffer.concat(MIFARE_SELECTCL1);
-
+        for (let i of MIFARE_SELECTCL1) {
+            buffer.push(i)
+        }
         let i = 0;
         while (i < 5) {
             buffer.push(serialNumber[i]);
             i = i + 1;
         }
-        let crc = this.calculateCRC(MIFARE_SELECTCL1);
-        serial.writeNumbers(crc)
-        buffer.concat(crc);
-
+        let crc = this.calculateCRC(buffer);
+        //serial.writeNumbers(crc)
+        for (let i2 of crc) {
+            buffer.push(i2)
+        }
+        //serial.writeNumbers(buffer);
         [status, backData, backBits] = this.transceiveCard(buffer);
 
         return [status, backData, backBits];
@@ -418,9 +423,13 @@ class SugarRFID {
         let backBits: number = 0;
 
         let buffer: number[] = [];
-        buffer.concat(mode);
+        for (let i3 of mode) {
+            buffer.push(i3)
+        }
         buffer.push(blockAddr);
-        buffer.concat(key);
+        for (let i4 of key) {
+            buffer.push(i4)
+        }
 
         let i = 0;
         while (i < 4) {
@@ -432,28 +441,55 @@ class SugarRFID {
         return [status, backData, backBits];
     }
 
+    read(blockAddr: number): [number, number[], number] {
+        let status: number = 0;
+        let backData: number[] = [];
+        let backBits: number = 0;
+
+
+        let buffer: number[] = []
+        for (let i9 of MIFARE_READ) {
+            buffer.push(i9)
+        }
+        buffer.push(blockAddr)
+
+        let crc = this.calculateCRC(buffer)
+        for (let i10 of crc) {
+            buffer.push(i10)
+        }
+        [status, backData, backBits] = this.transceiveCard(buffer)
+
+        return [status, backData, backBits]
+    }
+
     write(blockAddr: number, data: number[]): [number, number[], number] {
         let status: number = 0;
         let backData: number[] = [];
         let backBits: number = 0;
 
         let buffer: number[] = [];
-        buffer.concat(MIFARE_WRITE);
+        for (let i5 of MIFARE_WRITE) {
+            buffer.push(i5)
+        }
         buffer.push(blockAddr);
 
         let crc = this.calculateCRC(buffer);
-        buffer.concat(crc);
+        for (let i6 of crc) {
+            buffer.push(i6)
+        }
 
         [status, backData, backBits] = this.transceiveCard(buffer);
 
         if (status == MI_OK) {
 
             buffer = [];
-            buffer.concat(data);
-
+            for (let i7 of data) {
+                buffer.push(i7)
+            }
             crc = this.calculateCRC(buffer);
-            buffer.concat(crc);
-
+            for (let i8 of crc) {
+                buffer.push(i8)
+            }
             [status, backData, backBits] = this.transceiveCard(buffer);
         }
 
@@ -501,7 +537,7 @@ class SugarRFID {
                 dataASCLL.push(0x20)
             }
         }
-        serial.writeNumbers(dataASCLL)
+        //serial.writeNumbers(dataASCLL)
         while (true) {
             [status, backData, tagType] = this.scan()
             if (status == MI_OK) {
@@ -515,30 +551,79 @@ class SugarRFID {
                             blockAddr,
                             MIFARE_KEY,
                             uid)
-                        serial.writeNumbers(uid);
+                        //serial.writeNumbers(uid);
                         if (status == MI_OK) {
                             if (status == MI_OK) {
                                 [status, backData, backBits] = this.write(
                                     blockAddr,
                                     dataASCLL)
                                 if (status == MI_OK) {
-                                    serial.writeLine('written succeed')
+                                    //serial.writeLine('written succeed')
                                     break
                                 } else {
-                                    serial.writeLine('Error while writing new data')
+                                    //serial.writeLine('Error while writing new data')
                                 }
                             } else {
-                                serial.writeLine('Error while reading old data')
+                                //serial.writeLine('Error while reading old data')
                             }
                             this.deauthenticate()
-                            serial.writeLine('Card deauthenticated')
+                            //serial.writeLine('Card deauthenticated')
                         } else {
-                            serial.writeLine('Authentication error')
+                            //serial.writeLine('Authentication error')
                         }
                     }
                 }
             }
         }
     }
+    readBlock(blockAddrP: number) {
+        let status: number = 0;
+        let backData: number[] = [];
+        let uid: number[] = [];
+        let tagType: number = 0;
+        let backBits: number = 0;
 
+        let blockAddr = AVAILABLEBLOCK[blockAddrP]
+        this.MRFC522_init()
+        while (true) {
+            [status, backData, tagType] = this.scan()
+            if (status == MI_OK) {
+
+                [status, uid, backBits] = this.transceive()
+                if (status == MI_OK) {
+                    [status, backData, backBits] = this.select(uid)
+                    if (status == MI_OK) {
+
+                        let mode = MIFARE_AUTHKEY1;
+                        [status, backData, backBits] = this.authenticate(
+                            mode,
+                            blockAddr,
+                            MIFARE_KEY,
+                            uid)
+                        if (status == MI_OK) {
+
+                            [status, backData, backBits] = this.read(
+                                blockAddr)
+                            if (status == MI_OK) {
+                                let hex_list = backData
+                                let asc_str = ''
+                                for (let hex_str of hex_list) {
+                                    let asc = String.fromCharCode(hex_str)
+                                    asc_str += asc
+                                }
+                                asc_str = asc_str.trim()
+                                return asc_str
+                            } else {
+                                //serial.writeLine('Error while reading')
+                            }
+                            this.deauthenticate()
+                            //serial.writeLine('Card deauthenticated')
+                        } else {
+                            //serial.writeLine('Authentication error')
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
