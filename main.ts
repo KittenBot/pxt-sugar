@@ -871,24 +871,24 @@ namespace Sugar {
 
 
 
-    // const PM_ADDR = 0x12;
+    const PM_ADDR = 0x12;
 
-    // //% blockId=pm block="(PM) get %pmType data(µg/m³)"
-    // //% group="I2C" weight=76
-    // export function PMdata(pmType: PmMenu): number {
-    //     let buffer = pins.i2cReadBuffer(PM_ADDR, 32);
-    //     let sum = 0
-    //     for (let i = 0; i < 30; i++) {
-    //         sum += buffer[i]
-    //     }
-    //     let data = [-1, -1, -1]
-    //     if (sum == ((buffer[30] << 8) | buffer[31])) {
-    //         data[0] = (buffer[0x04] << 8) | buffer[0x05]
-    //         data[1] = (buffer[0x06] << 8) | buffer[0x07]
-    //         data[2] = (buffer[0x08] << 8) | buffer[0x09]
-    //     }
-    //     return data[pmType]
-    // }
+    //% blockId=pm block="(PM) get %pmType data(µg/m³)"
+    //% group="I2C" weight=76
+    export function PMdata(pmType: PmMenu): number {
+        let buffer = pins.i2cReadBuffer(PM_ADDR, 32);
+        let sum = 0
+        for (let i = 0; i < 30; i++) {
+            sum += buffer[i]
+        }
+        let data = [-1, -1, -1]
+        if (sum == ((buffer[30] << 8) | buffer[31])) {
+            data[0] = (buffer[0x04] << 8) | buffer[0x05]
+            data[1] = (buffer[0x06] << 8) | buffer[0x07]
+            data[2] = (buffer[0x08] << 8) | buffer[0x09]
+        }
+        return data[pmType]
+    }
 
     const CO2_ADDR = 0x58
     let co2Inited = false;
