@@ -238,10 +238,16 @@
     "Sugar.loadcellCalibrateSetPeel|block": "(称重模块)去皮(清零)",
     "Sugar.loadcellGetWeight|block": "(称重模块)获取重量(克)",
     "Sugar.loadcellCalibrateScale|block": "(称重模块)校准重量",
-    "{id:category}Sugar": "方糖",
-    "{id:group}DigitalIn": "数字输入",
+    "{id:subcategory}sensor": "传感器",
+    "{id:subcategory}display": "显示器",
+    "{id:subcategory}actuator": "执行器",
+    "{id:subcategory}advanced": "高级能力",
+    "{id:group}FPV": "摄像头模块",
+    "{id:group}solar power": "太阳能模块",
+    "{id:group}Sugar": "方糖",
+    "{id:group}DigitalIn": "数字接口",
     "{id:group}DigitalOut": "数字输出",
-    "{id:group}AnalogIn": "模拟输入",
+    "{id:group}AnalogIn": "模拟接口",
     "{id:group}Special": "特殊类型",
     "{id:group}I2C": "I2C类型",
     "{id:group}Ultrasonic": "超声波模块",
@@ -280,4 +286,5 @@
     "Sugar.sugarRfidReadUid|block": "(RFID)获取卡片uid",
     "Sugar.sugarRfidWriteBlock|block": "(RFID)向块 %blockAddress 写入数据 %data",
     "Sugar.sugarRfidReadBlock|block": "(RFID)读取块 %blockAddress"
+
 }
