@@ -383,45 +383,45 @@ namespace Sugar {
         PORT7 = 6
     }
     //% blockId=pir block="(PIR) motion detected %pin"
-    //% subcategory=sensor group="DigitalIn" weight=90 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
     export function PIR(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=tracer block="(Tracker) black dectected %pin"
-    //% subcategory=sensor group="DigitalIn" weight=89 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=89 color=#49CEF7
     export function Tracker(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=hall block="(Hall) magnetic detected %pin"
-    //% subcategory=sensor group="DigitalIn" weight=88 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=88 color=#49CEF7
     export function Hall(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 0
     }
 
     //% blockId=button block="(Button) pressed %pin "
-    //% subcategory=sensor group="DigitalIn" weight=87 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=87 color=#49CEF7
     export function Button(pin: DigitalPin): boolean {
         pins.setPull(pin, PinPullMode.PullUp)
         return pins.digitalReadPin(pin) == 0
     }
 
     //% blockId=onButtonEvent block="on button|%pin pressed"
-    //% subcategory=sensor group="DigitalIn" weight=86 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=86 color=#49CEF7
     export function onButtonEvent(pin: DigitalPin, handler: () => void): void {
         pins.setPull(pin, PinPullMode.PullUp)
         pins.onPulsed(pin, PulseValue.Low, handler)
     }
 
     //% blockId=Crash block="(Crash) crash detected %pin "
-    //% subcategory=sensor group="DigitalIn" weight=79 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=79 color=#49CEF7
     export function Crash(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=Touch block="(Touch) touch detected %pin "
-    //% subcategory=sensor group="DigitalIn" weight=78 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=78 color=#49CEF7
     export function Touch(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
@@ -433,37 +433,37 @@ namespace Sugar {
     }
 
     //% blockId=flameBool block="(Flame) fire Detected %pin "
-    //% subcategory=sensor group="DigitalIn" weight=80 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=80 color=#49CEF7
     export function FlameDigi(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=flameAnalog block="(Flame) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=84 color=#49BAF7
+    //% subcategory=sensor group=AnalogIn weight=84 color=#49CEF7
     export function FlameAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=potential block="(Angle) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=83 color=#49BAF7
+    //% subcategory=sensor group=AnalogIn weight=83 color=#49CEF7
     export function Angle(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=audio block="(Audio) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=83 color=#49BAF7
+    //% subcategory=sensor group=AnalogIn weight=83 color=#49CEF7
     export function audio(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=lightlvl block="(Light) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=82 color=#49BAF7
+    //% subcategory=sensor group=AnalogIn weight=82 color=#49CEF7
     export function Light(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=soilmoisture block="(SoilMoisture) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=81 color=#49BAF7
+    //% subcategory=sensor group=AnalogIn weight=81 color=#49CEF7
     export function SoilMoisture(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
@@ -475,13 +475,13 @@ namespace Sugar {
     }
 
     //% blockId=grayscale block="(Grayscale) value %pin"
-    //% subcategory=sensor  group=AnalogIn weight=79 color=#49BAF7
+    //% subcategory=sensor  group=AnalogIn weight=79 color=#49CEF7
     export function grayscale(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=waterlvl block="(WaterLevel) value %pin"
-    //% subcategory=sensor  group=AnalogIn weight=79 color=#49BAF7
+    //% subcategory=sensor  group=AnalogIn weight=79 color=#49CEF7
     export function WaterLevelAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
@@ -489,7 +489,7 @@ namespace Sugar {
     let sugarUVInit = false;
     let sugarUV: SugarUV;
     //% blockId=als block="(uv) get ALS"
-    //% subcategory=sensor group=I2C weight=84 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=84 color=#49CEF7
     export function alsValue(): number {
 
         if (!sugarUVInit) {
@@ -500,7 +500,7 @@ namespace Sugar {
     }
 
     //% blockId=uvi block="(uv) get UVI"
-    //% subcategory=sensor group=I2C weight=83 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=83 color=#49CEF7
     export function uviValue(): number {
 
         if (!sugarUVInit) {
@@ -513,7 +513,7 @@ namespace Sugar {
     let sugarColorInit = false;
     let sugarColor: SugarColor;
     //% blockId=colorUpdate block="(color recognition) update data"
-    //% subcategory=sensor group=I2C weight=82 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=82 color=#49CEF7
     export function colorUpdate(): void {
 
         if (!sugarColorInit) {
@@ -534,7 +534,7 @@ namespace Sugar {
     }
 
     //% blockId=getRGB block="(color recognition) get RGB %index"
-    //% subcategory=sensor group=I2C weight=81 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=81 color=#49CEF7
     export function getRGB(index: Colorindex): number {
         if (!sugarColorInit) {
             sugarColor = new SugarColor()
@@ -544,7 +544,7 @@ namespace Sugar {
     }
 
     //% blockId=getHex block="(color recognition) get color(hex)"
-    //% subcategory=sensor group=I2C weight=80 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=80 color=#49CEF7
     export function getHex(): number {
         if (!sugarColorInit) {
             sugarColor = new SugarColor()
@@ -561,7 +561,7 @@ namespace Sugar {
      * @param factor is calibration factor, eg: 1.53034747292419
      */
     //% blockId=loadcellBegin block="(loadcell) begin zeroOffset %zeroOffset factor %factor"
-    //% subcategory=sensor group=I2C weight=87 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=87 color=#49CEF7
     export function loadcellBegin(zeroOffset: number, factor: number): void {
         if (!loadcellInit) {
             loadcell = new SugarLoadcell()
@@ -572,7 +572,7 @@ namespace Sugar {
     }
 
     //% blockId=loadcellCali block="(loadcell) calibrate scale"
-    //% subcategory=sensor group=I2C weight=86 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=86 color=#49CEF7
     export function loadcellCalibrateScale(): void {
         if (!loadcellInit) {
             loadcell = new SugarLoadcell()
@@ -583,7 +583,7 @@ namespace Sugar {
     }
 
     //% blockId=loadcellsetPeel block="(loadcell) net weight"
-    //% subcategory=sensor group=I2C weight=85 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=85 color=#49CEF7
     export function loadcellCalibrateSetPeel(): void {
         if (!loadcellInit) {
             loadcell = new SugarLoadcell()
@@ -594,7 +594,7 @@ namespace Sugar {
     }
 
     //% blockId=loadcell block="(loadcell) weight(g)"
-    //% subcategory=sensor group=I2C weight=84 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=84 color=#49CEF7
     export function loadcellGetWeight(): number {
         if (!loadcellInit) {
             loadcell = new SugarLoadcell()
@@ -608,7 +608,7 @@ namespace Sugar {
     let vl53Inited = false;
 
     //% blockId=tof block="(TOF Distance) distance(mm)"
-    //% subcategory=sensor group=I2C weight=76 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=76 color=#49CEF7
     export function TOFDistance(): number {
         if (!vl53Inited) {
             let buf = pins.createBuffer(3)
@@ -658,21 +658,21 @@ namespace Sugar {
     }
 
     //% blockId="scd40 co2" block="(CO2)CO2(ppm)"
-    //% subcategory=sensor group=I2C weight=79 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=79 color=#49CEF7
     export function scd40co2(): number {
         scd40update()
         return co2
     }
 
     //% blockId="scd40 temperature" block="(CO2)temperature(°C)"
-    //% subcategory=sensor group=I2C weight=78 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=78 color=#49CEF7
     export function scd40temp(): number {
         scd40update()
         return temperature
     }
 
     //% blockId="scd40 humidity" block="(CO2)humidity(\\%)"
-    //% subcategory=sensor group=I2C weight=77 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=77 color=#49CEF7
     export function scd40hum(): number {
         scd40update()
         return relative_humidity
@@ -689,7 +689,7 @@ namespace Sugar {
 
     const PM_ADDR = 0x12;
     //% blockId=pm block="(PM) get %pmType data(µg/m³)"
-    //% subcategory=sensor group=I2C weight=76 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=76 color=#49CEF7
     export function PMdata(pmType: PmMenu): number {
         let buffer = pins.i2cReadBuffer(PM_ADDR, 32);
         let sum = 0
@@ -715,7 +715,7 @@ namespace Sugar {
     const CO2_ADDR = 0x58
     let co2Inited = false;
     //% blockId=co2 block="(CO2) value %air"
-    //% subcategory=sensor group=I2C weight=74 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=74 color=#49CEF7
     export function AIR(air: AirType): number {
         if (!co2Inited) {
             pins.i2cWriteNumber(CO2_ADDR, 0x2003, NumberFormat.UInt16BE);
@@ -760,7 +760,7 @@ namespace Sugar {
     }
 
     //% blockId=environment block="(ENV.Ⅰ) value %env"
-    //% subcategory=sensor group=I2C weight=74 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=74 color=#49CEF7
     export function ENV(env: EnvType): number {
         if (!aht20Inited) {
             i2cwrite(AHT20_ADDR, 0xba, [])
@@ -813,7 +813,7 @@ namespace Sugar {
     const HP203B_CH_TEMP = 0x02                       // Temperature Channel
 
     //% blockId="envUpdate" block="(ENV.II) update"
-    //% subcategory=sensor group=I2C weight=73 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=73 color=#49CEF7
     export function envUpdate() {
         const CNVRSN_CONFIG = Buffer.fromArray([HP203B_ADC_CVT | HP203B_OSR_1024 | HP203B_CH_PRESSTEMP])
         pins.i2cWriteBuffer(HP203B_ADDRESS, CNVRSN_CONFIG)
@@ -832,7 +832,7 @@ namespace Sugar {
     }
 
     //% blockId="envGetData" block="(ENV.II)get value %pin"
-    //% subcategory=sensor group=I2C weight=72 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=72 color=#49CEF7
     export function envGetData(pin: EnvTypeII): number {
         let presData = i2cread(HP203B_ADDRESS, HP203B_READ_P, 3)
         let pressure = (((presData[0] & 0x0F) * 65536) + (presData[1] * 256) + presData[2]) / 100.00
@@ -865,7 +865,7 @@ namespace Sugar {
 
     const JOYSTICK_ADDR = 0x5c
     //% blockId=joyState block="(Joystick) state %state triggered"
-    //% subcategory=sensor group=I2C weight=71 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=71 color=#49CEF7
     export function joyState(state: JoystickDir): boolean {
         const sta = i2cread(JOYSTICK_ADDR, 1, 1).getNumber(NumberFormat.UInt8BE, 0)
         return (sta & state) != 0;
@@ -877,7 +877,7 @@ namespace Sugar {
     }
 
     //% blockId=joyValue block="(Joystick) value %dir"
-    //% subcategory=sensor group=I2C weight=70 color=#49A9F7
+    //% subcategory=sensor group=I2C weight=70 color=#49CEF7
     export function joyValue(dir: DirType): number {
         const buf = i2cread(JOYSTICK_ADDR, 2, 4)
         const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0) * 255 / 2048 - 255)
@@ -899,20 +899,20 @@ namespace Sugar {
 
 
     //% blockId="TM1650_ON" block="(TM1650) turn on"
-    //% subcategory=display group=I2C weight=50 color=#49CEF7
+    //% subcategory=display group=I2C weight=50 color=#49BAF7
     export function TM1650_on() {
         TM1650_cmd(_intensity * 16 + 1)
     }
 
     //% blockId="TM1650_OFF" block="(TM1650) turn off"
-    //% subcategory=display group=I2C weight=50 color=#49CEF7
+    //% subcategory=display group=I2C weight=50 color=#49BAF7
     export function TM1650_off() {
         _intensity = 0
         TM1650_cmd(0)
     }
 
     //% blockId="TM1650_CLEAR" block="(TM1650) clear"
-    //% subcategory=display group=I2C weight=40 color=#49CEF7
+    //% subcategory=display group=I2C weight=40 color=#49BAF7
     export function TM1650_clear() {
         TM1650_dat(0, 0)
         TM1650_dat(1, 0)
@@ -929,7 +929,7 @@ namespace Sugar {
      * @param bit is position, eg: 0
      */
     //% blockId="TM1650_DIGIT" block="(TM1650) show number %num|at %bit place"
-    //% subcategory=display group=I2C weight=45 color=#49CEF7
+    //% subcategory=display group=I2C weight=45 color=#49BAF7
     //% num.max=15 num.min=0
     export function TM1650_digit(num: number, bit: number) {
         TM1650_dbuf[bit % 4] = _SEG[num % 16]
@@ -941,7 +941,7 @@ namespace Sugar {
      * @param num is number will be shown, eg: 100
      */
     //% blockId="TM1650_SHOW_NUMBER" block="(TM1650) show int %num"
-    //% subcategory=display group=I2C weight=46 color=#49CEF7
+    //% subcategory=display group=I2C weight=46 color=#49BAF7
     export function TM1650_showNumber(num: number) {
         if (num < 0) {
             TM1650_dat(0, 0x40) // '-'
@@ -959,7 +959,7 @@ namespace Sugar {
      * @param num is number will be shown, eg: 123
      */
     //% blockId="TM1650_SHOW_HEX_NUMBER" block="(TM1650) show hex %num"
-    //% subcategory=display group=I2C weight=44 color=#49CEF7
+    //% subcategory=display group=I2C weight=44 color=#49BAF7
     export function TM1650_showHex(num: number) {
         if (num < 0) {
             TM1650_dat(0, 0x40) // '-'
@@ -978,7 +978,7 @@ namespace Sugar {
      * @param show is true/false, eg: true
      */
     //% blockId="TM1650_SHOW_DP" block="(TM1650) %num show decimal point at %bit place"
-    //% subcategory=display group=I2C weight=43 color=#49CEF7
+    //% subcategory=display group=I2C weight=43 color=#49BAF7
     export function TM1650_showDpAt(show: boolean, bit: number) {
         if (show) TM1650_dat(bit, TM1650_dbuf[bit % 4] | 0x80)
         else TM1650_dat(bit, TM1650_dbuf[bit % 4] & 0x7F)
@@ -986,7 +986,7 @@ namespace Sugar {
 
     //% blockId="TM1650_INTENSITY" block="(TM1650) set intensity %dat"
     //% value.min=0 value.max=8 value.defl=8
-    //% subcategory=display group=I2C weight=42 color=#49CEF7
+    //% subcategory=display group=I2C weight=42 color=#49BAF7
     export function TM1650_setIntensity(dat: number) {
         if ((dat < 0) || (dat > 8))
             return;
@@ -1032,19 +1032,19 @@ namespace Sugar {
     }
 
     //% blockId=Buzzer block="(Active Buzzer) %pin| sound %onoff"
-    //% subcategory=actuator group=DigitalOut weight=83 color=#49CEF7
+    //% subcategory=actuator group=DigitalOut weight=83 color=#49A9F7
     export function Buzzer(pin: DigitalPin, onoff: Switch) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=atomizer block="(Atomizer) %pin| %onoff"
-    //% subcategory=actuator group=DigitalOut weight=82 color=#49CEF7
+    //% subcategory=actuator group=DigitalOut weight=82 color=#49A9F7
     export function atomizer(pin: DigitalPin, onoff: Switch) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=vibeMotor block="(Vibe Motor) %pin| %onoff"
-    //% subcategory=actuator group=DigitalOut weight=81 color=#49CEF7
+    //% subcategory=actuator group=DigitalOut weight=81 color=#49A9F7
     export function vibeMotor(pin: DigitalPin, onoff: Switch) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
@@ -1066,12 +1066,12 @@ namespace Sugar {
     //     return  '温度：16℃'
     // }
 
-    //% subcategory=sensor group="DigitalIn" weight=90 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
     export function celsius(pin: DigitalPin): number {
         return 32.6;
     }
     //% blockId=sugarDSTemperature block="ds18b20 Get Water Temperature Pin %pin"
-    //% subcategory=sensor group="DigitalIn" weight=90 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
     export function sugarDSTemperature(pin: DigitalPin): number {
         temp = celsius(pin)
         while (temp >= 85 || temp <= -300) {
@@ -1088,7 +1088,7 @@ namespace Sugar {
      * @param unit desired conversion unit
      */
     //% blockId=robotbit_holeultrasonicver block="(Ultrasonic Sensor) %pin distance unit %unit"
-    //% subcategory=sensor group="DigitalIn" weight=90 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
     export function HoleUltrasonic(pin: DigitalPin, unit: ValueUnit): number {
         pins.setPull(pin, PinPullMode.PullNone);
         // pins.setPull(pin, PinPullMode.PullDown);
@@ -1135,7 +1135,7 @@ namespace Sugar {
      * @param sdo Rx pin; eg: DigitalPin.P12
      */
     //% blockId=keyboard_getKey block="(4x4 keyboard) get value scl %scl sdo %sdo"
-    //% subcategory=sensor group="DigitalIn" weight=90 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
     export function keyboard_getKey(scl: DigitalPin, sdo: DigitalPin): string {
         let keyList: number[] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
         let keyText: string[] = ["*", "7", "4", "1", "3", "6", "9", "#", "A", "B", "C", "D", "0", "8", "5", "2"];
@@ -1169,7 +1169,7 @@ namespace Sugar {
      * @param rx Rx pin; eg: SerialPin.P12
      */
     //% blockId=asr_init block="(ASR) init tx %tx rx %rx"
-    //% subcategory=advanced group=ASR weight=50 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=50 color=#49A9F7
     export function asr_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         // serial.setRxBufferSize(6)
@@ -1192,7 +1192,7 @@ namespace Sugar {
      * @param rx Rx pin; eg: SerialPin.P12
      */
     //% blockId=fpv_init block="(Camera) init tx %tx rx %rx"
-    //% subcategory=advanced group=FPV weight=51 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=51 color=#49A9F7
     export function fpv_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         // serial.setRxBufferSize(6)
@@ -1240,7 +1240,7 @@ namespace Sugar {
     }
 
     //% blockId=fpv_IPAddress block="(Camera) ip Address"
-    //% subcategory=advanced group=FPV weight=50 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=50 color=#49A9F7
     export function fpv_IPAddress(): string {
         basic.pause(500)
         let str = `K4 \r\n`
@@ -1250,14 +1250,14 @@ namespace Sugar {
     }
 
     //% blockId=fpv_connectWifi block="(Camera) connect to wifi %ssid pwd %pwd"
-    //% subcategory=advanced group=FPV weight=50 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=50 color=#49A9F7
     export function fpv_connectWifi(ssid: string, pwd: string): void {
         let str = `K26 ${ssid} ${pwd} \r\n`
         serial.writeString(str)
     }
 
     //% blockId=fpv_colorTuple block="red %r green %g blue %b"
-    //% subcategory=advanced group=FPV weight=49 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=49 color=#49A9F7
     export function fpv_colorTuple(r: number, g: number, b: number): number {
         let color: number = 0
         color = (r << 16) + (g << 8) + b
@@ -1265,13 +1265,13 @@ namespace Sugar {
     }
 
     //% blockId=colorDefault block="%color"
-    //% subcategory=advanced group=FPV weight=49 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=49 color=#49A9F7
     export function colorDefault(color: ColorPreset): number {
         return color
     }
 
     //% blockId=fpv_setColor block="(Camera) set rgb |%color1=colorDefault |%color2=colorDefault"
-    //% subcategory=advanced group=FPV weight=48 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=48 color=#49A9F7
     export function fpv_setColor(color1: number, color2: number): void {
         basic.pause(500)
         let str = `K16 (${(color1 >> 16) & 0xFF},${(color1 >> 8) & 0xFF},${color1 & 0xFF}) (${(color2 >> 16) & 0xFF},${(color2 >> 8) & 0xFF},${color2 & 0xFF}) \r\n`
@@ -1284,7 +1284,7 @@ namespace Sugar {
      * @param picFile filePath; eg: pic.jpg
      */
     //% blockId=fpv_take_picture block="(Camera) take photo and save %picFile"
-    //% subcategory=advanced group=FPV weight=43 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=43 color=#49A9F7
     export function fpv_take_picture(picFile: string): void {
         basic.pause(500)
         let str = `K27 ${picFile} \r\n`
@@ -1296,7 +1296,7 @@ namespace Sugar {
      * @param file filePath; eg: hello.mp3                                                                                                                                                                                                                                                                                            
      */
     //% blockId=fpv_playAudio block="(Camera) play mp3 %file"
-    //% subcategory=advanced group=FPV weight=44 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=44 color=#49A9F7
     export function fpv_playAudio(file: string): void {
         basic.pause(500)
         let str = `K15 ${file} \r\n`
@@ -1306,7 +1306,7 @@ namespace Sugar {
 
 
     //% blockId=fpv_Qrcode_scan block="(Camera) scan QRcode"
-    //% subcategory=advanced group=FPV weight=47 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=47 color=#49A9F7
     export function fpv_Qrcode_scan(): void {
         basic.pause(500)
         let str = `K11 \r\n`
@@ -1315,7 +1315,7 @@ namespace Sugar {
     }
 
     //% blockId=fpv_QRcode block="(Camera)on QRcode is scanned"
-    //% subcategory=advanced group=FPV weight=46 draggableParameters=reporter color=#49BAF7
+    //% subcategory=advanced group=FPV weight=46 draggableParameters=reporter color=#49A9F7
     export function fpv_QRcode(handler: (qrcode: string) => void) {
         control.onEvent(fpvEventId, QRcodeId, () => {
             handler(qrcode);
@@ -1327,7 +1327,7 @@ namespace Sugar {
      * @param client device name; eg: sugar_camera
      */
     //% blockId=fpv_mqtt_connectNoUser block="(Camera) connection mqtt server %address client %client"
-    //% subcategory=advanced group=FPV weight=41 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=41 color=#49A9F7
     export function fpv_mqtt_connectNoUser(address: string, client: string): void {
         basic.pause(500)
         let str = `K20 ${address} ${client} \r\n`
@@ -1342,7 +1342,7 @@ namespace Sugar {
      * @param pwd password; eg: password
      */
     //% blockId=fpv_mqtt_connect block="(Camera) connect mqtt server %address client %client username %userid password %pwd"
-    //% subcategory=advanced group=FPV weight=42 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=42 color=#49A9F7
     export function fpv_mqtt_connect(address: string, client: string, userid: string, pwd: string): void {
         basic.pause(500)
         let str = `K20 ${address} ${client} ${userid} ${pwd} \r\n`
@@ -1354,7 +1354,7 @@ namespace Sugar {
      * @param topic topic name; eg: /topic
      */
     //% blockId=fpv_mqtt_subscription block="(Camera) subscribe mqtt topic %topic"
-    //% subcategory=advanced group=FPV weight=40 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=40 color=#49A9F7
     export function fpv_mqtt_subscription(topic: string): void {
         basic.pause(500)
         let str = `K21 ${topic} \r\n`
@@ -1367,7 +1367,7 @@ namespace Sugar {
      * @param message topic message; eg: hello
      */
     //% blockId=fpv_mqtt_sendMessage block="(Camera) Give the topic %topic send a %message"
-    //% subcategory=advanced group=FPV weight=37 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=37 color=#49A9F7
     export function fpv_mqtt_sendMessage(topic: string, message: string): void {
         basic.pause(500)
         let str = `K23 ${topic} ${message} \r\n`
@@ -1376,7 +1376,7 @@ namespace Sugar {
     }
 
     //% blockId=fpv_mqtt_getmessage block="(Camera) get mqtt topic message"
-    //% subcategory=advanced group=FPV weight=39 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=39 color=#49A9F7
     export function fpv_mqtt_getmessage(): void {
         basic.pause(1000)
         let str = `K22 \r\n`
@@ -1385,7 +1385,7 @@ namespace Sugar {
     }
 
     //% blockId=fpv_mqtt_message block="(Camera) on mqtt topic received"
-    //% subcategory=advanced group=FPV weight=38 draggableParameters=reporter color=#49BAF7
+    //% subcategory=advanced group=FPV weight=38 draggableParameters=reporter color=#49A9F7
     export function fpv_mqtt_message(handler: (mqttTopicL: string, mqttMessage: string) => void) {
         control.onEvent(fpvEventId, TopicMesId, () => {
             handler(mqttTopicL, mqttMessage);
@@ -1393,13 +1393,13 @@ namespace Sugar {
     }
 
     //% blockId=on_fpv_btn block="(Camera) on button |%btn is pressed"
-    //% subcategory=advanced group=FPV weight=36 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=36 color=#49A9F7
     export function on_fpv_btn(btn: BTNCmd, handler: () => void) {
         control.onEvent(fpvEventId, btn, handler);
     }
 
     //% blockId=fpv_asr_dispose block="(Camera) on speech recognition is complete"
-    //% subcategory=advanced group=FPV weight=45 draggableParameters=reporter color=#49BAF7
+    //% subcategory=advanced group=FPV weight=45 draggableParameters=reporter color=#49A9F7
     export function fpv_asr_dispose(handler: (asrText: string) => void) {
         control.onEvent(fpvEventId, AsrTextId, () => {
             handler(asrText);
@@ -1407,7 +1407,7 @@ namespace Sugar {
     }
 
     //% blockId=fpv_asr block="(Camera) speech recognition |%s seconds (English)"
-    //% subcategory=advanced group=FPV weight=45 color=#49BAF7
+    //% subcategory=advanced group=FPV weight=45 color=#49A9F7
     //% s.min=0 s.max=3 s.defl=2
     export function fpv_asr(s: number): void {
         basic.pause(500)
@@ -1512,39 +1512,39 @@ namespace Sugar {
         }
     }
     //% blockId=asr_init_pw block="(ASR) init port %port"
-    //% subcategory=advanced group=ASR weight=49 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=49 color=#49A9F7
     export function asr_init_pw(port: SerialPorts): void {
         asr_init(PortSerial[port][0], PortSerial[port][1])
     }
 
 
     //% blockId=asr_cmd_led block="(ASR) on led speech |%id recognized"
-    //% subcategory=advanced group=ASR weight=48 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=48 color=#49A9F7
     export function on_asr_led(id: LEDCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
     }
 
     //% blockId=asr_cmd_actuator block="(ASR) on actuator speech |%id recognized"
-    //% subcategory=advanced group=ASR weight=47 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=47 color=#49A9F7
     export function on_asr_act(id: ActCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
     }
 
     //% blockId=asr_cmd_measure block="(ASR) on measurement speech |%id recognized"
-    //% subcategory=advanced group=ASR weight=46 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=46 color=#49A9F7
     export function on_asr_measure(id: MeasureCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
     }
 
     //% blockId=asr_cmd_custom block="(ASR) on customized speech |%id recognized"
-    //% subcategory=advanced group=ASR weight=45 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=45 color=#49A9F7
     export function on_asr_custom(id: CustomCmd, handler: () => void) {
         control.onEvent(asrEventId, id, handler);
     }
 
     //% blockId=asr_tts_int block="(ASR) speak integer |%num"
     //% num.min=-67108864 num.max=67108864
-    //% subcategory=advanced group=ASR weight=44 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=44 color=#49A9F7
     export function asr_tts_int(num: number): void {
         let buf = pins.createBuffer(9);
         buf[0] = 0xAA;
@@ -1560,7 +1560,7 @@ namespace Sugar {
     }
 
     //% blockId=asr_tts_double block="(ASR) speak double |%num"
-    //% subcategory=advanced group=ASR weight=43 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=43 color=#49A9F7
     export function asr_tts_double(num: number): void {
         num = Math.floor(num * 100) / 100
         let binNum: string = ""
@@ -1655,7 +1655,7 @@ namespace Sugar {
     //% year.min=0 year.max=10000
     //% month.min=1 month.max=12
     //% day.min=1 day.max=31
-    //% subcategory=advanced group=ASR weight=42 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=42 color=#49A9F7
     export function asr_tts_date(year: number, month: number, day: number): void {
         let buf = pins.createBuffer(11);
         buf[0] = 0xAA;
@@ -1680,7 +1680,7 @@ namespace Sugar {
     //% blockId=asr_tts_time block="(ASR) speak time - hour|%hour minute|%minute"
     //% hour.min=0 hour.max=24
     //% minute.min=0 minute.max=59
-    //% subcategory=advanced group=ASR weight=41 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=41 color=#49A9F7
     export function asr_tts_time(hour: number, minute: number): void {
         let buf = pins.createBuffer(7);
         buf[0] = 0xAA;
@@ -1694,7 +1694,7 @@ namespace Sugar {
     }
 
     //% blockId=asr_tts_words block="(ASR) speak words |%id"
-    //% subcategory=advanced group=ASR weight=40 color=#49CEF7
+    //% subcategory=advanced group=ASR weight=40 color=#49A9F7
     export function asr_tts_words(id: WordsID): void {
         let buf = pins.createBuffer(5);
         buf[0] = 0xAA;
@@ -1749,7 +1749,7 @@ namespace Sugar {
     }
 
     //% blockId=solarpwrOnOff block="(solar power) set output status %state"
-    //% subcategory=advanced group="solar power" weight=40 color=#499AF7
+    //% subcategory=advanced group="solar power" weight=40 color=#49A9F7
     export function solarpwrOnOff(state: SPOnOff): void {
         const buff = pins.createBuffer(2) // reg, int16
         buff[0] = 0x03
@@ -1758,7 +1758,7 @@ namespace Sugar {
     }
 
     //% blockId=solarpwrBatteryLevel block="(solar power) battery level(V)"
-    //% subcategory=advanced group="solar power" weight=39 color=#499AF7
+    //% subcategory=advanced group="solar power" weight=39 color=#49A9F7
     export function solarpwrBatteryLevel(): number {
         const buff = pins.createBuffer(1) // reg, int16
         buff[0] = 0x02
@@ -1804,7 +1804,7 @@ namespace Sugar {
         Sec = 5,
     }
     //% blockId=solarpwrGetDate block="(solar power) get date %date"
-    //% subcategory=advanced group="solar power" weight=38 color=#499AF7
+    //% subcategory=advanced group="solar power" weight=38 color=#49A9F7
     export function solarpwrGetDate(date: SolarpwrDate): number {
         const buff = pins.createBuffer(1) // reg, int16
         buff[0] = 0x06
@@ -1814,7 +1814,7 @@ namespace Sugar {
     }
 
     //% blockId=solarpwrSetDate block="(solar power) set date year %y moths %month day %d hour %h minute %minute sec %s"
-    //% subcategory=advanced group="solar power" weight=38 color=#499AF7
+    //% subcategory=advanced group="solar power" weight=38 color=#49A9F7
     export function solarpwrSetDate(y: number, month: number, d: number, h: number, minute: number, s: number): void {
         const buff = pins.createBuffer(1 + 6) // reg, int16
         y = y % 100
@@ -1829,7 +1829,7 @@ namespace Sugar {
     }
 
     //% blockId=solarpwrSetAlarm block="(solar power) set alarm hour %h minute %minute sec %s"
-    //% subcategory=advanced group="solar power" weight=37 color=#499AF7
+    //% subcategory=advanced group="solar power" weight=37 color=#49A9F7
     export function solarpwrSetAlarm(h: number, minute: number, s: number): void {
         const buff = pins.createBuffer(1 + 3) // reg, int16
         buff[0] = 0x04
@@ -1846,26 +1846,26 @@ namespace Sugar {
      * @param rx Rx pin; eg: SerialPin.P12
      */
     //% blockId=GPS_init block="(GPS) init tx %tx rx %rx"
-    //% subcategory=advanced group=GPS weight=69 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=69 color=#49A9F7
     export function gps_init(tx: SerialPin, rx: SerialPin): void {
         sugar_gps = new SugarGPS(tx, rx)
     }
 
 
     //% blockId=gps_satellite_quantity block="(GPS) satellite quantity"
-    //% subcategory=advanced group=GPS weight=68 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=68 color=#49A9F7
     export function gps_satellite_quantity(): number {
         return sugar_gps.satellite_quantity
     }
 
     //% blockId=gps_true_ground_track block="(GPS) true ground track"
-    //% subcategory=advanced group=GPS weight=67 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=67 color=#49A9F7
     export function gps_true_ground_track(): number {
         return sugar_gps.true_ground_track
     }
 
     //% blockId=gps_speed_over_ground block="(GPS) speed over ground"
-    //% subcategory=advanced group=GPS weight=66 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=66 color=#49A9F7
     export function gps_speed_over_ground(): number {
         return sugar_gps.speed_over_ground
     }
@@ -1878,7 +1878,7 @@ namespace Sugar {
     }
 
     //% blockId=gps_coordinate_direction block="(GPS) coordinate direction %dir"
-    //% subcategory=advanced group=GPS weight=65 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=65 color=#49A9F7
     export function gps_coordinate_direction(dir: GPSCoordDir): string {
         if (dir) {
             return sugar_gps.longitude_direction
@@ -1895,7 +1895,7 @@ namespace Sugar {
     }
 
     //% blockId=gps_coordinate block="(GPS) coordinate %coord"
-    //% subcategory=advanced group=GPS weight=64 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=64 color=#49A9F7
     export function gps_coordinate(coord: GPSCoord): number {
         if (coord) {
             return sugar_gps.longitude
@@ -1904,7 +1904,7 @@ namespace Sugar {
     }
 
     //% blockId=gps_altitude block="(GPS) altitude"
-    //% subcategory=advanced group=GPS weight=63 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=63 color=#49A9F7
     export function gps_altitude(): number {
         return sugar_gps.altitude
     }
@@ -1918,7 +1918,7 @@ namespace Sugar {
     }
 
     //% blockId=gps_time block="(GPS) get time %dateType"
-    //% subcategory=advanced group=GPS weight=64 color=#49CEF7
+    //% subcategory=advanced group=GPS weight=64 color=#49A9F7
     export function gps_time(dateType: GPSTime): number {
         if (dateType == 0) {
             return sugar_gps.hour
@@ -1936,7 +1936,7 @@ namespace Sugar {
          * @param rx Rx pin; eg: SerialPin.P12
          */
     //% blockId=gesture_init block="(Gesture) init tx %tx rx %rx"
-    //% subcategory=advanced group=Gesture  color=#49BAF7
+    //% subcategory=advanced group=Gesture  color=#49A9F7
     export function gesture_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate9600)
         control.inBackground(() => {
@@ -1956,7 +1956,7 @@ namespace Sugar {
     }
 
     //% blockId=get_gesture block="(Gesture) gesture is |%gestureType "
-    //% subcategory=advanced group=Gesture weight=50 color=#49BAF7
+    //% subcategory=advanced group=Gesture weight=50 color=#49A9F7
     export function get_gesture(): string {
         let transfer = gesturesOperate
         gesturesOperate = null
@@ -1965,7 +1965,7 @@ namespace Sugar {
     }
 
     //% blockId=gesture_dispose block="(Gesture)When %gestureType gesture is received"
-    //% subcategory=advanced group=Gesture weight=46 color=#49BAF7
+    //% subcategory=advanced group=Gesture weight=46 color=#49A9F7
     export function gesture_dispose(gestureType: GestureType, handler: () => void) {
         control.onEvent(gestureEventId, gestureType, handler);
     }
