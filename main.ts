@@ -1033,19 +1033,22 @@ namespace Sugar {
 
     //% blockId=Buzzer block="(Active Buzzer) %pin| sound %onoff"
     //% subcategory=actuator group=DigitalOut weight=83 color=#49A9F7
-    export function Buzzer(pin: DigitalPin, onoff: Switch) {
+    //% onoff.shadow="toggleOnOff"
+    export function Buzzer(pin: DigitalPin, onoff: boolean) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=atomizer block="(Atomizer) %pin| %onoff"
     //% subcategory=actuator group=DigitalOut weight=82 color=#49A9F7
-    export function atomizer(pin: DigitalPin, onoff: Switch) {
+    //% onoff.shadow="toggleOnOff"
+    export function atomizer(pin: DigitalPin, onoff: boolean) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
 
     //% blockId=vibeMotor block="(Vibe Motor) %pin| %onoff"
     //% subcategory=actuator group=DigitalOut weight=81 color=#49A9F7
-    export function vibeMotor(pin: DigitalPin, onoff: Switch) {
+    //% onoff.shadow="toggleOnOff"
+    export function vibeMotor(pin: DigitalPin, onoff: boolean) {
         pins.digitalWritePin(pin, onoff ? 1 : 0)
     }
     // //% blockId=infraRx block="(Infrared)on infra %pin received"
