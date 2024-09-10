@@ -1069,8 +1069,8 @@ namespace Sugar {
     //     return  '温度：16℃'
     // }
 
-    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
-    export function celsius(pin: DigitalPin): number {
+    
+    function celsius(pin: DigitalPin): number {
         return 32.6;
     }
     //% blockId=sugarDSTemperature block="ds18b20 Get Water Temperature Pin %pin"
