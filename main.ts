@@ -1930,45 +1930,45 @@ namespace Sugar {
         return -1
     }
 
-    /**
-         * init serial port
-         * @param tx Tx pin; eg: SerialPin.P2
-         * @param rx Rx pin; eg: SerialPin.P12
-         */
-    //% blockId=gesture_init block="(Gesture) init tx %tx rx %rx"
-    //% subcategory=advanced group=Gesture  color=#49A9F7
-    export function gesture_init(tx: SerialPin, rx: SerialPin): void {
-        serial.redirect(tx, rx, BaudRate.BaudRate9600)
-        control.inBackground(() => {
-            while (1) {
-                let a = serial.readBuffer(4)
-                if (a) {
-                    if (a.length >= 4) {
-                        if (a[0] == 0xAA && a[3] == 0x55) {
-                            gesturesOperate = gestureMap(a[1])
-                            control.raiseEvent(gestureEventId, a[1])
-                        }
-                    }
-                }
-                basic.pause(40)
-            }
-        })
-    }
+    // /**
+    //      * init serial port
+    //      * @param tx Tx pin; eg: SerialPin.P2
+    //      * @param rx Rx pin; eg: SerialPin.P12
+    //      */
+    // //% blockId=gesture_init block="(Gesture) init tx %tx rx %rx"
+    // //% subcategory=advanced group=Gesture  color=#49A9F7
+    // export function gesture_init(tx: SerialPin, rx: SerialPin): void {
+    //     serial.redirect(tx, rx, BaudRate.BaudRate9600)
+    //     control.inBackground(() => {
+    //         while (1) {
+    //             let a = serial.readBuffer(4)
+    //             if (a) {
+    //                 if (a.length >= 4) {
+    //                     if (a[0] == 0xAA && a[3] == 0x55) {
+    //                         gesturesOperate = gestureMap(a[1])
+    //                         control.raiseEvent(gestureEventId, a[1])
+    //                     }
+    //                 }
+    //             }
+    //             basic.pause(40)
+    //         }
+    //     })
+    // }
 
-    //% blockId=get_gesture block="(Gesture) gesture is |%gestureType "
-    //% subcategory=advanced group=Gesture weight=50 color=#49A9F7
-    export function get_gesture(): string {
-        let transfer = gesturesOperate
-        gesturesOperate = null
-        return transfer
+    // //% blockId=get_gesture block="(Gesture) gesture is |%gestureType "
+    // //% subcategory=advanced group=Gesture weight=50 color=#49A9F7
+    // export function get_gesture(): string {
+    //     let transfer = gesturesOperate
+    //     gesturesOperate = null
+    //     return transfer
 
-    }
+    // }
 
-    //% blockId=gesture_dispose block="(Gesture)When %gestureType gesture is received"
-    //% subcategory=advanced group=Gesture weight=46 color=#49A9F7
-    export function gesture_dispose(gestureType: GestureType, handler: () => void) {
-        control.onEvent(gestureEventId, gestureType, handler);
-    }
+    // //% blockId=gesture_dispose block="(Gesture)When %gestureType gesture is received"
+    // //% subcategory=advanced group=Gesture weight=46 color=#49A9F7
+    // export function gesture_dispose(gestureType: GestureType, handler: () => void) {
+    //     control.onEvent(gestureEventId, gestureType, handler);
+    // }
 
 
 }
