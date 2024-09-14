@@ -29,6 +29,7 @@ class SugarColor {
     red: number
     green: number
     blue: number
+    hue: number
     lm: number
     hexColor: number
     constructor() {
@@ -36,6 +37,7 @@ class SugarColor {
         this.green = 0
         this.blue = 0
         this.lm = 0
+        this.hue = 0
         this.time_config()
         this.gain_config()
         this.write_default()
@@ -111,7 +113,7 @@ class SugarColor {
         return this.hexColor
     }
 
-    getRGB(index: number): number {
+    getValue(index: number): number {
         switch (index) {
             case (0):
                 return this.red
@@ -119,8 +121,10 @@ class SugarColor {
                 return this.green
             case (2):
                 return this.blue
+            case (3):
+                return this.hue
             default:
-                return this.red
+                return this.hue
         }
         return this.red
     }

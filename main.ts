@@ -373,6 +373,13 @@ namespace Sugar {
         ok = 0x21
     }
 
+    export enum Switch {
+        //% block="OFF"
+        Off = 0,
+        //% block="ON"
+        On = 1
+    }
+
     export enum Ports {
         PORT1 = 0,
         PORT2 = 1,
@@ -382,233 +389,207 @@ namespace Sugar {
         PORT6 = 5,
         PORT7 = 6
     }
-    //% blockId=pir block="(PIR) motion detected %pin"
-    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
-    export function PIR(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
-    }
-
-    //% blockId=tracer block="(Tracker) black dectected %pin"
-    //% subcategory=sensor group=DigitalIn weight=89 color=#49CEF7
-    export function Tracker(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
-    }
-
-    //% blockId=hall block="(Hall) magnetic detected %pin"
-    //% subcategory=sensor group=DigitalIn weight=88 color=#49CEF7
-    export function Hall(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 0
-    }
 
     //% blockId=button block="(Button) pressed %pin "
-    //% subcategory=sensor group=DigitalIn weight=87 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=99 color=#49CEF7
     export function Button(pin: DigitalPin): boolean {
         pins.setPull(pin, PinPullMode.PullUp)
         return pins.digitalReadPin(pin) == 0
     }
 
     //% blockId=onButtonEvent block="on button|%pin pressed"
-    //% subcategory=sensor group=DigitalIn weight=86 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=98 color=#49CEF7
     export function onButtonEvent(pin: DigitalPin, handler: () => void): void {
         pins.setPull(pin, PinPullMode.PullUp)
         pins.onPulsed(pin, PulseValue.Low, handler)
     }
 
     //% blockId=Crash block="(Crash) crash detected %pin "
-    //% subcategory=sensor group=DigitalIn weight=79 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=97 color=#49CEF7
     export function Crash(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
     //% blockId=Touch block="(Touch) touch detected %pin "
-    //% subcategory=sensor group=DigitalIn weight=78 color=#49CEF7
+    //% subcategory=sensor group=DigitalIn weight=96 color=#49CEF7
     export function Touch(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
-    export enum Switch {
-        //% block="OFF"
-        Off = 0,
-        //% block="ON"
-        On = 1
-    }
 
-    //% blockId=flameBool block="(Flame) fire Detected %pin "
-    //% subcategory=sensor group=DigitalIn weight=80 color=#49CEF7
-    export function FlameDigi(pin: DigitalPin): boolean {
+    //% blockId=pir block="(PIR) motion detected %pin"
+    //% subcategory=sensor group=DigitalIn weight=95 color=#49CEF7
+    export function PIR(pin: DigitalPin): boolean {
         return pins.digitalReadPin(pin) == 1
     }
 
+    //% blockId=hall block="(Hall) magnetic detected %pin"
+    //% subcategory=sensor group=DigitalIn weight=94 color=#49CEF7
+    export function Hall(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 0
+    }
+
+    //% blockId=tracer block="(Tracker) black dectected %pin"
+    //% subcategory=sensor group=DigitalIn weight=93 color=#49CEF7
+    export function Tracker(pin: DigitalPin): boolean {
+        return pins.digitalReadPin(pin) == 1
+    }
+
+    function celsius(pin: DigitalPin): number {
+        return 32.6;
+    }
+    //% blockId=sugarDSTemperature block="ds18b20 Get Water Temperature Pin %pin"
+    //% subcategory=sensor group=DigitalIn weight=92 color=#49CEF7
+    export function sugarDSTemperature(pin: DigitalPin): number {
+        temp = celsius(pin)
+        while (temp >= 85 || temp <= -300) {
+            temp = celsius(pin)
+            basic.pause(100)
+        }
+
+        return Math.round(temp)
+    }
+
+    /**
+     * signal pin
+     * @param pin singal pin; eg: DigitalPin.P1
+     * @param unit desired conversion unit
+     */
+    //% blockId=robotbit_holeultrasonicver block="(Ultrasonic Sensor) %pin distance unit %unit"
+    //% subcategory=sensor group=DigitalIn weight=91 color=#49CEF7
+    export function HoleUltrasonic(pin: DigitalPin, unit: ValueUnit): number {
+        pins.setPull(pin, PinPullMode.PullNone);
+        // pins.setPull(pin, PinPullMode.PullDown);
+        pins.digitalWritePin(pin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(pin, 1);
+        control.waitMicros(10);
+        pins.digitalWritePin(pin, 0);
+        pins.setPull(pin, PinPullMode.PullUp);
+
+        // read pulse
+        let d = pins.pulseIn(pin, PulseValue.High, 30000);
+        let ret = d;
+        // filter timeout spikes
+        if (ret == 0 && distanceBuf != 0) {
+            ret = distanceBuf;
+        }
+        distanceBuf = d;
+        pins.digitalWritePin(pin, 0);
+        basic.pause(15)
+        if (parseInt(control.hardwareVersion()) == 2) {
+            d = ret * 10 / 58;
+        }
+        else {
+            // return Math.floor(ret / 40 + (ret / 800));
+            d = ret * 15 / 58;
+        }
+        switch (unit) {
+            case ValueUnit.Millimeter: return Math.floor(d)
+            case ValueUnit.Centimeters: return Math.floor(d / 10)
+            default: return d;
+        }
+    }
+
+    function sleep_simulate() {
+        //microbit can't do 1-millisecond delay,so in this way
+        for (let index = 0; index < 400; index++) {
+        }
+    }
+
+    /**
+     * get 4x4keyboard value
+     * @param scl Tx pin; eg: DigitalPin.P2
+     * @param sdo Rx pin; eg: DigitalPin.P12
+     */
+    //% blockId=keyboard_getKey block="(4x4 keyboard) get value scl %scl sdo %sdo"
+    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
+    export function keyboard_getKey(scl: DigitalPin, sdo: DigitalPin): string {
+        let keyList: number[] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+        let keyText: string[] = ["*", "7", "4", "1", "3", "6", "9", "#", "A", "B", "C", "D", "0", "8", "5", "2"];
+        let i = 0;
+        pins.digitalWritePin(scl, 1)
+        basic.pause(1)
+        i = 0
+        for (let index = 0; index < keyList.length; index++) {
+            pins.digitalWritePin(scl, 0)
+            sleep_simulate()
+            keyList[i] = pins.digitalReadPin(sdo)
+            pins.digitalWritePin(scl, 1)
+            sleep_simulate()
+            i += 1
+        }
+        basic.pause(1)
+        for (let index = 0; index < keyList.length; index++) {
+            if (keyList[index] == 0) {
+                return keyText[index]
+            }
+        }
+        return "None"
+
+    }
+
+
+    // //% blockId=flameBool block="(Flame) fire Detected %pin "
+    // //% subcategory=sensor group=DigitalIn weight=80 color=#49CEF7
+    // export function FlameDigi(pin: DigitalPin): boolean {
+    //     return pins.digitalReadPin(pin) == 1
+    // }
+
     //% blockId=flameAnalog block="(Flame) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=84 color=#49CEF7
+    //% subcategory=sensor group=AnalogIn weight=79 color=#49CEF7
     export function FlameAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=potential block="(Angle) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=83 color=#49CEF7
+    //% subcategory=sensor group=AnalogIn weight=78 color=#49CEF7
     export function Angle(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=audio block="(Audio) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=83 color=#49CEF7
+    //% subcategory=sensor group=AnalogIn weight=77 color=#49CEF7
     export function audio(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=lightlvl block="(Light) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=82 color=#49CEF7
+    //% subcategory=sensor group=AnalogIn weight=76 color=#49CEF7
     export function Light(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
     //% blockId=soilmoisture block="(SoilMoisture) value %pin"
-    //% subcategory=sensor group=AnalogIn weight=81 color=#49CEF7
+    //% subcategory=sensor group=AnalogIn weight=75 color=#49CEF7
     export function SoilMoisture(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
-    //% blockId=rain block="(WaterLevel) value %pin"
-    //%  subcategory=sensor group="DigitalIn" weight=80 color=#49CEF7
-    export function WaterLevelDigi(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == 1
-    }
-
-    //% blockId=grayscale block="(Grayscale) value %pin"
-    //% subcategory=sensor  group=AnalogIn weight=79 color=#49CEF7
-    export function grayscale(pin: AnalogPin): number {
-        return pins.analogReadPin(pin)
-    }
-
     //% blockId=waterlvl block="(WaterLevel) value %pin"
-    //% subcategory=sensor  group=AnalogIn weight=79 color=#49CEF7
+    //% subcategory=sensor  group=AnalogIn weight=74 color=#49CEF7
     export function WaterLevelAna(pin: AnalogPin): number {
         return pins.analogReadPin(pin)
     }
 
-    let sugarUVInit = false;
-    let sugarUV: SugarUV;
-    //% blockId=als block="(uv) get ALS"
-    //% subcategory=sensor group=I2C weight=84 color=#49CEF7
-    export function alsValue(): number {
 
-        if (!sugarUVInit) {
-            sugarUV = new SugarUV()
-            sugarUVInit = true
-        }
-        return sugarUV.als()
+    // //% blockId=rain block="(WaterLevel) value %pin"
+    // //%  subcategory=sensor group="DigitalIn" weight=80 color=#49CEF7
+    // export function WaterLevelDigi(pin: DigitalPin): boolean {
+    //     return pins.digitalReadPin(pin) == 1
+    // }
+
+    //% blockId=grayscale block="(Grayscale) value %pin"
+    //% subcategory=sensor  group=AnalogIn weight=73 color=#49CEF7
+    export function grayscale(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
     }
 
-    //% blockId=uvi block="(uv) get UVI"
-    //% subcategory=sensor group=I2C weight=83 color=#49CEF7
-    export function uviValue(): number {
-
-        if (!sugarUVInit) {
-            sugarUV = new SugarUV()
-            sugarUVInit = true
-        }
-        return sugarUV.uvi()
-    }
-
-    let sugarColorInit = false;
-    let sugarColor: SugarColor;
-    //% blockId=colorUpdate block="(color recognition) update data"
-    //% subcategory=sensor group=I2C weight=82 color=#49CEF7
-    export function colorUpdate(): void {
-
-        if (!sugarColorInit) {
-            sugarColor = new SugarColor()
-            sugarColorInit = true
-        }
-        sugarColor.update()
-    }
-
-
-    export enum Colorindex {
-        //% block="red"
-        Red = 0,
-        //% block="green"
-        Green = 1,
-        //% block="blue"
-        Blue = 2,
-    }
-
-    //% blockId=getRGB block="(color recognition) get RGB %index"
-    //% subcategory=sensor group=I2C weight=81 color=#49CEF7
-    export function getRGB(index: Colorindex): number {
-        if (!sugarColorInit) {
-            sugarColor = new SugarColor()
-            sugarColorInit = true
-        }
-        return sugarColor.getRGB(index)
-    }
-
-    //% blockId=getHex block="(color recognition) get color(hex)"
-    //% subcategory=sensor group=I2C weight=80 color=#49CEF7
-    export function getHex(): number {
-        if (!sugarColorInit) {
-            sugarColor = new SugarColor()
-            sugarColorInit = true
-        }
-        return sugarColor.getHex()
-    }
-
-    let loadcellInit = false;
-    let loadcell: SugarLoadcell;
-    /**
-     * init loadcell
-     * @param zeroOffset is zero offset, eg: 2071.921875
-     * @param factor is calibration factor, eg: 1.53034747292419
-     */
-    //% blockId=loadcellBegin block="(loadcell) begin zeroOffset %zeroOffset factor %factor"
-    //% subcategory=sensor group=I2C weight=87 color=#49CEF7
-    export function loadcellBegin(zeroOffset: number, factor: number): void {
-        if (!loadcellInit) {
-            loadcell = new SugarLoadcell()
-            loadcell.begin()
-            loadcellInit = true
-        }
-        loadcell.begin(true, zeroOffset, factor)
-    }
-
-    //% blockId=loadcellCali block="(loadcell) calibrate scale"
-    //% subcategory=sensor group=I2C weight=86 color=#49CEF7
-    export function loadcellCalibrateScale(): void {
-        if (!loadcellInit) {
-            loadcell = new SugarLoadcell()
-            loadcell.begin()
-            loadcellInit = true
-        }
-        loadcell.calibrateScale()
-    }
-
-    //% blockId=loadcellsetPeel block="(loadcell) net weight"
-    //% subcategory=sensor group=I2C weight=85 color=#49CEF7
-    export function loadcellCalibrateSetPeel(): void {
-        if (!loadcellInit) {
-            loadcell = new SugarLoadcell()
-            loadcell.begin()
-            loadcellInit = true
-        }
-        loadcell.setPeel()
-    }
-
-    //% blockId=loadcell block="(loadcell) weight(g)"
-    //% subcategory=sensor group=I2C weight=84 color=#49CEF7
-    export function loadcellGetWeight(): number {
-        if (!loadcellInit) {
-            loadcell = new SugarLoadcell()
-            loadcell.begin()
-            loadcellInit = true
-        }
-        return loadcell.getWeightPeel()
-    }
 
     const VL53L0X_ADDR = 0x5e;
     let vl53Inited = false;
 
     //% blockId=tof block="(TOF Distance) distance(mm)"
-    //% subcategory=sensor group=I2C weight=76 color=#49CEF7
+    //% subcategory=sensor group=I2C weight=59 color=#49CEF7
     export function TOFDistance(): number {
         if (!vl53Inited) {
             let buf = pins.createBuffer(3)
@@ -620,6 +601,280 @@ namespace Sugar {
         pins.i2cWriteNumber(VL53L0X_ADDR, 0x1, NumberFormat.UInt8BE);
         return pins.i2cReadNumber(VL53L0X_ADDR, NumberFormat.UInt16LE);
     }
+
+
+    const AHT20_ADDR = 0x38
+    let aht20Inited = false;
+
+    function _aht20Ready(): boolean {
+        let stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
+        while (stat & 0x80) {
+            stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
+            basic.pause(100)
+        }
+        return true
+    }
+
+    export enum EnvType {
+        //% block="Temperature(℃)"
+        Temperature = 0,
+        //% block="Humidity(%RH)"
+        Humidity = 1
+    }
+
+    //% blockId=environment block="(ENV.Ⅰ) value %env"
+    //% subcategory=sensor group=I2C weight=58 color=#49CEF7
+    export function ENV(env: EnvType): number {
+        if (!aht20Inited) {
+            i2cwrite(AHT20_ADDR, 0xba, [])
+            basic.pause(50)
+            i2cwrite(AHT20_ADDR, 0xa8, [0, 0])
+            basic.pause(350)
+            i2cwrite(AHT20_ADDR, 0xe1, [0x28, 0])
+            aht20Inited = true;
+        }
+        i2cwrite(AHT20_ADDR, 0xac, [0x33, 0])
+        if (_aht20Ready()) {
+            const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
+            const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
+            const humi = Math.floor((h * 0.000095) * 100) / 100
+            const t = ((n[3] & 0x0f) << 16 | (n[4] << 8) | n[5])
+            const temp = Math.floor((t * 0.000191 - 50) * 100) / 100
+            return env === EnvType.Humidity ? humi : temp
+        }
+        return 0;
+    }
+
+
+    //self.i2c address of the device
+    const HP203B_ADDRESS = 0x76
+
+    //ADC_CVT(HP203B_ADC_CVT, 3 - bit OSR, 2 - bit CHNL)
+
+    //HP203B Command Set
+    const HP203B_SOFT_RST = 0x06          //Soft reset the device
+    const HP203B_ADC_CVT = 0x40           //Perform ADC conversion
+    const HP203B_READ_PT = 0x10           //Read the temperature and pressure values
+    const HP203B_READ_AT = 0x11           //Read the temperature and altitude values
+    const HP203B_READ_P = 0x30            //Read the pressure value only
+    const HP203B_READ_A = 0x31            //Read the altitude value only
+    const HP203B_READ_T = 0x32            //Read the temperature value only
+    const HP203B_ANA_CAL = 0x28           //Re - calibrate the internal analog blocks
+    const HP203B_READ_REG = 0x80          //Read out the control registers
+    const HP203B_WRITE_REG = 0xC0         //Write in the control registers
+
+
+    //OSR Configuration
+    const HP203B_OSR_4096 = 0x00                // Conversion time: 4.1ms
+    const HP203B_OSR_2048 = 0x04                // Conversion time: 8.2ms
+    const HP203B_OSR_1024 = 0x08                // Conversion time: 16.4ms
+    const HP203B_OSR_512 = 0xC0                 // Conversion time: 32.8ms
+    const HP203B_OSR_256 = 0x10                 // Conversion time: 65.6ms
+    const HP203B_OSR_128 = 0x14                 // Conversion time: 131.1ms
+
+    const HP203B_CH_PRESSTEMP = 0x00                  // Sensor Pressure and Temperature Channel
+    const HP203B_CH_TEMP = 0x02                       // Temperature Channel
+
+
+    export enum EnvTypeII {
+        //% block="Pressure(hPa)"
+        Pressure = 0,
+        //% block="Altitude(m)"
+        Altitude = 1,
+        //% block="Temp(℃)"
+        CTemp = 2,
+        //% block="Temp(℉)"
+        FTemp = 3
+    }
+
+    //% blockId="environment2" block="(ENV.II)get value %pin"
+    //% subcategory=sensor group=I2C weight=56 color=#49CEF7
+    export function ENVII(pin: EnvTypeII): number {
+        const CNVRSN_CONFIG = Buffer.fromArray([HP203B_ADC_CVT | HP203B_OSR_1024 | HP203B_CH_PRESSTEMP])
+        pins.i2cWriteBuffer(HP203B_ADDRESS, CNVRSN_CONFIG)
+
+        let presData = i2cread(HP203B_ADDRESS, HP203B_READ_P, 3)
+        let pressure = (((presData[0] & 0x0F) * 65536) + (presData[1] * 256) + presData[2]) / 100.00
+
+        let tempData = i2cread(HP203B_ADDRESS, HP203B_READ_T, 3)
+        let cTemp = (((tempData[0] & 0x0F) * 65536) + (tempData[1] * 256) + tempData[2]) / 100.00
+        const fTemp = (cTemp * 1.8) + 32
+
+        let altData = i2cread(HP203B_ADDRESS, HP203B_READ_A, 3)
+        let altitude = (((altData[0] & 0x0F) << 16) + (altData[1] << 8) + altData[2]) / 100.00
+
+        if (pin === EnvTypeII.Pressure) {
+            return pressure
+        } else if (pin === EnvTypeII.Altitude) {
+            return altitude
+        } else if (pin === EnvTypeII.CTemp) {
+            return cTemp
+        } else {
+            return fTemp
+        }
+    }
+
+    export enum JoystickDir {
+        pressed = 1,
+        left = 0x10,
+        right = 0x8,
+        up = 0x4,
+        down = 0x2
+    }
+
+    const JOYSTICK_ADDR = 0x5c
+    //% blockId=joyState block="(Joystick) state %state triggered"
+    //% subcategory=sensor group=I2C weight=55 color=#49CEF7
+    export function joyState(state: JoystickDir): boolean {
+        const sta = i2cread(JOYSTICK_ADDR, 1, 1).getNumber(NumberFormat.UInt8BE, 0)
+        return (sta & state) != 0;
+    }
+
+    export enum DirType {
+        X = 0,
+        Y = 1
+    }
+
+    //% blockId=joyValue block="(Joystick) value %dir"
+    //% subcategory=sensor group=I2C weight=54 color=#49CEF7
+    export function joyValue(dir: DirType): number {
+        const buf = i2cread(JOYSTICK_ADDR, 2, 4)
+        const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0) * 255 / 2048 - 255)
+        const valY = Math.round(buf.getNumber(NumberFormat.Int16LE, 2) * 255 / 2048 - 255)
+        return dir === DirType.X ? valX : valY
+    }
+
+
+    let sugarColorInit = false;
+    let sugarColor: SugarColor;
+    //% blockId=colorUpdate block="color sensor update value"
+    //% subcategory=sensor group=I2C weight=53 color=#49CEF7
+    export function colorUpdate(): void {
+
+        if (!sugarColorInit) {
+            sugarColor = new SugarColor()
+            sugarColorInit = true
+        }
+        sugarColor.update()
+    }
+
+
+    export enum colorType {
+        //% block="red"
+        Red = 0,
+        //% block="green"
+        Green = 1,
+        //% block="blue"
+        Blue = 2,
+        //% block="hue"
+        Hue = 3,
+    }
+
+    //% blockId=colorValue block="color sensor get %type value"
+    //% subcategory=sensor group=I2C weight=52 color=#49CEF7
+    export function colorValue(type: colorType): number {
+        if (!sugarColorInit) {
+            sugarColor = new SugarColor()
+            sugarColorInit = true
+        }
+        return sugarColor.getValue(type)
+    }
+
+    export enum uvType {
+        //% block="UV"
+        uv = 0,
+        //% block="Lux"
+        lux = 1,
+    }
+
+    let sugarUVInit = false;
+    let sugarUV: SugarUV;
+
+    //% blockId=als block="UV Sensor get %type"
+    //% subcategory=sensor group=I2C weight=50 color=#49CEF7
+    export function uvValue(type:uvType): number {
+
+        if (!sugarUVInit) {
+            sugarUV = new SugarUV()
+            sugarUVInit = true
+        }
+        return type === uvType.uv ? sugarUV.uvi(): sugarUV.als()
+    }
+
+    // //% blockId=als block="(uv) get ALS"
+    // //% subcategory=sensor group=I2C weight=84 color=#49CEF7
+    // export function alsValue(): number {
+
+    //     if (!sugarUVInit) {
+    //         sugarUV = new SugarUV()
+    //         sugarUVInit = true
+    //     }
+    //     return sugarUV.als()
+    // }
+
+    // //% blockId=uvi block="(uv) get UVI"
+    // //% subcategory=sensor group=I2C weight=83 color=#49CEF7
+    // export function uviValue(): number {
+
+    //     if (!sugarUVInit) {
+    //         sugarUV = new SugarUV()
+    //         sugarUVInit = true
+    //     }
+    //     return sugarUV.uvi()
+    // }
+
+
+    let loadcellInit = false;
+    let loadcell: SugarLoadcell;
+    /**
+     * init loadcell
+     * @param zeroOffset is zero offset, eg: 2071.921875
+     * @param factor is calibration factor, eg: 1.53034747292419
+     */
+    //% blockId=loadcellBegin block="(loadcell) begin zeroOffset %zeroOffset factor %factor"
+    //% subcategory=sensor group=I2C weight=48 color=#49CEF7
+    export function loadcellBegin(zeroOffset: number, factor: number): void {
+        if (!loadcellInit) {
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        loadcell.begin(true, zeroOffset, factor)
+    }
+
+    //% blockId=loadcellCali block="(loadcell) calibrate scale"
+    //% subcategory=sensor group=I2C weight=49 color=#49CEF7
+    export function loadcellCalibrateScale(): void {
+        if (!loadcellInit) {
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        loadcell.calibrateScale()
+    }
+
+    //% blockId=loadcellsetPeel block="(loadcell) net weight"
+    //% subcategory=sensor group=I2C weight=47 color=#49CEF7
+    export function loadcellCalibrateSetPeel(): void {
+        if (!loadcellInit) {
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        loadcell.setPeel()
+    }
+
+    //% blockId=loadcell block="(loadcell) weight(g)"
+    //% subcategory=sensor group=I2C weight=46 color=#49CEF7
+    export function loadcellGetWeight(): number {
+        if (!loadcellInit) {
+            loadcell = new SugarLoadcell()
+            loadcell.begin()
+            loadcellInit = true
+        }
+        return loadcell.getWeightPeel()
+    }
+
 
     const SCD40_ADDR = 0x62;
     let scd40Inited = false;
@@ -738,151 +993,6 @@ namespace Sugar {
         else {
             return data[1]
         }
-    }
-
-    const AHT20_ADDR = 0x38
-    let aht20Inited = false;
-
-    function _aht20Ready(): boolean {
-        let stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
-        while (stat & 0x80) {
-            stat = pins.i2cReadNumber(AHT20_ADDR, NumberFormat.UInt8BE);
-            basic.pause(100)
-        }
-        return true
-    }
-
-    export enum EnvType {
-        //% block="Temperature(℃)"
-        Temperature = 0,
-        //% block="Humidity(%RH)"
-        Humidity = 1
-    }
-
-    //% blockId=environment block="(ENV.Ⅰ) value %env"
-    //% subcategory=sensor group=I2C weight=74 color=#49CEF7
-    export function ENV(env: EnvType): number {
-        if (!aht20Inited) {
-            i2cwrite(AHT20_ADDR, 0xba, [])
-            basic.pause(50)
-            i2cwrite(AHT20_ADDR, 0xa8, [0, 0])
-            basic.pause(350)
-            i2cwrite(AHT20_ADDR, 0xe1, [0x28, 0])
-            aht20Inited = true;
-        }
-        i2cwrite(AHT20_ADDR, 0xac, [0x33, 0])
-        if (_aht20Ready()) {
-            const n = pins.i2cReadBuffer(AHT20_ADDR, 6)
-            const h = ((n[1] << 16) | (n[2] << 8) | (n[3])) >> 4
-            const humi = Math.floor((h * 0.000095) * 100) / 100
-            const t = ((n[3] & 0x0f) << 16 | (n[4] << 8) | n[5])
-            const temp = Math.floor((t * 0.000191 - 50) * 100) / 100
-            return env === EnvType.Humidity ? humi : temp
-        }
-        return 0;
-    }
-
-
-    //self.i2c address of the device
-    const HP203B_ADDRESS = 0x76
-
-    //ADC_CVT(HP203B_ADC_CVT, 3 - bit OSR, 2 - bit CHNL)
-
-    //HP203B Command Set
-    const HP203B_SOFT_RST = 0x06          //Soft reset the device
-    const HP203B_ADC_CVT = 0x40           //Perform ADC conversion
-    const HP203B_READ_PT = 0x10           //Read the temperature and pressure values
-    const HP203B_READ_AT = 0x11           //Read the temperature and altitude values
-    const HP203B_READ_P = 0x30            //Read the pressure value only
-    const HP203B_READ_A = 0x31            //Read the altitude value only
-    const HP203B_READ_T = 0x32            //Read the temperature value only
-    const HP203B_ANA_CAL = 0x28           //Re - calibrate the internal analog blocks
-    const HP203B_READ_REG = 0x80          //Read out the control registers
-    const HP203B_WRITE_REG = 0xC0         //Write in the control registers
-
-
-    //OSR Configuration
-    const HP203B_OSR_4096 = 0x00                // Conversion time: 4.1ms
-    const HP203B_OSR_2048 = 0x04                // Conversion time: 8.2ms
-    const HP203B_OSR_1024 = 0x08                // Conversion time: 16.4ms
-    const HP203B_OSR_512 = 0xC0                 // Conversion time: 32.8ms
-    const HP203B_OSR_256 = 0x10                 // Conversion time: 65.6ms
-    const HP203B_OSR_128 = 0x14                 // Conversion time: 131.1ms
-
-    const HP203B_CH_PRESSTEMP = 0x00                  // Sensor Pressure and Temperature Channel
-    const HP203B_CH_TEMP = 0x02                       // Temperature Channel
-
-    //% blockId="envUpdate" block="(ENV.II) update"
-    //% subcategory=sensor group=I2C weight=73 color=#49CEF7
-    export function envUpdate() {
-        const CNVRSN_CONFIG = Buffer.fromArray([HP203B_ADC_CVT | HP203B_OSR_1024 | HP203B_CH_PRESSTEMP])
-        pins.i2cWriteBuffer(HP203B_ADDRESS, CNVRSN_CONFIG)
-    }
-
-
-    export enum EnvTypeII {
-        //% block="Pressure(hPa)"
-        Pressure = 0,
-        //% block="Altitude(m)"
-        Altitude = 1,
-        //% block="Temp(℃)"
-        CTemp = 2,
-        //% block="Temp(℉)"
-        FTemp = 3
-    }
-
-    //% blockId="envGetData" block="(ENV.II)get value %pin"
-    //% subcategory=sensor group=I2C weight=72 color=#49CEF7
-    export function envGetData(pin: EnvTypeII): number {
-        let presData = i2cread(HP203B_ADDRESS, HP203B_READ_P, 3)
-        let pressure = (((presData[0] & 0x0F) * 65536) + (presData[1] * 256) + presData[2]) / 100.00
-
-        let tempData = i2cread(HP203B_ADDRESS, HP203B_READ_T, 3)
-        let cTemp = (((tempData[0] & 0x0F) * 65536) + (tempData[1] * 256) + tempData[2]) / 100.00
-        const fTemp = (cTemp * 1.8) + 32
-
-        let altData = i2cread(HP203B_ADDRESS, HP203B_READ_A, 3)
-        let altitude = (((altData[0] & 0x0F) << 16) + (altData[1] << 8) + altData[2]) / 100.00
-
-        if (pin === EnvTypeII.Pressure) {
-            return pressure
-        } else if (pin === EnvTypeII.Altitude) {
-            return altitude
-        } else if (pin === EnvTypeII.CTemp) {
-            return cTemp
-        } else {
-            return fTemp
-        }
-    }
-
-    export enum JoystickDir {
-        pressed = 1,
-        left = 0x10,
-        right = 0x8,
-        up = 0x4,
-        down = 0x2
-    }
-
-    const JOYSTICK_ADDR = 0x5c
-    //% blockId=joyState block="(Joystick) state %state triggered"
-    //% subcategory=sensor group=I2C weight=71 color=#49CEF7
-    export function joyState(state: JoystickDir): boolean {
-        const sta = i2cread(JOYSTICK_ADDR, 1, 1).getNumber(NumberFormat.UInt8BE, 0)
-        return (sta & state) != 0;
-    }
-
-    export enum DirType {
-        X = 0,
-        Y = 1
-    }
-
-    //% blockId=joyValue block="(Joystick) value %dir"
-    //% subcategory=sensor group=I2C weight=70 color=#49CEF7
-    export function joyValue(dir: DirType): number {
-        const buf = i2cread(JOYSTICK_ADDR, 2, 4)
-        const valX = Math.round(buf.getNumber(NumberFormat.Int16LE, 0) * 255 / 2048 - 255)
-        const valY = Math.round(buf.getNumber(NumberFormat.Int16LE, 2) * 255 / 2048 - 255)
-        return dir === DirType.X ? valX : valY
     }
 
     let COMMAND_I2C_ADDRESS = 0x24
@@ -1068,102 +1178,6 @@ namespace Sugar {
     // export function tempSensor(pin: DigitalPin):string {
     //     return  '温度：16℃'
     // }
-
-    
-    function celsius(pin: DigitalPin): number {
-        return 32.6;
-    }
-    //% blockId=sugarDSTemperature block="ds18b20 Get Water Temperature Pin %pin"
-    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
-    export function sugarDSTemperature(pin: DigitalPin): number {
-        temp = celsius(pin)
-        while (temp >= 85 || temp <= -300) {
-            temp = celsius(pin)
-            basic.pause(100)
-        }
-
-        return Math.round(temp)
-    }
-
-    /**
-     * signal pin
-     * @param pin singal pin; eg: DigitalPin.P1
-     * @param unit desired conversion unit
-     */
-    //% blockId=robotbit_holeultrasonicver block="(Ultrasonic Sensor) %pin distance unit %unit"
-    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
-    export function HoleUltrasonic(pin: DigitalPin, unit: ValueUnit): number {
-        pins.setPull(pin, PinPullMode.PullNone);
-        // pins.setPull(pin, PinPullMode.PullDown);
-        pins.digitalWritePin(pin, 0);
-        control.waitMicros(2);
-        pins.digitalWritePin(pin, 1);
-        control.waitMicros(10);
-        pins.digitalWritePin(pin, 0);
-        pins.setPull(pin, PinPullMode.PullUp);
-
-        // read pulse
-        let d = pins.pulseIn(pin, PulseValue.High, 30000);
-        let ret = d;
-        // filter timeout spikes
-        if (ret == 0 && distanceBuf != 0) {
-            ret = distanceBuf;
-        }
-        distanceBuf = d;
-        pins.digitalWritePin(pin, 0);
-        basic.pause(15)
-        if (parseInt(control.hardwareVersion()) == 2) {
-            d = ret * 10 / 58;
-        }
-        else {
-            // return Math.floor(ret / 40 + (ret / 800));
-            d = ret * 15 / 58;
-        }
-        switch (unit) {
-            case ValueUnit.Millimeter: return Math.floor(d)
-            case ValueUnit.Centimeters: return Math.floor(d / 10)
-            default: return d;
-        }
-    }
-
-    function sleep_simulate() {
-        //microbit can't do 1-millisecond delay,so in this way
-        for (let index = 0; index < 400; index++) {
-        }
-    }
-
-    /**
-     * get 4x4keyboard value
-     * @param scl Tx pin; eg: DigitalPin.P2
-     * @param sdo Rx pin; eg: DigitalPin.P12
-     */
-    //% blockId=keyboard_getKey block="(4x4 keyboard) get value scl %scl sdo %sdo"
-    //% subcategory=sensor group=DigitalIn weight=90 color=#49CEF7
-    export function keyboard_getKey(scl: DigitalPin, sdo: DigitalPin): string {
-        let keyList: number[] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-        let keyText: string[] = ["*", "7", "4", "1", "3", "6", "9", "#", "A", "B", "C", "D", "0", "8", "5", "2"];
-        let i = 0;
-        pins.digitalWritePin(scl, 1)
-        basic.pause(1)
-        i = 0
-        for (let index = 0; index < keyList.length; index++) {
-            pins.digitalWritePin(scl, 0)
-            sleep_simulate()
-            keyList[i] = pins.digitalReadPin(sdo)
-            pins.digitalWritePin(scl, 1)
-            sleep_simulate()
-            i += 1
-        }
-        basic.pause(1)
-        for (let index = 0; index < keyList.length; index++) {
-            if (keyList[index] == 0) {
-                return keyText[index]
-            }
-        }
-        return "None"
-
-    }
-
 
 
     /**
