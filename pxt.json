@@ -18,7 +18,8 @@
         "sugarColor.ts",
         "sugarGPS.ts",
         "sugarUV.ts",
-        "sugarRFID.ts"
+        "sugarRFID.ts",
+        "background.ts"
     ],
     "public": true,
     "targetVersions": {

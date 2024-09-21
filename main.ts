@@ -535,6 +535,235 @@ namespace Sugar {
     //     return pins.digitalReadPin(pin) == 1
     // }
 
+    let irState: IrState;
+    let kittenIREventId = 202412
+
+    interface IrState {
+        protocol: 1;
+        hasNewDatagram: boolean;
+        bitsReceived: uint8;
+        addressSectionBits: uint16;
+        commandSectionBits: uint16;
+        hiword: uint16;
+        loword: uint16;
+        activeCommand: number;
+        repeatTimeout: number;
+        onIrDatagram: () => void;
+    }
+    const IR_REPEAT = 256;
+    const IR_INCOMPLETE = 257;
+    const IR_DATAGRAM = 258;
+
+    const REPEAT_TIMEOUT_MS = 120;
+
+    export enum IrCmd {
+        //% block="power"
+        OFF = 41565,
+        //% block="menu"
+        Menu = 25245,
+        //% block="mute"
+        Mute = 57885,
+        //% block="mode"
+        Mode = 8925,
+        //% block="+"
+        Add = 765,
+        //% block="🔙"
+        Back = 49725,
+        //% block="⏪️"
+        Fb = 57375,
+        //% block="⏯︎"
+        Stop = 43095,
+        //% block="⏩︎"
+        Ff = 36975,
+        //% block="0"
+        Zero = 26775,
+        //% block="-"
+        Minus = 39015,
+        //% block="ok"
+        OK = 45135,
+        //% block="1"
+        One = 12495,
+        //% block="2"
+        Tow = 6375,
+        //% block="3"
+        Three = 31365,
+        //% block="4"
+        Four = 4335,
+        //% block="5"
+        Five = 14535,
+        //% block="6"
+        Six = 23205,
+        //% block="7"
+        Seven = 17085,
+        //% block="8"
+        Eight = 19125,
+        //% block="9"
+        Nine = 21165,
+    }
+
+    function initIr(pin: DigitalPin) {
+        initIrState();
+
+        enableIrMarkSpaceDetection(pin);
+
+        background.schedule(notifyIrEvents, background.Thread.Priority, background.Mode.Repeat, REPEAT_TIMEOUT_MS);
+    }
+
+    //% blockId=initInfraed block="init Infraed %pin"
+    //% subcategory=Sensor group=DigitalIn weight=71
+    export function sugarInitInfraed(pin: DigitalPin) {
+        control.inBackground(() => {
+            initIr(pin);
+        });;
+    }
+    
+
+    function appendBitToDatagram(bit: number): number {
+        irState.bitsReceived += 1;
+
+        if (irState.bitsReceived <= 8) {
+            irState.hiword = (irState.hiword << 1) + bit;
+        } else if (irState.bitsReceived <= 16) {
+            irState.hiword = (irState.hiword << 1) + bit;
+        } else if (irState.bitsReceived <= 32) {
+            irState.loword = (irState.loword << 1) + bit;
+        }
+
+        if (irState.bitsReceived === 32) {
+            irState.addressSectionBits = irState.hiword & 0xffff;
+            irState.commandSectionBits = irState.loword & 0xffff;
+            serial.writeString(irState.addressSectionBits.toString() + "-" + irState.commandSectionBits.toString())
+            control.raiseEvent(kittenIREventId, irState.commandSectionBits)
+            return IR_DATAGRAM;
+        } else {
+            return IR_INCOMPLETE;
+        }
+    }
+
+    function decode(markAndSpace: number): number {
+        if (markAndSpace < 1600) {
+            // low bit
+            return appendBitToDatagram(0);
+        } else if (markAndSpace < 2700) {
+            // high bit
+            return appendBitToDatagram(1);
+        }
+
+        irState.bitsReceived = 0;
+
+        if (markAndSpace < 12500) {
+            // Repeat detected
+            return IR_REPEAT;
+        } else if (markAndSpace < 14500) {
+            // Start detected
+            return IR_INCOMPLETE;
+        } else {
+            return IR_INCOMPLETE;
+        }
+    }
+
+    function enableIrMarkSpaceDetection(pin: DigitalPin) {
+        pins.setPull(pin, PinPullMode.PullNone);
+
+        let mark = 0;
+        let space = 0;
+
+        pins.onPulsed(pin, PulseValue.Low, () => {
+            mark = pins.pulseDuration();
+        });
+
+        pins.onPulsed(pin, PulseValue.High, () => {
+            // LOW
+            space = pins.pulseDuration();
+            const status = decode(mark + space);
+
+            if (status !== IR_INCOMPLETE) {
+                handleIrEvent(status);
+            }
+        });
+    }
+
+    function handleIrEvent(irEvent: number) {
+
+        // Refresh repeat timer
+        if (irEvent === IR_DATAGRAM || irEvent === IR_REPEAT) {
+            irState.repeatTimeout = input.runningTime() + REPEAT_TIMEOUT_MS;
+        }
+
+        if (irEvent === IR_DATAGRAM) {
+            irState.hasNewDatagram = true;
+
+            if (irState.onIrDatagram) {
+                background.schedule(irState.onIrDatagram, background.Thread.UserCallback, background.Mode.Once, 0);
+            }
+
+            const newCommand = irState.commandSectionBits >> 8;
+            // Process a new command
+            if (newCommand !== irState.activeCommand) {
+
+                irState.activeCommand = newCommand;
+            }
+        }
+    }
+
+    function initIrState() {
+        if (irState) {
+            return;
+        }
+
+        irState = {
+            protocol: undefined,
+            bitsReceived: 0,
+            hasNewDatagram: false,
+            addressSectionBits: 0,
+            commandSectionBits: 0,
+            hiword: 0, // TODO replace with uint32
+            loword: 0,
+            activeCommand: -1,
+            repeatTimeout: 0,
+            onIrDatagram: undefined,
+        };
+    }
+
+    function notifyIrEvents() {
+        if (irState.activeCommand === -1) {
+            // skip to save CPU cylces
+        } else {
+            const now = input.runningTime();
+            if (now > irState.repeatTimeout) {
+                // repeat timed out
+                irState.bitsReceived = 0;
+                irState.activeCommand = -1;
+            }
+        }
+    }
+
+    /**
+     * Registers code to run when a specific button on the remote control is pressed.
+     * @param handler 
+     */
+    //% blockId=sugarInfrared block="on remote control |%btn pressed"
+    //% subcategory=Sensor group=DigitalIn weight=70
+    //% btn.fieldEditor="gridpicker"
+    //% btn.fieldOptions.columns=3
+    export function sugarOnRemoteControlPressed(btn: IrCmd, handler: () => void) {
+        control.onEvent(kittenIREventId, btn, handler);
+    }
+
+    function ir_rec_to16BitHex(value: number): string {
+        let hex = "";
+        for (let pos = 0; pos < 4; pos++) {
+            let remainder = value % 16;
+            if (remainder < 10) {
+                hex = remainder.toString() + hex;
+            } else {
+                hex = String.fromCharCode(55 + remainder) + hex;
+            }
+            value = Math.idiv(value, 16);
+        }
+        return hex;
+    }
+
     //% blockId=flameAnalog block="flame sensor %pin analog value"
     //% subcategory=Sensor group=AnalogIn weight=79 color=#49CEF7
     export function FlameAna(pin: AnalogPin): number {

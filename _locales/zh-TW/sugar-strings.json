@@ -296,5 +296,7 @@
     "Sugar.uvValue|block": "UV感測器 取得 %type",
     "Sugar.sugarRfidReadUid|block": "RFID模組 取得卡片uid",
     "Sugar.sugarRfidWriteBlock|block": "RFID模組 將資料 %data 寫入區塊 %blockAddress",
-    "Sugar.sugarRfidReadBlock|block": "RFID模組 讀取區塊 %blockAddress"
+    "Sugar.sugarRfidReadBlock|block": "RFID模組 讀取區塊 %blockAddress",
+    "Sugar.sugarInitInfraed|block": "初始化紅外接收模塊 %pin",
+    "Sugar.sugarOnRemoteControlPressed|block": "當遙控器按鈕 %btn 被按下"
 }
