@@ -1938,7 +1938,7 @@ namespace Sugar {
     //% blockId=sugarRfidWriteBlock block="rfid module writes %data to block %blockAddress"
     //% blockAddress.min=0 blockAddress.max=46
     //% subcategory=Advanced group=RFID weight=89 color=#499AF7
-    export function sugarRfidWriteBlock(blockAddress: number, data: string): void {
+    export function sugarRfidWriteBlock(data: string, blockAddress: number): void {
         if (!sugarRFIDInit) {
             sugarRFID = new SugarRFID()
             sugarRFIDInit = true
