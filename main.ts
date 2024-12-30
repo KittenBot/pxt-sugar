@@ -75,6 +75,7 @@ namespace Sugar {
     let asrEventId = 6666
     let fpvEventId = 7777
     let gestureEventId = 8888
+    let rfidEventId = 9999
     let cmd = 0
     let asrText: string = ''
     let qrcode: string = ''
@@ -1919,6 +1920,34 @@ namespace Sugar {
 
     let sugarRFIDInit = false;
     let sugarRFID: SugarRFID;
+
+
+    function initSugarRFID(): void {
+        sugarRFID = new SugarRFID()
+        sugarRFIDInit = true
+        control.inBackground(() => {
+            let status: number = 0;
+            let backData: number[] = [];
+            let tagType: number = 0;
+            while (1) {
+                [status, backData, tagType] = sugarRFID.scan()
+                if (status == 0){
+                    control.raiseEvent(rfidEventId, 0)
+                }
+                basic.pause(40)
+            }
+        })
+    }
+
+    //% blockId=sugarRfidOnTagDetected block="rfid tag was detected"
+    //% subcategory=Advanced group=RFID weight=91 color=#499AF7
+    export function sugarRfidOnTagDetected(handler: () => void) {
+        if (!sugarRFIDInit) {
+            initSugarRFID();
+        }
+        control.onEvent(rfidEventId, 0, handler);
+    }
+
     /**
      * read uid
      */
@@ -1926,8 +1955,7 @@ namespace Sugar {
     //% subcategory=Advanced group=RFID weight=90 color=#499AF7
     export function sugarRfidReadUid(): string {
         if (!sugarRFIDInit) {
-            sugarRFID = new SugarRFID()
-            sugarRFIDInit = true
+            initSugarRFID();
         }
         return sugarRFID.scanCar()
     }
@@ -1940,8 +1968,7 @@ namespace Sugar {
     //% subcategory=Advanced group=RFID weight=89 color=#499AF7
     export function sugarRfidWriteBlock(data: string, blockAddress: number): void {
         if (!sugarRFIDInit) {
-            sugarRFID = new SugarRFID()
-            sugarRFIDInit = true
+            initSugarRFID();
         }
         sugarRFID.writeBlock(blockAddress, data)
     }
@@ -1954,8 +1981,7 @@ namespace Sugar {
     //% subcategory=Advanced group=RFID weight=88 color=#499AF7
     export function sugarRfidReadBlock(blockAddress: number): string {
         if (!sugarRFIDInit) {
-            sugarRFID = new SugarRFID()
-            sugarRFIDInit = true
+            initSugarRFID();
         }
         return sugarRFID.readBlock(blockAddress)
     }

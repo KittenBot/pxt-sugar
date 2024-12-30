@@ -294,6 +294,7 @@
     "Sugar.uvType.uv|block": "紫外線指數",
     "Sugar.uvType.lux|block": "光照度lux",
     "Sugar.uvValue|block": "UV感測器 取得 %type",
+    "Sugar.sugarRfidOnTagDetected|block": "RFID 检测到卡片",
     "Sugar.sugarRfidReadUid|block": "RFID模組 取得卡片uid",
     "Sugar.sugarRfidWriteBlock|block": "RFID模組 將資料 %data 寫入區塊 %blockAddress",
     "Sugar.sugarRfidReadBlock|block": "RFID模組 讀取區塊 %blockAddress",

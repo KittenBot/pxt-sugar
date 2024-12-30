@@ -298,6 +298,7 @@
     "Sugar.uvType.uv|block": "紫外线指数",
     "Sugar.uvType.lux|block": "光照度lux",
     "Sugar.uvValue|block":"UV传感器 获取 %type",
+    "Sugar.sugarRfidOnTagDetected|block": "RFID 检测到卡片",
     "Sugar.sugarRfidReadUid|block": "RFID模块 获取卡片uid",
     "Sugar.sugarRfidWriteBlock|block": "RFID模块 将数据 %data 写入块 %blockAddress",
     "Sugar.sugarRfidReadBlock|block": "RFID模块 读取块 %blockAddress",
