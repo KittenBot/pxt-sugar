@@ -1043,15 +1043,15 @@ namespace Sugar {
      * @param zeroOffset is zero offset, eg: 2071.921875
      * @param factor is calibration factor, eg: 1.53034747292419
      */
-    //% blockId=loadcellBegin block="loadcell sensor set zeroOffset %zeroOffset factor %factor"
+    //% blockId=loadcellBegin block="loadcell sensor set factor %factor"
     //% subcategory=Sensor group=I2C weight=38 color=#49CEF7
-    export function loadcellBegin(zeroOffset: number, factor: number): void {
+    export function loadcellBegin(factor: number): void {
         if (!loadcellInit) {
             loadcell = new SugarLoadcell()
             loadcell.begin()
             loadcellInit = true
         }
-        loadcell.begin(true, zeroOffset, factor)
+        loadcell.begin(true, factor)
     }
 
     //% blockId=loadcellCali block="loadcell sensor calibration begins"

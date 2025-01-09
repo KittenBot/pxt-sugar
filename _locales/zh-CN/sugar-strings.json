@@ -246,7 +246,7 @@
     "Sugar.SolarpwrDate.Minute|block": "分",
     "Sugar.SolarpwrDate.Sec|block": "秒",
     "Sugar.loadcellCalibrateScale|block": "称重传感器 开始校准",
-    "Sugar.loadcellBegin|block": "称重传感器 设置空载值 %zeroOffset 校准值 %factor(校准后获得)",
+    "Sugar.loadcellBegin|block": "称重传感器 设置校准值 %factor(校准后获得)",
     "Sugar.loadcellCalibrateSetPeel|block": "称重传感器 去皮(重量清零)",
     "Sugar.loadcellGetWeight|block": "称重传感器 测量重量(克)",
     "{id:subcategory}Sensor": "传感器",

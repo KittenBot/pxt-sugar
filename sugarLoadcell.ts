@@ -92,12 +92,10 @@ const NAU7802_CAL_IN_PROGRESS = 1;
 const NAU7802_CAL_FAILURE = 2;
 
 class SugarLoadcell {
-
-    _zeroOffset: number;
     _calibrationFactor: number;
     _peel: number;
 
-    begin(initialize: boolean = true, zeroOffset: number = 2071.921875, factor: number = 1.53034747292419): boolean {
+    begin(initialize: boolean = true, factor: number = 102123.5): boolean {
         this._peel = 0
         let result = true
         if (initialize) {
@@ -111,10 +109,16 @@ class SugarLoadcell {
             result = result && this.calibrateAFE()
         }
         if (result) {
-            this.setZeroOffset(zeroOffset)
             this.setCalibrationFactor(factor)
         }
-        
+
+        // 54
+        // 0b00110110
+        // bit 0~1: Offset Calibration System
+        // bit 2: start Calibration
+        this.setRegister(NAU7802_CTRL2,54)
+        basic.pause(2000)
+
         return result
     }
 
@@ -251,10 +255,6 @@ class SugarLoadcell {
         return this.waitForCalibrateAFE(1000)
     }
 
-    setZeroOffset(new_zero_offset: number) {
-        this._zeroOffset = new_zero_offset
-    }
-
     setCalibrationFactor(new_cal_factor: number): void {
         this._calibrationFactor = new_cal_factor
     }
@@ -264,15 +264,16 @@ class SugarLoadcell {
     }
 
     getReading(): number {
-        try {
-            pins.i2cWriteNumber(DEVICE_ADDRESS, NAU7802_ADCO_B2, NumberFormat.UInt8BE)
-            let value_list = pins.i2cReadBuffer(DEVICE_ADDRESS, 3)
-            let value: number = (value_list[0] << 24) | (value_list[1] << 16) | (value_list[2] << 8);
-            value >>= 16;
-            return value
-        } catch {
-            return 0
+        pins.i2cWriteNumber(DEVICE_ADDRESS, NAU7802_ADCO_B2, NumberFormat.UInt8BE)
+        let value_list = pins.i2cReadBuffer(DEVICE_ADDRESS, 3)
+        let _adc_out_2 = value_list[0]
+        let _adc_out_1 = value_list[1]
+        let _adc_out_0 = value_list[2]
+        let value = (_adc_out_2 << 24) | (_adc_out_1 << 16) | (_adc_out_0 << 8)
+        if (value & (1 << 31)){
+            value -= 1 << 32
         }
+        return value
     }
 
     getAverage(average_amount: number): number {
@@ -292,19 +293,10 @@ class SugarLoadcell {
         total /= average_amount
         return total
     }
-
-    calculateZeroOffset(average_amount: number = 8): void {
-        this.setZeroOffset(this.getAverage(average_amount))
-    }
-
     calculateCalibrationFactor(weight_on_scale: number, average_amount: number = 8): void {
         let onScale = this.getAverage(average_amount)
-        let newCalFactor = (onScale - this._zeroOffset) / weight_on_scale
+        let newCalFactor = onScale / weight_on_scale
         this.setCalibrationFactor(newCalFactor)
-    }
-
-    getZeroOffset(): number {
-        return this._zeroOffset
     }
 
     getCalibrationFactor(): number {
@@ -317,12 +309,7 @@ class SugarLoadcell {
 
     getWeight(allow_negative_weights: boolean = true, samples_to_take: number = 8): number {
         let on_scale = this.getAverage(samples_to_take)
-        if (!allow_negative_weights) {
-            if (on_scale < this._zeroOffset) {
-                on_scale = this._zeroOffset
-            }
-        }
-        let weight = Math.round((on_scale - this._zeroOffset) / this._calibrationFactor)
+        let weight = Math.round(on_scale / this._calibrationFactor)
         return weight
     }
 
@@ -332,8 +319,6 @@ class SugarLoadcell {
 
     calibrateScale(): void {
         serial.writeString("start calibrate.\n")
-        this.calculateZeroOffset(64)
-        serial.writeValue("new unloaded value", this.getZeroOffset())
         serial.writeString("Place an object of known weight on the scale and press enter when ready.\n")
         serial.readLine()
         serial.writeString("Enter the weight of the object and press enter (g). \n")
