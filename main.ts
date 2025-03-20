@@ -1041,7 +1041,7 @@ namespace Sugar {
     /**
      * init loadcell
      * @param zeroOffset is zero offset, eg: 2071.921875
-     * @param factor is calibration factor, eg: 1.53034747292419
+     * @param factor is calibration factor, eg: 92678.96
      */
     //% blockId=loadcellBegin block="loadcell sensor set factor %factor"
     //% subcategory=Sensor group=I2C weight=38 color=#49CEF7
