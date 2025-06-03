@@ -1923,7 +1923,6 @@ namespace Sugar {
 
 
     function initSugarRFID(): void {
-        serial.writeLine("init sugar rfid")
         sugarRFID = new SugarRFID()
         sugarRFIDInit = true
         control.inBackground(() => {
@@ -1934,12 +1933,14 @@ namespace Sugar {
                 [status, backData, tagType] = sugarRFID.scan();
                 if (status == 0){
                     control.raiseEvent(rfidEventId, 0);
-                    serial.writeLine("test rfid")
                 }
                 basic.pause(40);
             }
         })
     }
+
+
+    let isHandlerRunning = false;
 
     //% blockId=sugarRfidOnTagDetected block="rfid tag was detected"
     //% subcategory=Advanced group=RFID weight=91 color=#499AF7
@@ -1947,7 +1948,23 @@ namespace Sugar {
         if (!sugarRFIDInit) {
             initSugarRFID();
         }
-        control.onEvent(rfidEventId, 0, handler);
+
+        control.onEvent(rfidEventId, 0, () => {
+            if (!isHandlerRunning) {
+                isHandlerRunning = true;
+                try {
+                    let status: number = 0;
+                    let backData: number[] = [];
+                    let tagType: number = 0;
+                    [status, backData, tagType] = sugarRFID.scan();
+                    if (status == 0) {
+                        handler();
+                    }
+                } finally {
+                    isHandlerRunning = false;
+                }
+            }
+        });
     }
 
     /**

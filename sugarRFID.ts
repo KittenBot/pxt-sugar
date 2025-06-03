@@ -504,7 +504,6 @@ class SugarRFID {
         let tagType: number = 0;
         let backBits: number = 0;
         //while (true) {
-            serial.writeLine("scan Car ing");
             [status, backData, tagType] = this.scan()
             if (status == MI_OK) {
                 [status, uid, backBits] = this.transceive()
