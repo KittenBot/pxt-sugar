@@ -503,7 +503,8 @@ class SugarRFID {
         let uid: number[] = [];
         let tagType: number = 0;
         let backBits: number = 0;
-        while (true) {
+        //while (true) {
+            serial.writeLine("scan Car ing");
             [status, backData, tagType] = this.scan()
             if (status == MI_OK) {
                 [status, uid, backBits] = this.transceive()
@@ -514,9 +515,13 @@ class SugarRFID {
                         uidStr += buff;
                     }
                     return uidStr
+                }else{
+                    return ""
                 }
+            }else{
+                return ""
             }
-        }
+        //}
     }
 
     writeBlock(blockAddrP: number, data: string) {
@@ -538,7 +543,7 @@ class SugarRFID {
             }
         }
         //serial.writeNumbers(dataASCLL)
-        while (true) {
+        //while (true) {
             [status, backData, tagType] = this.scan()
             if (status == MI_OK) {
                 [status, uid, backBits] = this.transceive()
@@ -559,7 +564,7 @@ class SugarRFID {
                                     dataASCLL)
                                 if (status == MI_OK) {
                                     //serial.writeLine('written succeed')
-                                    break
+                                    //break
                                 } else {
                                     //serial.writeLine('Error while writing new data')
                                 }
@@ -574,7 +579,7 @@ class SugarRFID {
                     }
                 }
             }
-        }
+        //}
     }
     readBlock(blockAddrP: number) {
         let status: number = 0;
@@ -584,8 +589,8 @@ class SugarRFID {
         let backBits: number = 0;
 
         let blockAddr = AVAILABLEBLOCK[blockAddrP]
-        this.MRFC522_init()
-        while (true) {
+        this.MRFC522_init();
+        //while (true) 
             [status, backData, tagType] = this.scan()
             if (status == MI_OK) {
 
@@ -615,15 +620,23 @@ class SugarRFID {
                                 return asc_str
                             } else {
                                 //serial.writeLine('Error while reading')
+                                return ""
                             }
                             this.deauthenticate()
                             //serial.writeLine('Card deauthenticated')
                         } else {
                             //serial.writeLine('Authentication error')
+                            return ""
                         }
+                    }else{
+                        return ""
                     }
+                }else{
+                    return ""
                 }
+            }else{
+                return ""
             }
-        }
+        //}
     }
 }

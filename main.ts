@@ -1923,6 +1923,7 @@ namespace Sugar {
 
 
     function initSugarRFID(): void {
+        serial.writeLine("init sugar rfid")
         sugarRFID = new SugarRFID()
         sugarRFIDInit = true
         control.inBackground(() => {
@@ -1930,11 +1931,12 @@ namespace Sugar {
             let backData: number[] = [];
             let tagType: number = 0;
             while (1) {
-                [status, backData, tagType] = sugarRFID.scan()
+                [status, backData, tagType] = sugarRFID.scan();
                 if (status == 0){
-                    control.raiseEvent(rfidEventId, 0)
+                    control.raiseEvent(rfidEventId, 0);
+                    serial.writeLine("test rfid")
                 }
-                basic.pause(40)
+                basic.pause(40);
             }
         })
     }
