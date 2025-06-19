@@ -27,16 +27,18 @@ let GAIN_9 = 0x3
 let GAIN_18 = 0x4
 
 class SugarUV {
-    id:number;
+    id: number;
+    factorkb: number;
     constructor() {
-        this.id = this.read_mem(LTR390_PART_ID,1)[0]
-        if(this.id != 0xb2){
+        this.id = this.read_mem(LTR390_PART_ID, 1)[0]
+        if (this.id != 0xb2) {
             serial.writeLine("Warning!Unknown device model")
         }
-        this.setIntVal(5,20)
+        this.factorkb = 1.0
+        this.setIntVal(5, 20)
     }
 
-    read_mem(cmd:number,size:number):Buffer{
+    read_mem(cmd: number, size: number): Buffer {
         pins.i2cWriteNumber(ADDR, cmd, NumberFormat.UInt8BE)
         let data = pins.i2cReadBuffer(0x53, size)
         return data
@@ -59,17 +61,21 @@ class SugarUV {
         this.write_byte(0x25, (low >> 8) & 0xff)
         this.write_byte(0x26, (low >> 16) & 0x0f)
     }
-
-    uvi(): number {
+    uvs(): number {
         this.write_byte(LTR390_INT_CFG, 0x34)
         this.write_byte(LTR390_MAIN_CTRL, 0x0A)
-        let data = this.read_mem(LTR390_UVSDATA,3)
+        let data = this.read_mem(LTR390_UVSDATA, 3)
         let data1 = data[0]
         let data2 = data[1]
         let data3 = data[2]
         let uv = (data3 << 16) | (data2 << 8) | data1
+        return uv * this.factorkb
+    }
+
+    uvi(): number {
+        let uv = this.uvs()
         uv = (
-            (uv / 4.000046)
+            uv
             / (
                 (3 / 18)
                 * (2 ** 16)
@@ -79,6 +85,24 @@ class SugarUV {
             * 1
         )
         return Math.round(uv)
+    }
+
+    calibration(): number {
+        this.write_byte(LTR390_INT_CFG, 0x34)
+        this.write_byte(LTR390_MAIN_CTRL, 0x0A)
+        let data = this.read_mem(LTR390_UVSDATA, 3)
+        let data1 = data[0]
+        let data2 = data[1]
+        let data3 = data[2]
+        let uv = (data3 << 16) | (data2 << 8) | data1
+        if(uv){
+            this.factorkb = 350 / uv
+            serial.writeLine("new calibration factor:"+this.factorkb.toString())
+        }else{
+            this.factorkb = 1
+            serial.writeLine("No UV light was detected!!!")
+        }
+        return this.factorkb
     }
 
     als(): number {

@@ -1036,6 +1036,27 @@ namespace Sugar {
         return type === uvType.uv ? sugarUV.uvi(): sugarUV.als()
     }
 
+    //% blockId=uvCalibration block="uv calibration uvi"
+    //% subcategory=Sensor group=I2C weight=50 color=#49CEF7
+    export function uvCalibration(): number {
+        if (!sugarUVInit) {
+            sugarUV = new SugarUV()
+            sugarUVInit = true
+        }
+        return sugarUV.calibration()
+    }
+
+    //% blockId=setCalibrationfactor block="uv set calibration factor %factor"
+    //% subcategory=Sensor group=I2C weight=50 color=#49CEF7
+    export function setCalibrationfactor(factor: number): void {
+        if (!sugarUVInit) {
+            sugarUV = new SugarUV()
+            sugarUVInit = true
+        }
+        sugarUV.factorkb = factor
+    }
+
+
     let loadcellInit = false;
     let loadcell: SugarLoadcell;
     /**
