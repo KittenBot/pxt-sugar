@@ -305,5 +305,11 @@
     "Sugar.sugarRfidWriteBlock|block": "RFID模块 将数据 %data 写入块 %blockAddress",
     "Sugar.sugarRfidReadBlock|block": "RFID模块 读取块 %blockAddress",
     "Sugar.sugarInitInfraed|block":"初始化红外接收模块 %pin",
-    "Sugar.sugarOnRemoteControlPressed|block":"当遥控器按钮 %btn 被按下"
+    "Sugar.sugarOnRemoteControlPressed|block":"当遥控器按钮 %btn 被按下",
+    "Sugar.Gaseous|block":"气体传感器 类型 %gasType 引脚 %pin",
+    "Sugar.GasTypes.MQ_2|block": "烟雾",
+    "Sugar.GasTypes.MQ_3|block": "酒精",
+    "Sugar.GasTypes.MQ_5|block": "可燃气",
+    "Sugar.GasTypes.MQ_7|block": "一氧化碳",
+    "Sugar.GasTypes.MQ_135|block": "空气质量"
 }

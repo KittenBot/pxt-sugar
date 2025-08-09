@@ -374,6 +374,19 @@ namespace Sugar {
         ok = 0x21
     }
 
+    export enum GasTypes {
+        //% block="smog"
+        MQ_2 = 0,
+        //% block="alky"
+        MQ_3 = 1,
+        //% block="coal gas"
+        MQ_5 = 2,
+        //% block="carbon monoxide"
+        MQ_7 = 3,
+        //% block="air quality"
+        MQ_135 = 4
+    }
+
     export enum Switch {
         //% block="OFF"
         Off = 0,
@@ -404,6 +417,8 @@ namespace Sugar {
         pins.setPull(pin, PinPullMode.PullUp)
         pins.onPulsed(pin, PulseValue.Low, handler)
     }
+
+
 
     //% blockId=Crash block="crash sensor %pin pressed"
     //% subcategory=Sensor group=DigitalIn weight=97 color=#49CEF7
@@ -766,8 +781,15 @@ namespace Sugar {
     }
 
     //% blockId=flameAnalog block="flame sensor %pin analog value"
-    //% subcategory=Sensor group=AnalogIn weight=79 color=#49CEF7
+    //% subcategory=Sensor group=AnalogIn weight=80 color=#49CEF7
     export function FlameAna(pin: AnalogPin): number {
+        return pins.analogReadPin(pin)
+    }
+
+    //% blockId=gaseous block="gaseous type %gasType sensor %pin analog value"
+    //% subcategory=Sensor group=AnalogIn weight=79 color=#49CEF7
+    export function Gaseous(gasType: GasTypes, pin: AnalogPin): number {
+        let data = gasType
         return pins.analogReadPin(pin)
     }
 
