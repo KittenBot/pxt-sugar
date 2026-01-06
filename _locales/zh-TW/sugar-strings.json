@@ -316,5 +316,5 @@
     "Sugar.mp3_init|block": "方糖MP3(TTS) 初始化 TX %tx RX %rx",
     "Sugar.mp3_control|block": "方糖MP3(TTS) %cmd",
     "Sugar.mp3_playName|block": "方糖MP3(TTS) 播放音訊名稱 %name",
-    "Sugar.mp3_playId|block": "方糖MP3(TTS) 播放音訊需要 %id"
+    "Sugar.mp3_playId|block": "方糖MP3(TTS) 播放音訊序號 %id"
 }
