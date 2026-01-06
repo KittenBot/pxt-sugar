@@ -632,7 +632,7 @@ namespace Sugar {
             initIr(pin);
         });;
     }
-    
+
 
     function appendBitToDatagram(bit: number): number {
         irState.bitsReceived += 1;
@@ -1049,13 +1049,13 @@ namespace Sugar {
 
     //% blockId=als block="uv sensor %type value"
     //% subcategory=Sensor group=I2C weight=50 color=#49CEF7
-    export function uvValue(type:uvType): number {
+    export function uvValue(type: uvType): number {
 
         if (!sugarUVInit) {
             sugarUV = new SugarUV()
             sugarUVInit = true
         }
-        return type === uvType.uv ? sugarUV.uvi(): sugarUV.als()
+        return type === uvType.uv ? sugarUV.uvi() : sugarUV.als()
     }
 
     //% blockId=uvCalibration block="uv calibration uvi"
@@ -1139,7 +1139,7 @@ namespace Sugar {
     let temperature = 0
     let relative_humidity = 0
 
-    export function scd40update(type: number): number{
+    export function scd40update(type: number): number {
         if (!scd40Inited) {
             pins.i2cWriteNumber(SCD40_ADDR, 0x21b1, NumberFormat.UInt16BE)
             basic.pause(500)
@@ -1173,7 +1173,7 @@ namespace Sugar {
                 default:
                     return co2
             }
-        }else{
+        } else {
             return 0;
         }
     }
@@ -1190,7 +1190,7 @@ namespace Sugar {
     //% blockId="co2Value" block="co2 sensor %type value"
     //% subcategory=Sensor group=I2C weight=49 color=#49CEF7
     export function co2Value(type: co2Type): number {
-        
+
         scd40update(type)
         return co2
     }
@@ -1279,7 +1279,7 @@ namespace Sugar {
         TM1650_cmd(0)
     }
 
-    export enum displayState{
+    export enum displayState {
         //% block="on"
         ON = 1,
         //% block="off"
@@ -1974,7 +1974,7 @@ namespace Sugar {
             let tagType: number = 0;
             while (1) {
                 [status, backData, tagType] = sugarRFID.scan();
-                if (status == 0){
+                if (status == 0) {
                     control.raiseEvent(rfidEventId, 0);
                 }
                 basic.pause(40);
@@ -2228,6 +2228,58 @@ namespace Sugar {
             return sugar_gps.sec
         }
         return -1
+    }
+
+    export enum MP3Control {
+        //% block="play/pause"
+        Play = 2,
+        //% block="stop"
+        Stop = 3,
+        //% block="next"
+        Next = 4,
+        //% block="previous"
+        Prev = 5
+    }
+
+    /**
+     * init serial port
+     * @param tx Tx pin; eg: SerialPin.P2
+     * @param rx Rx pin; eg: SerialPin.P12
+     */
+    //% blockId=mp3_init block="mp3 module init tx %tx rx %rx"
+    //% subcategory=Advanced group=MP3 weight=50 color=#499AF7
+    export function mp3_init(tx: SerialPin, rx: SerialPin): void {
+        serial.redirect(tx, rx, BaudRate.BaudRate9600)
+        basic.pause(500)
+        serial.writeString("K1 \r\n") // 进入MP3模式
+        basic.pause(500)
+    }
+
+    //% blockId=mp3_control block="mp3 module %cmd"
+    //% subcategory=Advanced group=MP3 weight=49 color=#499AF7
+    export function mp3_control(cmd: MP3Control): void {
+        serial.writeString("K" + cmd + " \r\n")
+    }
+
+    /**
+     * @param name mp3 name; eg: hello.mp3
+     */
+    //% blockId=mp3_playName block="mp3 module play name %name"
+    //% subcategory=Advanced group=MP3 weight=48 color=#499AF7
+    export function mp3_playName(name: string): void {
+        if (name.length < 4 || name.slice(-4).toLowerCase() != ".mp3") {
+            name += ".mp3"
+        }
+        serial.writeString("K6 " + name + " \r\n")
+    }
+
+    /**
+     * @param id mp3 id; eg: 1
+     */
+    //% blockId=mp3_playId block="mp3 module play id %id"
+    //% subcategory=Advanced group=MP3 weight=47 color=#499AF7
+    export function mp3_playId(id: number): void {
+        serial.writeString("K7 " + id.toString() + "\n")
     }
 
     // /**

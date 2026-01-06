@@ -311,5 +311,13 @@
     "Sugar.GasTypes.MQ_3|block": "酒精",
     "Sugar.GasTypes.MQ_5|block": "可燃气",
     "Sugar.GasTypes.MQ_7|block": "一氧化碳",
-    "Sugar.GasTypes.MQ_135|block": "空气质量"
+    "Sugar.GasTypes.MQ_135|block": "空气质量",
+    "Sugar.MP3Control.Play|block":"播放/暂停",
+    "Sugar.MP3Control.Stop|block": "停止",
+    "Sugar.MP3Control.Next|block": "下一曲",
+    "Sugar.MP3Control.Prev|block": "上一曲",
+    "Sugar.mp3_init|block": "方糖MP3(TTS) 初始化 TX %tx RX %rx",
+    "Sugar.mp3_control|block": "方糖MP3(TTS) %cmd",
+    "Sugar.mp3_playName|block": "方糖MP3(TTS) 播放音频名 %name",
+    "Sugar.mp3_playId|block": "方糖MP3(TTS) 播放音频需要 %id"
 }
