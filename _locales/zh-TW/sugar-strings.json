@@ -328,5 +328,6 @@
     "Sugar.thermalPrinterLastResponse|block": "熱感印表機 上次回應",
     "Sugar|group|Thermal Printer": "熱感印表機",
     "Sugar.bitmap32x32ToBits|block": "32×32 點陣轉 bits（HEX）",
-    "Sugar|group|Bitmap Experiment": "點陣實驗"
+    "Sugar|group|Bitmap Experiment": "點陣實驗",
+    "Sugar.thermalPrinterPrintBitmap32x32|block": "熱感印表機 列印32×32點陣 放大至256×256"
 }

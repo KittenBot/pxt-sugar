@@ -103,6 +103,46 @@ class SugarThermalPrinter {
         return this.feed(count * (this.lineHeight * scale + this.lineGap), wait)
     }
 
+    /**
+     * Print packed 32x32 MSB-first bits, enlarged 8x to 256x256 and centered.
+     * The existing FutureBoard Lite Sugar driver uses command 0x04 with a
+     * UInt16LE heating time followed by 48-byte rows, at most 16 rows per batch.
+     * Always wait between batches so the printer can finish before more data arrives.
+     */
+    printBits(bitmap: Buffer): string {
+        if (bitmap == null || bitmap.length != 128) control.panic(909)
+        const heat = this.checkRange(this.heatUs, 0, 65535)
+        let response = ""
+
+        while (serial.readString().length) { }
+        this.sendFrame(0x06, Buffer.fromArray([0x01]))
+        for (let startRow = 0; startRow < 256; startRow += 16) {
+            const payload = pins.createBuffer(2 + 48 * 16)
+            payload.setNumber(NumberFormat.UInt16LE, 0, heat)
+            for (let row = 0; row < 16; row++) {
+                const sourceY = Math.floor((startRow + row) / 8)
+                for (let sourceX = 0; sourceX < 32; sourceX++) {
+                    const pixel = sourceY * 32 + sourceX
+                    if (bitmap[pixel >> 3] & (0x80 >> (pixel & 7))) {
+                        // Eight enlarged black pixels occupy one byte. The
+                        // 256-pixel image has 64 blank pixels (8 bytes) on each side.
+                        payload[2 + row * 48 + 8 + sourceX] = 0xFF
+                    }
+                }
+            }
+            this.sendFrame(0x04, payload)
+            const part = this.readResponse(3000 + 16 * 1000)
+            response += part
+            if (part.indexOf("ERR") >= 0) break
+            if (part.indexOf("DONE") < 0) {
+                response += "ERR bitmap timeout"
+                break
+            }
+        }
+        this.sendFrame(0x07, pins.createBuffer(0))
+        return response
+    }
+
     printText(text: string, align: Sugar.ThermalPrinterAlign = Sugar.ThermalPrinterAlign.Left,
         scale: number = 1, lineGap?: number,
         heatUs?: number, wait: boolean = true): string {
