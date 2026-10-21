@@ -2293,8 +2293,8 @@ namespace Sugar {
     }
 
     /**
-     * Print a packed 32x32 bitmap as a centered 256x256 image.
-     * Each source pixel becomes an 8x8 square. Waits for every batch to finish.
+     * Print a packed 32x32 bitmap at its original size, centered.
+     * Waits for every batch to finish.
      * @param bits 128 bytes, row-major with the most significant bit first
      */
     export function thermalPrinterPrintBits(bits: Buffer): void {

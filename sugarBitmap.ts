@@ -33,10 +33,10 @@ namespace Sugar {
     }
 
     /**
-     * Draw 32x32 pixels and print them as a centered 256x256 image (8x scale).
+     * Draw 32x32 pixels and print them at their original size, centered.
      * Waits for completion, stopping on a printer error or response timeout.
      */
-    //% blockId=thermalPrinterPrintBitmap32x32 block="thermal printer print 32x32 bitmap enlarged to 256x256"
+    //% blockId=thermalPrinterPrintBitmap32x32 block="thermal printer print 32x32 bitmap"
     //% gridLiteral=1 imageLiteralColumns=32 imageLiteralRows=32 imageLiteralScale=0.6
     //% subcategory=Advanced group="Thermal Printer" weight=57 color=#499AF7
     export function thermalPrinterPrintBitmap32x32(leds: string): void {

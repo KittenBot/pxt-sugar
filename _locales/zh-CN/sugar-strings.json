@@ -332,5 +332,5 @@
     "Sugar|group|Thermal Printer": "热敏打印机",
     "Sugar.bitmap32x32ToBits|block": "32×32 点阵转 bits（HEX）",
     "Sugar|group|Bitmap Experiment": "点阵实验",
-    "Sugar.thermalPrinterPrintBitmap32x32|block": "热敏打印机 打印32×32点阵 放大至256×256"
+    "Sugar.thermalPrinterPrintBitmap32x32|block": "热敏打印机 打印32×32点阵"
 }

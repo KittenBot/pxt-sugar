@@ -104,7 +104,7 @@ class SugarThermalPrinter {
     }
 
     /**
-     * Print packed 32x32 MSB-first bits, enlarged 8x to 256x256 and centered.
+     * Print packed 32x32 MSB-first bits at their original size, centered.
      * The existing FutureBoard Lite Sugar driver uses command 0x04 with a
      * UInt16LE heating time followed by 48-byte rows, at most 16 rows per batch.
      * Always wait between batches so the printer can finish before more data arrives.
@@ -116,18 +116,14 @@ class SugarThermalPrinter {
 
         while (serial.readString().length) { }
         this.sendFrame(0x06, Buffer.fromArray([0x01]))
-        for (let startRow = 0; startRow < 256; startRow += 16) {
+        for (let startRow = 0; startRow < 32; startRow += 16) {
             const payload = pins.createBuffer(2 + 48 * 16)
             payload.setNumber(NumberFormat.UInt16LE, 0, heat)
             for (let row = 0; row < 16; row++) {
-                const sourceY = Math.floor((startRow + row) / 8)
-                for (let sourceX = 0; sourceX < 32; sourceX++) {
-                    const pixel = sourceY * 32 + sourceX
-                    if (bitmap[pixel >> 3] & (0x80 >> (pixel & 7))) {
-                        // Eight enlarged black pixels occupy one byte. The
-                        // 256-pixel image has 64 blank pixels (8 bytes) on each side.
-                        payload[2 + row * 48 + 8 + sourceX] = 0xFF
-                    }
+                for (let columnByte = 0; columnByte < 4; columnByte++) {
+                    // Center 32 pixels in a 384-pixel row: 176 blank pixels
+                    // (22 bytes) on each side, with no pixel scaling.
+                    payload[2 + row * 48 + 22 + columnByte] = bitmap[(startRow + row) * 4 + columnByte]
                 }
             }
             this.sendFrame(0x04, payload)
