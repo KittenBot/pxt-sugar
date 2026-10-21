@@ -326,5 +326,7 @@
     "Sugar.thermalPrinterFeed|block": "熱感印表機 進紙 %pixels 像素||等待完成 %wait",
     "Sugar.thermalPrinterNewline|block": "熱感印表機 換行 %count 行||縮放 %scale 等待完成 %wait",
     "Sugar.thermalPrinterLastResponse|block": "熱感印表機 上次回應",
-    "Sugar|group|Thermal Printer": "熱感印表機"
+    "Sugar|group|Thermal Printer": "熱感印表機",
+    "Sugar.bitmap32x32ToBits|block": "32×32 點陣轉 bits（HEX）",
+    "Sugar|group|Bitmap Experiment": "點陣實驗"
 }
