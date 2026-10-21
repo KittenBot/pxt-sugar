@@ -20,7 +20,8 @@
         "sugarUV.ts",
         "sugarRFID.ts",
         "background.ts",
-        "sugarCO2.ts"
+        "sugarCO2.ts",
+        "sugarThermalPrinter.ts"
     ],
     "public": true,
     "targetVersions": {

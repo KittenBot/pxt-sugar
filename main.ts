@@ -2230,6 +2230,103 @@ namespace Sugar {
         return -1
     }
 
+    export enum ThermalPrinterAlign {
+        //% block="left"
+        Left = 0,
+        //% block="center"
+        Center = 1,
+        //% block="right"
+        Right = 2
+    }
+
+    let sugarThermalPrinter: SugarThermalPrinter
+    let thermalPrinterResponse = ""
+
+    function getThermalPrinter(): SugarThermalPrinter {
+        if (!sugarThermalPrinter) sugarThermalPrinter = new SugarThermalPrinter()
+        return sugarThermalPrinter
+    }
+
+    /**
+     * Initialize the shared serial port for the Sugar thermal printer.
+     * @param tx micro:bit TX pin connected to printer RX
+     * @param rx micro:bit RX pin connected to printer TX
+     * @param baudrate printer baud rate
+     */
+    //% blockId=thermalPrinterInit block="thermal printer init TX %tx RX %rx||baud rate %baudrate"
+    //% tx.defl=SerialPin.P0 rx.defl=SerialPin.P1 baudrate.defl=BaudRate.BaudRate115200
+    //% subcategory=Advanced group="Thermal Printer" weight=60 color=#499AF7
+    export function thermalPrinterInit(tx: SerialPin = SerialPin.P0, rx: SerialPin = SerialPin.P1,
+        baudrate: BaudRate = BaudRate.BaudRate115200): void {
+        sugarThermalPrinter = new SugarThermalPrinter(tx, rx, baudrate)
+        thermalPrinterResponse = ""
+    }
+
+    /**
+     * Set printing defaults. Invalid parameters stop the program with error 909.
+     * @param heatUs heating time in microseconds, eg: 3000
+     * @param lineGap line gap in pixels, eg: 8
+     * @param lineHeight base text line height in pixels, eg: 24
+     */
+    //% blockId=thermalPrinterConfigure block="thermal printer set heating %heatUs us line gap %lineGap pixels||line height %lineHeight pixels"
+    //% heatUs.min=0 heatUs.max=65535 heatUs.defl=3000
+    //% lineGap.min=0 lineGap.max=64 lineGap.defl=8 lineHeight.min=1 lineHeight.defl=24
+    //% subcategory=Advanced group="Thermal Printer" weight=59 color=#499AF7
+    export function thermalPrinterConfigure(heatUs: number = 3000, lineGap: number = 8, lineHeight: number = 24): void {
+        getThermalPrinter().configure(heatUs, lineGap, lineHeight)
+    }
+
+    /**
+     * Print UTF-8 text. Each nonempty line is one print command.
+     * With wait=false, send power off immediately after the command, as in the original driver.
+     * @param text text to print, eg: "Hello Sugar"
+     * @param scale text scale from 1 to 4, eg: 1
+     * @param wait wait for DONE, ERR or timeout
+     */
+    //% blockId=thermalPrinterPrintText block="thermal printer print %text||align %align scale %scale wait for completion %wait"
+    //% text.shadowOptions.toString=true scale.min=1 scale.max=4 scale.defl=1 wait.defl=true
+    //% subcategory=Advanced group="Thermal Printer" weight=58 color=#499AF7
+    export function thermalPrinterPrintText(text: string, align: ThermalPrinterAlign = ThermalPrinterAlign.Left,
+        scale: number = 1, wait: boolean = true): void {
+        const printer = getThermalPrinter()
+        thermalPrinterResponse = printer.printText(text, align, scale, printer.lineGap, printer.heatUs, wait)
+    }
+
+    /**
+     * Advance paper in pixels (two motor steps per pixel).
+     * @param pixels distance in pixels, eg: 24
+     * @param wait wait for DONE, ERR or timeout
+     */
+    //% blockId=thermalPrinterFeed block="thermal printer feed %pixels pixels||wait for completion %wait"
+    //% pixels.min=0 pixels.defl=24 wait.defl=true
+    //% subcategory=Advanced group="Thermal Printer" weight=57 color=#499AF7
+    export function thermalPrinterFeed(pixels: number = 24, wait: boolean = true): void {
+        thermalPrinterResponse = getThermalPrinter().feed(pixels, wait)
+    }
+
+    /**
+     * Advance by count * (line height * scale + line gap) pixels.
+     * @param count number of lines, eg: 1
+     * @param scale text scale from 1 to 4, eg: 1
+     * @param wait wait for DONE, ERR or timeout
+     */
+    //% blockId=thermalPrinterNewline block="thermal printer newline %count lines||scale %scale wait for completion %wait"
+    //% count.min=0 count.defl=1 scale.min=1 scale.max=4 scale.defl=1 wait.defl=true
+    //% subcategory=Advanced group="Thermal Printer" weight=56 color=#499AF7
+    export function thermalPrinterNewline(count: number = 1, scale: number = 1, wait: boolean = true): void {
+        thermalPrinterResponse = getThermalPrinter().newline(count, scale, wait)
+    }
+
+    /**
+     * Raw response from the last print/feed/newline operation. Empty when not waiting;
+     * a timeout returns the received partial response, which may also be empty.
+     */
+    //% blockId=thermalPrinterLastResponse block="thermal printer last response"
+    //% subcategory=Advanced group="Thermal Printer" weight=55 color=#499AF7
+    export function thermalPrinterLastResponse(): string {
+        return thermalPrinterResponse
+    }
+
     export enum MP3Control {
         //% block="play/pause"
         Play = 2,

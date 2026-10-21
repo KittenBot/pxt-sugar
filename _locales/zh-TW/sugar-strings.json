@@ -316,5 +316,15 @@
     "Sugar.mp3_init|block": "方糖MP3(TTS) 初始化 TX %tx RX %rx",
     "Sugar.mp3_control|block": "方糖MP3(TTS) %cmd",
     "Sugar.mp3_playName|block": "方糖MP3(TTS) 播放音訊名稱 %name",
-    "Sugar.mp3_playId|block": "方糖MP3(TTS) 播放音訊序號 %id"
+    "Sugar.mp3_playId|block": "方糖MP3(TTS) 播放音訊序號 %id",
+    "Sugar.ThermalPrinterAlign.Left|block": "靠左對齊",
+    "Sugar.ThermalPrinterAlign.Center|block": "置中",
+    "Sugar.ThermalPrinterAlign.Right|block": "靠右對齊",
+    "Sugar.thermalPrinterInit|block": "熱感印表機 初始化 TX %tx RX %rx||鮑率 %baudrate",
+    "Sugar.thermalPrinterConfigure|block": "熱感印表機 設定加熱時間 %heatUs 微秒 行距 %lineGap 像素||行高 %lineHeight 像素",
+    "Sugar.thermalPrinterPrintText|block": "熱感印表機 列印文字 %text||對齊 %align 縮放 %scale 等待完成 %wait",
+    "Sugar.thermalPrinterFeed|block": "熱感印表機 進紙 %pixels 像素||等待完成 %wait",
+    "Sugar.thermalPrinterNewline|block": "熱感印表機 換行 %count 行||縮放 %scale 等待完成 %wait",
+    "Sugar.thermalPrinterLastResponse|block": "熱感印表機 上次回應",
+    "Sugar|group|Thermal Printer": "熱感印表機"
 }

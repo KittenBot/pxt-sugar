@@ -146,6 +146,40 @@ This extension is designed to programme and drive the moudule series Sugar for m
 ```
 
 
+## Sugar thermal printer / 热敏打印机
+
+积木位置：`Sugar → Advanced → 热敏打印机`。驱动位于 `sugarThermalPrinter.ts`，
+由 `Sugar` 命名空间提供积木接口。
+
+默认使用 micro:bit **TX=P0、RX=P1、115200 baud**；micro:bit TX 接打印机 RX，
+micro:bit RX 接打印机 TX，并连接共地。首次调用也会按默认引脚自动初始化。
+初始化会使用共享串口，不能同时与本扩展的 GPS、语音、MP3 等串口模块共用。
+
+```typescript
+Sugar.thermalPrinterInit(SerialPin.P0, SerialPin.P1)
+Sugar.thermalPrinterConfigure(3000, 8, 24)
+Sugar.thermalPrinterPrintText("你好，Sugar!", Sugar.ThermalPrinterAlign.Center, 2)
+Sugar.thermalPrinterPrintText("第一行\n第二行")
+Sugar.thermalPrinterNewline(1)
+Sugar.thermalPrinterFeed(24)
+// 可通过 Sugar.thermalPrinterLastResponse() 获取上次操作的原始响应。
+```
+
+- 文本以 UTF-8 发送，中文字形支持取决于打印机固件。支持左对齐、居中、右对齐和 1～4 倍缩放。
+- 默认加热时间为 3000 微秒（范围 0～65535），行距 8 像素（范围 0～64），基础行高 24 像素（正整数）。
+- 换行走纸距离为 `行数 × (基础行高 × 缩放 + 行距)`；走纸每像素对应 2 个电机步进，超过 16383 像素自动分段。
+- 自动识别 `\n`、`\r\n`、`\r`。非空行分别打印，中间的空行走纸，末尾换行符不额外走纸，与源库一致。
+- 单行 UTF-8 文本最多 3065 字节（总载荷上限 3072 字节，包含 7 字节参数），超长行不自动拆分。
+- 默认等待 `DONE`、`ERR` 或超时。打印超时为 `3000 + 文本字节数 × 50` 毫秒，走纸超时为 `1000 + 分段像素数 × 10` 毫秒。
+  上次响应保留原始内容，多行/分段响应依次拼接；超时保留已收到的内容，也可能为空，不自动重试。
+- 展开积木可设置 `等待完成=false`，或在代码中调用 `Sugar.thermalPrinterPrintText("Hello", Sugar.ThermalPrinterAlign.Left, 1, false)`。
+  此模式保持源库行为：发送命令后立即发送关闭电源帧，不读取完成响应，上次响应为空。
+- 参数转为整数后检查范围。MakeCode 不使用 Python 的 `ValueError`，非法参数会停止程序并显示错误码 909。
+
+底层类 `SugarThermalPrinter` 提供 `configure`、`printText`、`feed` 和 `newline`，后三者直接返回响应字符串。
+`printText(text, align, scale, lineGap, heatUs, wait)` 也支持逐次覆盖行距与加热时间；省略时使用当前配置。
+协议帧、校验和以及每条命令前开启电源、命令后关闭电源的顺序均沿用 MicroPython 驱动。
+
 ## License
 
 MIT
