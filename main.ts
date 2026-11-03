@@ -2254,9 +2254,9 @@ namespace Sugar {
      * @param baudrate printer baud rate
      */
     //% blockId=thermalPrinterInit block="thermal printer init TX %tx RX %rx||baud rate %baudrate"
-    //% tx.defl=SerialPin.P0 rx.defl=SerialPin.P1 baudrate.defl=BaudRate.BaudRate115200
+    //% tx.defl=SerialPin.P2 rx.defl=SerialPin.P12 baudrate.defl=BaudRate.BaudRate115200
     //% subcategory=Advanced group="Thermal Printer" weight=60 color=#499AF7
-    export function thermalPrinterInit(tx: SerialPin = SerialPin.P0, rx: SerialPin = SerialPin.P1,
+    export function thermalPrinterInit(tx: SerialPin = SerialPin.P2, rx: SerialPin = SerialPin.P12,
         baudrate: BaudRate = BaudRate.BaudRate115200): void {
         sugarThermalPrinter = new SugarThermalPrinter(tx, rx, baudrate)
         thermalPrinterResponse = ""
