@@ -328,5 +328,6 @@
     "Sugar.thermalPrinterLastResponse|block": "熱感印表機 上次回應",
     "Sugar|group|Thermal Printer": "熱感印表機",
     "Sugar.thermalPrinterPrintBitmap32x32|block": "熱感印表機 列印32×32點陣",
-    "Sugar.thermalPrinterPrintBytes|block": "熱感印表機 列印位元組陣列 %data 圖片寬度 %width 像素"
+    "Sugar.thermalPrinterPrintBytes|block": "熱感印表機 列印位元組陣列 %data 圖片寬度 %width 像素",
+    "Sugar.thermalPrinterPrintWords|block": "熱感印表機 列印32位元陣列 %data 圖片寬度 %width 像素"
 }

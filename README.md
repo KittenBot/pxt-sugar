@@ -237,6 +237,26 @@ Sugar.thermalPrinterPrintBytes([255, 192], 10)
 收到 `ERR` 或超时后停止并关闭电源。响应通过 `Sugar.thermalPrinterLastResponse()` 获取。
 原有 32×32 点阵积木和 `Sugar.thermalPrinterPrintBits(Buffer)` 接口继续可用。
 
+## 按图片宽度打印32位数组
+
+积木位置：`Sugar → Advanced → 热敏打印机 → 打印32位数组`。
+每个数组元素表示横向 32 个点，高位在左，`1` 打黑点、`0` 留白。
+例如 `0xffffffff` 表示连续 32 个黑点，`0x80000000` 表示最左边一个黑点，`0x00000000` 表示全白。
+384 点宽的一行只需要 12 个数组元素，是字节数组的四分之一。
+
+```typescript
+// 宽 32 点、高 2 点的全黑矩形。
+Sugar.thermalPrinterPrintWords([0xffffffff, 0xffffffff], 32)
+
+// 宽 16 点、高 1 点；只使用该数最高的 16 位。
+Sugar.thermalPrinterPrintWords([0xffff0000], 16)
+```
+
+宽度范围 `1～384`，默认 384，每行占 `Math.ceil(图片宽度 / 32)` 个数，按原尺寸居中打印。
+每行末数超出宽度的低位忽略；最后一行缺少的数补白。支持无符号 32 位数（`0～0xffffffff`），
+也接受位运算产生的有符号 32 位数（`-2147483648～-1`），例如 `-1` 等同于 `0xffffffff`。
+加热、等待、错误响应和空数组行为与字节数组接口一致。原有字节数组接口继续可用。
+
 ### 图片转 TS 小工具
 
 运行 `tools/image_to_thermal_printer.py` 可选择本地图片，预览黑白效果，并复制 TS 代码或保存为 `.ts` 文件。
@@ -249,8 +269,8 @@ python tools/image_to_thermal_printer.py
 
 图片宽度超过 384 像素时默认等比例缩小，小图不放大；也可指定更小的最大宽度。
 透明区域按白色处理，默认使用黑白阈值转换；照片可勾选“照片抖动”保留灰度层次。
-每行末尾不足 8 点的字节补 0，输出宽度为转换后的实际像素宽度。
-把生成的 `Sugar.thermalPrinterPrintBytes([...], width)` 代码粘贴到 MakeCode 的 JavaScript 编辑器中使用，
+每个数按 `0xffffffff` 形式输出，每行末尾不足 32 点的部分在低位补 0，输出宽度为转换后的实际像素宽度。
+把生成的 `Sugar.thermalPrinterPrintWords([...], width)` 代码粘贴到 MakeCode 的 JavaScript 编辑器中使用，
 串口初始化和加热参数仍由项目中的积木设置。
 
 ## License

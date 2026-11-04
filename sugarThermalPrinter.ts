@@ -129,6 +129,29 @@ class SugarThermalPrinter {
         return this.printBitmap(bitmap, width)
     }
 
+    /**
+     * Print packed 32-bit words, MSB first. Each row uses ceil(width / 32)
+     * words; unused low bits and missing words in the last row print white.
+     * Accept signed int32 results as well as unsigned hexadecimal literals.
+     */
+    printWords(data: number[], width: number = 384): string {
+        width = this.checkRange(width, 1, 384)
+        if (data == null) control.panic(909)
+        const wordsPerRow = Math.ceil(width / 32)
+        const bytesPerRow = Math.ceil(width / 8)
+        const height = Math.ceil(data.length / wordsPerRow)
+        const bitmap = pins.createBuffer(height * bytesPerRow)
+        for (let i = 0; i < data.length; i++) {
+            const word = this.checkRange(data[i], -2147483648, 0xFFFFFFFF)
+            const row = Math.floor(i / wordsPerRow)
+            const columnByte = (i % wordsPerRow) * 4
+            for (let byte = 0; byte < 4 && columnByte + byte < bytesPerRow; byte++) {
+                bitmap[row * bytesPerRow + columnByte + byte] = (word >>> (24 - byte * 8)) & 0xFF
+            }
+        }
+        return this.printBitmap(bitmap, width)
+    }
+
     private printBitmap(bitmap: Buffer, width: number): string {
         if (bitmap.length == 0) return ""
         const bytesPerRow = Math.ceil(width / 8)
