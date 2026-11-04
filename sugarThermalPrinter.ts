@@ -152,6 +152,30 @@ class SugarThermalPrinter {
         return this.printBitmap(bitmap, width)
     }
 
+    /**
+     * Decode MakeCode's 1-bit bitmap literal: 8-byte header, then columns of
+     * LSB-first vertical pixels. Convert to the printer's MSB-first rows.
+     */
+    printBitmapData(image: Buffer): string {
+        if (image == null || image.length < 8 || image[0] != 0x87 || image[1] != 1) control.panic(909)
+        const width = image.getNumber(NumberFormat.UInt16LE, 2)
+        const height = image.getNumber(NumberFormat.UInt16LE, 4)
+        this.checkRange(width, 1, 384)
+        if (height < 1) control.panic(909)
+        const columnBytes = Math.ceil(height / 8)
+        if (image.length != 8 + width * columnBytes) control.panic(909)
+        const rowBytes = Math.ceil(width / 8)
+        const bitmap = pins.createBuffer(rowBytes * height)
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                if (image[8 + x * columnBytes + (y >> 3)] & (1 << (y & 7))) {
+                    bitmap[y * rowBytes + (x >> 3)] |= 0x80 >> (x & 7)
+                }
+            }
+        }
+        return this.printBitmap(bitmap, width)
+    }
+
     private printBitmap(bitmap: Buffer, width: number): string {
         if (bitmap.length == 0) return ""
         const bytesPerRow = Math.ceil(width / 8)

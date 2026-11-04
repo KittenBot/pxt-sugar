@@ -2317,6 +2317,19 @@ namespace Sugar {
     }
 
     /**
+     * Print a monochrome bmp literal at its original size, centered.
+     * The bitmap contains its width and height. Maximum width is 384 pixels.
+     * Dithering is performed by the image conversion tool before printing.
+     * @param bitmap black and white image to print
+     */
+    //% blockId=thermalPrinterPrintBitmap block="thermal printer print bitmap %bitmap"
+    //% bitmap.shadow=thermalPrinterBitmap
+    //% subcategory=Advanced group="Thermal Printer" weight=58 color=#499AF7
+    export function thermalPrinterPrintBitmap(bitmap: Buffer): void {
+        thermalPrinterResponse = getThermalPrinter().printBitmapData(bitmap)
+    }
+
+    /**
      * Print packed 32-bit numbers as a bitmap at its original size, centered.
      * Each row uses ceil(width / 32) numbers, MSB first (1=black, 0=white).
      * Unused low bits are ignored; an incomplete last row is padded white.

@@ -332,5 +332,7 @@
     "Sugar|group|Thermal Printer": "热敏打印机",
     "Sugar.thermalPrinterPrintBitmap32x32|block": "热敏打印机 打印32×32点阵",
     "Sugar.thermalPrinterPrintBytes|block": "热敏打印机 打印字节数组 %data 图片宽度 %width 像素",
-    "Sugar.thermalPrinterPrintWords|block": "热敏打印机 打印32位数组 %data 图片宽度 %width 像素"
+    "Sugar.thermalPrinterPrintWords|block": "热敏打印机 打印32位数组 %data 图片宽度 %width 像素",
+    "Sugar.thermalPrinterBitmap|block": "黑白图片 %bitmap",
+    "Sugar.thermalPrinterPrintBitmap|block": "热敏打印机 打印图片 %bitmap"
 }
