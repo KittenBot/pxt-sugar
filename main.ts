@@ -2310,7 +2310,7 @@ namespace Sugar {
      * @param width image width in pixels from 1 to 384, eg: 384
      */
     //% blockId=thermalPrinterPrintBytes block="thermal printer print byte array %data width %width pixels"
-    //% data.shadow=lists_create_with width.min=1 width.max=384 width.defl=384
+    //% width.min=1 width.max=384 width.defl=384
     //% subcategory=Advanced group="Thermal Printer" weight=57 color=#499AF7
     export function thermalPrinterPrintBytes(data: number[], width: number = 384): void {
         thermalPrinterResponse = getThermalPrinter().printBytes(data, width)
@@ -2320,11 +2320,11 @@ namespace Sugar {
      * Print packed 32-bit numbers as a bitmap at its original size, centered.
      * Each row uses ceil(width / 32) numbers, MSB first (1=black, 0=white).
      * Unused low bits are ignored; an incomplete last row is padded white.
-     * @param data packed 32-bit pixels, eg: [0xffffffff]
+     * @param data packed 32-bit pixels; 0xffffffff prints 32 black pixels
      * @param width image width in pixels from 1 to 384, eg: 384
      */
     //% blockId=thermalPrinterPrintWords block="thermal printer print 32-bit array %data width %width pixels"
-    //% data.shadow=lists_create_with width.min=1 width.max=384 width.defl=384
+    //% width.min=1 width.max=384 width.defl=384
     //% subcategory=Advanced group="Thermal Printer" weight=58 color=#499AF7
     export function thermalPrinterPrintWords(data: number[], width: number = 384): void {
         thermalPrinterResponse = getThermalPrinter().printWords(data, width)
