@@ -212,6 +212,47 @@ JavaScript 也可调用 `Sugar.thermalPrinterPrintBits(data)`，其中 `data` �
 上次响应可通过 `Sugar.thermalPrinterLastResponse()` 查看，超时会追加 `ERR bitmap timeout`。
 位图按原尺寸逐组填入协议行，不做缩放；该打印积木始终等待响应。
 
+## 按图片宽度打印字节数组
+
+积木位置：`Sugar → Advanced → 热敏打印机 → 打印字节数组`。
+数组中的每个数表示横向 8 个点，取值 `0～255`；高位在左，`1` 打黑点、`0` 留白。
+图片宽度以像素为单位，范围 `1～384`，默认 384；图案按原尺寸居中打印。
+
+每行使用 `Math.ceil(图片宽度 / 8)` 个数，按从左到右、从上到下排列，高度由数组长度自动推算。
+宽度不是 8 的倍数时，忽略每行末字节多出的低位；最后一行不足的字节补白。空数组不打印、不走纸。
+参数沿用现有接口的整数转换和范围检查，非法参数会停止程序并显示错误码 909。
+
+```typescript
+// 16×2 的全黑矩形，每行 2 个字节。
+Sugar.thermalPrinterPrintBytes([255, 255, 255, 255], 16)
+
+// 宽 8 点、高 1 点，只有最左边的点为黑色。
+Sugar.thermalPrinterPrintBytes([128], 8)
+
+// 宽 10 点，每行 2 个字节；第二个字节只使用最高 2 位。
+Sugar.thermalPrinterPrintBytes([255, 192], 10)
+```
+
+打印使用当前配置的加热时间，每批最多 16 行，并等待完成后发送下一批；
+收到 `ERR` 或超时后停止并关闭电源。响应通过 `Sugar.thermalPrinterLastResponse()` 获取。
+原有 32×32 点阵积木和 `Sugar.thermalPrinterPrintBits(Buffer)` 接口继续可用。
+
+### 图片转 TS 小工具
+
+运行 `tools/image_to_thermal_printer.py` 可选择本地图片，预览黑白效果，并复制 TS 代码或保存为 `.ts` 文件。
+需要 Python 3.9 或以上版本（含 Tkinter），首次使用安装 Pillow：
+
+```shell
+python -m pip install -r tools/requirements.txt
+python tools/image_to_thermal_printer.py
+```
+
+图片宽度超过 384 像素时默认等比例缩小，小图不放大；也可指定更小的最大宽度。
+透明区域按白色处理，默认使用黑白阈值转换；照片可勾选“照片抖动”保留灰度层次。
+每行末尾不足 8 点的字节补 0，输出宽度为转换后的实际像素宽度。
+把生成的 `Sugar.thermalPrinterPrintBytes([...], width)` 代码粘贴到 MakeCode 的 JavaScript 编辑器中使用，
+串口初始化和加热参数仍由项目中的积木设置。
+
 ## License
 
 MIT

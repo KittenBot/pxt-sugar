@@ -111,23 +111,50 @@ class SugarThermalPrinter {
      */
     printBits(bitmap: Buffer): string {
         if (bitmap == null || bitmap.length != 128) control.panic(909)
+        return this.printBitmap(bitmap, 32)
+    }
+
+    /**
+     * Print row-major bytes at their original size, centered. Each byte packs
+     * eight pixels, MSB first. Rows use ceil(width / 8) bytes; unused low bits
+     * are ignored and an incomplete last row is padded with white pixels.
+     */
+    printBytes(data: number[], width: number = 384): string {
+        width = this.checkRange(width, 1, 384)
+        if (data == null) control.panic(909)
+        const bitmap = pins.createBuffer(data.length)
+        for (let i = 0; i < data.length; i++) {
+            bitmap[i] = this.checkRange(data[i], 0, 255)
+        }
+        return this.printBitmap(bitmap, width)
+    }
+
+    private printBitmap(bitmap: Buffer, width: number): string {
+        if (bitmap.length == 0) return ""
+        const bytesPerRow = Math.ceil(width / 8)
+        const height = Math.ceil(bitmap.length / bytesPerRow)
+        const left = Math.floor((384 - width) / 2)
         const heat = this.checkRange(this.heatUs, 0, 65535)
         let response = ""
 
         while (serial.readString().length) { }
         this.sendFrame(0x06, Buffer.fromArray([0x01]))
-        for (let startRow = 0; startRow < 32; startRow += 16) {
-            const payload = pins.createBuffer(2 + 48 * 16)
+        for (let startRow = 0; startRow < height; startRow += 16) {
+            const rows = Math.min(16, height - startRow)
+            const payload = pins.createBuffer(2 + 48 * rows)
             payload.setNumber(NumberFormat.UInt16LE, 0, heat)
-            for (let row = 0; row < 16; row++) {
-                for (let columnByte = 0; columnByte < 4; columnByte++) {
-                    // Center 32 pixels in a 384-pixel row: 176 blank pixels
-                    // (22 bytes) on each side, with no pixel scaling.
-                    payload[2 + row * 48 + 22 + columnByte] = bitmap[(startRow + row) * 4 + columnByte]
+            for (let row = 0; row < rows; row++) {
+                const sourceRow = (startRow + row) * bytesPerRow
+                for (let column = 0; column < width; column++) {
+                    const sourceByte = sourceRow + (column >> 3)
+                    if (sourceByte < bitmap.length && (bitmap[sourceByte] & (0x80 >> (column & 7)))) {
+                        const pixel = left + column
+                        payload[2 + row * 48 + (pixel >> 3)] |= 0x80 >> (pixel & 7)
+                    }
                 }
             }
             this.sendFrame(0x04, payload)
-            const part = this.readResponse(3000 + 16 * 1000)
+            const part = this.readResponse(3000 + rows * 1000)
             response += part
             if (part.indexOf("ERR") >= 0) break
             if (part.indexOf("DONE") < 0) {

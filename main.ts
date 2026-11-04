@@ -2302,6 +2302,21 @@ namespace Sugar {
     }
 
     /**
+     * Print a byte array as a bitmap at its original size, centered.
+     * Each row uses ceil(width / 8) bytes, MSB first (1=black, 0=white).
+     * Unused low bits are ignored; an incomplete last row is padded white.
+     * Empty arrays print nothing. Always waits for each batch to finish.
+     * @param data pixel bytes from 0 to 255, eight horizontal pixels per number
+     * @param width image width in pixels from 1 to 384, eg: 384
+     */
+    //% blockId=thermalPrinterPrintBytes block="thermal printer print byte array %data width %width pixels"
+    //% data.shadow=lists_create_with width.min=1 width.max=384 width.defl=384
+    //% subcategory=Advanced group="Thermal Printer" weight=57 color=#499AF7
+    export function thermalPrinterPrintBytes(data: number[], width: number = 384): void {
+        thermalPrinterResponse = getThermalPrinter().printBytes(data, width)
+    }
+
+    /**
      * Advance paper in pixels (two motor steps per pixel).
      * @param pixels distance in pixels, eg: 24
      * @param wait wait for DONE, ERR or timeout
