@@ -104,55 +104,6 @@ class SugarThermalPrinter {
     }
 
     /**
-     * Print packed 32x32 MSB-first bits at their original size, centered.
-     * The existing FutureBoard Lite Sugar driver uses command 0x04 with a
-     * UInt16LE heating time followed by 48-byte rows, at most 16 rows per batch.
-     * Always wait between batches so the printer can finish before more data arrives.
-     */
-    printBits(bitmap: Buffer): string {
-        if (bitmap == null || bitmap.length != 128) control.panic(909)
-        return this.printBitmap(bitmap, 32)
-    }
-
-    /**
-     * Print row-major bytes at their original size, centered. Each byte packs
-     * eight pixels, MSB first. Rows use ceil(width / 8) bytes; unused low bits
-     * are ignored and an incomplete last row is padded with white pixels.
-     */
-    printBytes(data: number[], width: number = 384): string {
-        width = this.checkRange(width, 1, 384)
-        if (data == null) control.panic(909)
-        const bitmap = pins.createBuffer(data.length)
-        for (let i = 0; i < data.length; i++) {
-            bitmap[i] = this.checkRange(data[i], 0, 255)
-        }
-        return this.printBitmap(bitmap, width)
-    }
-
-    /**
-     * Print packed 32-bit words, MSB first. Each row uses ceil(width / 32)
-     * words; unused low bits and missing words in the last row print white.
-     * Accept signed int32 results as well as unsigned hexadecimal literals.
-     */
-    printWords(data: number[], width: number = 384): string {
-        width = this.checkRange(width, 1, 384)
-        if (data == null) control.panic(909)
-        const wordsPerRow = Math.ceil(width / 32)
-        const bytesPerRow = Math.ceil(width / 8)
-        const height = Math.ceil(data.length / wordsPerRow)
-        const bitmap = pins.createBuffer(height * bytesPerRow)
-        for (let i = 0; i < data.length; i++) {
-            const word = this.checkRange(data[i], -2147483648, 0xFFFFFFFF)
-            const row = Math.floor(i / wordsPerRow)
-            const columnByte = (i % wordsPerRow) * 4
-            for (let byte = 0; byte < 4 && columnByte + byte < bytesPerRow; byte++) {
-                bitmap[row * bytesPerRow + columnByte + byte] = (word >>> (24 - byte * 8)) & 0xFF
-            }
-        }
-        return this.printBitmap(bitmap, width)
-    }
-
-    /**
      * Decode MakeCode's 1-bit bitmap literal: 8-byte header, then columns of
      * LSB-first vertical pixels. Convert to the printer's MSB-first rows.
      */

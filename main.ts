@@ -2293,30 +2293,6 @@ namespace Sugar {
     }
 
     /**
-     * Print a packed 32x32 bitmap at its original size, centered.
-     * Waits for every batch to finish.
-     * @param bits 128 bytes, row-major with the most significant bit first
-     */
-    export function thermalPrinterPrintBits(bits: Buffer): void {
-        thermalPrinterResponse = getThermalPrinter().printBits(bits)
-    }
-
-    /**
-     * Print a byte array as a bitmap at its original size, centered.
-     * Each row uses ceil(width / 8) bytes, MSB first (1=black, 0=white).
-     * Unused low bits are ignored; an incomplete last row is padded white.
-     * Empty arrays print nothing. Always waits for each batch to finish.
-     * @param data pixel bytes from 0 to 255, eight horizontal pixels per number
-     * @param width image width in pixels from 1 to 384, eg: 384
-     */
-    //% blockId=thermalPrinterPrintBytes block="thermal printer print byte array %data width %width pixels"
-    //% width.min=1 width.max=384 width.defl=384
-    //% subcategory=Advanced group="Thermal Printer" weight=57 color=#499AF7
-    export function thermalPrinterPrintBytes(data: number[], width: number = 384): void {
-        thermalPrinterResponse = getThermalPrinter().printBytes(data, width)
-    }
-
-    /**
      * Print a monochrome bmp literal at its original size, centered.
      * The bitmap contains its width and height. Maximum width is 384 pixels.
      * Dithering is performed by the image conversion tool before printing.
@@ -2327,20 +2303,6 @@ namespace Sugar {
     //% subcategory=Advanced group="Thermal Printer" weight=58 color=#499AF7
     export function thermalPrinterPrintBitmap(bitmap: Buffer): void {
         thermalPrinterResponse = getThermalPrinter().printBitmapData(bitmap)
-    }
-
-    /**
-     * Print packed 32-bit numbers as a bitmap at its original size, centered.
-     * Each row uses ceil(width / 32) numbers, MSB first (1=black, 0=white).
-     * Unused low bits are ignored; an incomplete last row is padded white.
-     * @param data packed 32-bit pixels; 0xffffffff prints 32 black pixels
-     * @param width image width in pixels from 1 to 384, eg: 384
-     */
-    //% blockId=thermalPrinterPrintWords block="thermal printer print 32-bit array %data width %width pixels"
-    //% width.min=1 width.max=384 width.defl=384
-    //% subcategory=Advanced group="Thermal Printer" weight=58 color=#499AF7
-    export function thermalPrinterPrintWords(data: number[], width: number = 384): void {
-        thermalPrinterResponse = getThermalPrinter().printWords(data, width)
     }
 
     /**
