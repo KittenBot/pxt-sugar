@@ -1,6 +1,6 @@
 {
     "name": "sugar",
-    "version": "0.4.15",
+    "version": "0.4.16",
     "description": "Extension for Kittenbot Sugar",
     "license": "MIT",
     "dependencies": {
@@ -26,12 +26,6 @@
         "sugarEncoderMotor.ts"
     ],
     "public": true,
-    "palette": [
-        "#ffffff", "#000000", "#000000", "#000000",
-        "#000000", "#000000", "#000000", "#000000",
-        "#000000", "#000000", "#000000", "#000000",
-        "#000000", "#000000", "#000000", "#000000"
-    ],
     "targetVersions": {
         "target": "9.0.12",
         "targetId": "microbit"
@@ -39,5 +33,23 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "tsprj"
+    "preferredEditor": "tsprj",
+    "palette": [
+        "#ffffff",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000"
+    ]
 }

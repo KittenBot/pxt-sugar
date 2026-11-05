@@ -2300,7 +2300,7 @@ namespace Sugar {
      */
     //% blockId=thermalPrinterPrintBitmap block="thermal printer print bitmap %bitmap"
     //% bitmap.shadow=thermalPrinterBitmap
-    //% subcategory=Advanced group="Thermal Printer" weight=58 color=#499AF7
+    //% subcategory=Advanced group="Thermal Printer" weight=56 color=#499AF7
     export function thermalPrinterPrintBitmap(bitmap: Buffer): void {
         thermalPrinterResponse = getThermalPrinter().printBitmapData(bitmap)
     }
@@ -2312,7 +2312,7 @@ namespace Sugar {
      */
     //% blockId=thermalPrinterFeed block="thermal printer feed %pixels pixels||wait for completion %wait"
     //% pixels.min=0 pixels.defl=24 wait.defl=true
-    //% subcategory=Advanced group="Thermal Printer" weight=57 color=#499AF7
+    //% subcategory=Advanced group="Thermal Printer" weight=55 color=#499AF7
     export function thermalPrinterFeed(pixels: number = 24, wait: boolean = true): void {
         thermalPrinterResponse = getThermalPrinter().feed(pixels, wait)
     }
@@ -2325,7 +2325,7 @@ namespace Sugar {
      */
     //% blockId=thermalPrinterNewline block="thermal printer newline %count lines||scale %scale wait for completion %wait"
     //% count.min=0 count.defl=1 scale.min=1 scale.max=4 scale.defl=1 wait.defl=true
-    //% subcategory=Advanced group="Thermal Printer" weight=56 color=#499AF7
+    //% subcategory=Advanced group="Thermal Printer" weight=54 color=#499AF7
     export function thermalPrinterNewline(count: number = 1, scale: number = 1, wait: boolean = true): void {
         thermalPrinterResponse = getThermalPrinter().newline(count, scale, wait)
     }
@@ -2335,7 +2335,7 @@ namespace Sugar {
      * a timeout returns the received partial response, which may also be empty.
      */
     //% blockId=thermalPrinterLastResponse block="thermal printer last response"
-    //% subcategory=Advanced group="Thermal Printer" weight=55 color=#499AF7
+    //% subcategory=Advanced group="Thermal Printer" weight=53 color=#499AF7
     export function thermalPrinterLastResponse(): string {
         return thermalPrinterResponse
     }
