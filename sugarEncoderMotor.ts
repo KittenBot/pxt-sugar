@@ -282,7 +282,7 @@ namespace Sugar {
     /** Initialize the shared UART at 115200 baud. Replies use the TX wire. */
     //% blockId=sugarEncoderMotorInit block="encoder motor initialize TX %tx RX %rx"
     //% tx.defl=SerialPin.P2 rx.defl=SerialPin.P12
-    //% subcategory=Actuator group="Encoder Motor" weight=79 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=79 color=#49A9F7
     export function encoderMotorInit(tx: SerialPin = SerialPin.P2, rx: SerialPin = SerialPin.P12): void {
         if (!sugarEncoderMotor) sugarEncoderMotor = new SugarEncoderMotor(tx, rx)
         else sugarEncoderMotor.init(tx, rx)
@@ -291,14 +291,14 @@ namespace Sugar {
     /** Change and save the ID of every motor on the wire. Connect one at a time. */
     //% blockId=sugarEncoderMotorChangeId block="set all encoder motors on the wire to ID %id"
     //% id.defl=Sugar.EncoderMotorAddress.M1
-    //% subcategory=Actuator group="Encoder Motor" weight=78 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=78 color=#49A9F7
     export function encoderMotorChangeId(id: EncoderMotorAddress): void {
         getEncoderMotor().changeId(id)
     }
 
     //% blockId=sugarEncoderMotorTorque block="encoder motor %id set torque mode %mode"
     //% id.defl=Sugar.EncoderMotorId.M1 mode.defl=Sugar.EncoderMotorTorque.Locked
-    //% subcategory=Actuator group="Encoder Motor" weight=77 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=77 color=#49A9F7
     export function encoderMotorTorque(id: EncoderMotorId, mode: EncoderMotorTorque): void {
         getEncoderMotor().release(id, mode)
     }
@@ -306,14 +306,14 @@ namespace Sugar {
     /** Query readiness. Retry up to 50 times, with an 80 ms timeout per try. */
     //% blockId=sugarEncoderMotorReady block="encoder motor %id ready?"
     //% id.defl=Sugar.EncoderMotorAddress.M1
-    //% subcategory=Actuator group="Encoder Motor" weight=76 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=76 color=#49A9F7
     export function encoderMotorReady(id: EncoderMotorAddress): boolean {
         return getEncoderMotor().ready(id)
     }
 
     //% blockId=sugarEncoderMotorSetMode block="set encoder motor rotation mode %mode"
     //% mode.defl=Sugar.EncoderMotorMode.Relative
-    //% subcategory=Actuator group="Encoder Motor" weight=75 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=75 color=#49A9F7
     export function encoderMotorSetMode(mode: EncoderMotorMode): void {
         getEncoderMotor().setMode(mode)
     }
@@ -322,7 +322,7 @@ namespace Sugar {
     //% blockId=sugarEncoderMotorPositionTime block="encoder motor %id rotate %angle degrees in %duration ms"
     //% id.defl=Sugar.EncoderMotorId.M1 angle.defl=90 duration.defl=1000 duration.min=0
     //% inlineInputMode=inline
-    //% subcategory=Actuator group="Encoder Motor" weight=74 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=74 color=#49A9F7
     export function encoderMotorPositionTime(id: EncoderMotorId, angle: number = 90, duration: number = 1000): void {
         getEncoderMotor().position(id, angle, duration, true)
     }
@@ -330,7 +330,7 @@ namespace Sugar {
     //% blockId=sugarEncoderMotorPositionSpeed block="encoder motor %id rotate %angle degrees at %speed degrees/s"
     //% id.defl=Sugar.EncoderMotorId.M1 angle.defl=90 speed.defl=180 speed.min=0 speed.max=480
     //% inlineInputMode=inline
-    //% subcategory=Actuator group="Encoder Motor" weight=73 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=73 color=#49A9F7
     export function encoderMotorPositionSpeed(id: EncoderMotorId, angle: number = 90, speed: number = 180): void {
         getEncoderMotor().position(id, angle, speed, false)
     }
@@ -339,20 +339,20 @@ namespace Sugar {
     //% blockId=sugarEncoderMotorSpeedTime block="encoder motor %id speed %speed degrees/s for %duration ms"
     //% id.defl=Sugar.EncoderMotorId.M1 speed.defl=360 speed.min=-480 speed.max=480 duration.defl=1000 duration.min=0
     //% inlineInputMode=inline
-    //% subcategory=Actuator group="Encoder Motor" weight=72 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=72 color=#49A9F7
     export function encoderMotorSpeedTime(id: EncoderMotorId, speed: number = 360, duration: number = 1000): void {
         getEncoderMotor().speed(id, speed, duration)
     }
 
     //% blockId=sugarEncoderMotorSpeed block="encoder motor %id speed %speed degrees/s"
     //% id.defl=Sugar.EncoderMotorId.M1 speed.defl=360 speed.min=-480 speed.max=480
-    //% subcategory=Actuator group="Encoder Motor" weight=71 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=71 color=#49A9F7
     export function encoderMotorSpeed(id: EncoderMotorId, speed: number = 360): void {
         getEncoderMotor().speed(id, speed, 0)
     }
 
     //% blockId=sugarEncoderMotorStop block="stop all encoder motors"
-    //% subcategory=Actuator group="Encoder Motor" weight=70 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=70 color=#49A9F7
     export function encoderMotorStop(): void {
         getEncoderMotor().stop()
     }
@@ -360,7 +360,7 @@ namespace Sugar {
     /** Read degrees, or NaN on timeout. Up to 50 attempts of 80 ms each. */
     //% blockId=sugarEncoderMotorAngle block="read encoder motor %id angle"
     //% id.defl=Sugar.EncoderMotorAddress.M1
-    //% subcategory=Actuator group="Encoder Motor" weight=69 color=#D359CD
+    //% subcategory=Actuator group="Encoder Motor" weight=69 color=#49A9F7
     export function encoderMotorAngle(id: EncoderMotorAddress): number {
         return getEncoderMotor().getPosition(id)
     }
