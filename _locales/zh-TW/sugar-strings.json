@@ -270,6 +270,7 @@
     "{id:group}Encoded Motor": "編碼馬達(單)",
     "{id:group}Dual Encoded Motor": "編碼馬達(雙)",
     "{id:group}4x4keyboard": "4x4矩陣鍵盤",
+    "{id:group}Thermal Printer": "熱感式印表機",
     "Sugar.colorUpdate|block": "顏色感測器 更新資料",
     "Sugar.colorValue|block": "顏色感測器 取得 %type 數值",
     "Sugar.colorType.Red|block": "紅色(0~255)",

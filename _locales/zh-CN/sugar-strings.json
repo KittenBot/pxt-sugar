@@ -274,6 +274,7 @@
     "{id:group}Encoded Motor": "编码电机(单)",
     "{id:group}Dual Encoded Motor": "编码电机(双)",
     "{id:group}4x4keyboard": "4x4矩阵键盘",
+    "{id:group}Thermal Printer": "热敏打印机",
     "Sugar.colorUpdate|block": "颜色传感器 更新数据",
     "Sugar.colorValue|block": "颜色传感器 获取 %type 数值",
     "Sugar.colorType.Red|block": "红色(0~255)",
