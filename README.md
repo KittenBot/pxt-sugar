@@ -146,6 +146,43 @@ This extension is designed to programme and drive the moudule series Sugar for m
 ```
 
 
+## Serial bus encoder motor / 串口总线编码电机
+
+积木位置：**Sugar → 执行器 → 编码电机**。驱动位于 `sugarEncoderMotor.ts`，
+移植自 FUTURELITE 的 `encoderMotor.py` 1.3.0，包含初始化、修改 ID、扭矩模式、
+就绪查询、相对/绝对位置模式、按时间/速度转角、定时/连续转动、全部停止和角度读取共 11 个积木。
+
+初始化选择 micro:bit 的 TX、RX 引脚，默认 **TX=P2、RX=P12，115200 baud**。
+这是半双工总线：**TX 接电机总线信号线**，回复也从同一根信号线返回；
+RX 选择另一个空闲引脚，查询时驱动会交换 UART 的 TX/RX 分配，结束后恢复。
+电机使用合适的独立电源，并与 micro:bit 共地。此接法对应原 Python 驱动，
+不是普通双线 UART 的 TX/RX 交叉接法。
+该驱动占用共享串口，不能与 GPS、语音、MP3、热敏打印机等串口模块同时使用。
+
+```typescript
+Sugar.encoderMotorInit(SerialPin.P2, SerialPin.P12)
+if (Sugar.encoderMotorReady(Sugar.EncoderMotorAddress.M1)) {
+    Sugar.encoderMotorSetMode(Sugar.EncoderMotorMode.Relative)
+    Sugar.encoderMotorPositionTime(Sugar.EncoderMotorId.M1, 90, 1000)
+    basic.pause(1200)
+    let angle = Sugar.encoderMotorAngle(Sugar.EncoderMotorAddress.M1)
+    if (!isNaN(angle)) basic.showNumber(angle)
+    Sugar.encoderMotorStop()
+}
+```
+
+- ID 为 1～8；控制积木还支持“所有”。**修改 ID 会修改线上所有电机并保存设置，请逐个连接设置。**
+- 相对位置模式为 `0x02`，绝对位置模式为 `0x00`；模式设置影响总线上的所有电机。
+- 转角单位为度，支持负数和 0.1 度精度；速度单位为度/秒。定速指令限制在 ±700 度/秒，积木滑块为 ±480。
+- 时间单位为毫秒。运动积木发送指令后返回；需要等待完成时，另加暂停积木。定速持续时间为 0 时连续转动。
+- 扭矩可选默认锁定或释放。位置指令会自动开启扭矩，广播位置指令直接广播开启，避免多个电机同时回复。
+- 就绪和角度查询每次超时 80 毫秒，最多重试 50 次；离线时约等待 4 秒。
+  就绪查询失败返回 `false`，角度读取失败返回 `NaN`，不会以 0 度代替失败。
+- TX、RX 必须是两个不同的外部串口引脚；非法引脚或参数会触发错误码 910。
+
+协议回归测试：`node tests/encoderMotor.test.js [pxt-microbit目录]`。
+编译和模拟串口测试不能替代电机实物测试，特别是 micro:bit 上的总线切换时序。
+
 ## Sugar thermal printer / 热敏打印机
 
 积木位置：`Sugar → Advanced → 热敏打印机`。驱动位于 `sugarThermalPrinter.ts`，

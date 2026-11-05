@@ -22,7 +22,8 @@
         "background.ts",
         "sugarCO2.ts",
         "sugarThermalPrinter.ts",
-        "sugarBitmap.ts"
+        "sugarBitmap.ts",
+        "sugarEncoderMotor.ts"
     ],
     "public": true,
     "palette": [
